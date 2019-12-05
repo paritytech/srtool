@@ -1,0 +1,41 @@
+
+:name: chevdor/srtool
+
+= Substrate Runtime Toolbox: srtool
+
+srtool is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development.
+
+It especially helps with building and verifying Wasm Runtime Blobs. 
+  
+The Docker image is `{name}`.
+
+== Build container
+
+First you may want to double check what rustc versions are available as you will HAVE to build an image for a given version:
+
+    rustup check
+
+So say you want to build a builder for rustc 1.39.0:
+
+    RUSTC=1.39.0 && docker build --build-arg RUSTC_VERSION=$RUSTC -t chevdor/srtool:$RUSTC .
+
+== Install
+
+=== Pull image
+
+    docker pull {name}:<version>
+
+Where <version> is the rustc version you want to use.
+
+...or just skip that step, the right image will be fetched at first run.
+
+=== Create alias    
+
+Creating an alias helps hiding the docker complexity behind one simple command.
+
+    export RUSTC=1.39.0 && alias srtool='docker run --rm -it -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'
+
+== Use
+
+    srtool help
+    srtool build

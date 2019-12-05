@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# export PATH=$PATH:$HOME/.cargo/bin # TODO this should be in the image
+
+echo "Substrate Runtime Toolbox"
+
+echo "Building $PACKAGE as $PROFILE"
+
+rustc -V
+
+cd /build
+
+cargo build --$PROFILE -p $PACKAGE
+
+find . | grep *.wasm | grep release | xargs ls -al
+find . | grep *.wasm | grep release | xargs shasum -a 256
+
