@@ -1,0 +1,12 @@
+Welcome to srtool!
+
+First of all, make sure you are in your Substrate/Polkadot repo:
+
+    cd /my/project/substrate
+
+Then run:
+
+    srtool build
+    
+That´s when you can go grab a coffee and read 
+the documentation at https://gitlab.com/chevdor/srtool"

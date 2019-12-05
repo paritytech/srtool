@@ -7,13 +7,14 @@ ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
 WORKDIR /build
 
-# COPY . /build
-COPY ./scripts/* /srtool/
-
+# We first init as much as we can in the first layers
+COPY ./scripts/init.sh /srtool/
 RUN apt-get update && \
 	    apt-get upgrade -y && \
 	    apt-get install -y cmake pkg-config libssl-dev git clang
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
+RUN curl https://sh.rustup.rs -sSf | sh -s -- -y 
+        #source $HOME/.cargo/env && \
+RUN  export PATH=$HOME/.cargo/bin:$PATH && \
         /srtool/init.sh && \
         mv -f $HOME/.cargo/bin/* /bin && \
         rustc -V
@@ -24,7 +25,10 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
 
 RUN echo 'export PATH="/srtool/:$PATH"' >> $HOME/.bashrc
 ENV PATH="/srtool:$PATH"
-RUN cargo install cargo-cache
+#RUN cargo install cargo-cache
+
+# we copy those only at the end which makes testing of new scripts faster as the other layers are cached
+COPY ./scripts/* /srtool/ 
 
 CMD ["/srtool/build.sh"]
 

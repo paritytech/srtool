@@ -1,31 +1,28 @@
 
 :name: chevdor/srtool
+:toc:
+:sectnums:
 
 = Substrate Runtime Toolbox: srtool
+
+== Intro
 
 srtool is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development.
 
 It especially helps with building and verifying Wasm Runtime Blobs. 
   
-The Docker image is `{name}`.
-
-== Build container
-
-First you may want to double check what rustc versions are available as you will HAVE to build an image for a given version:
-
-    rustup check
-
-So say you want to build a builder for rustc 1.39.0:
-
-    RUSTC=1.39.0 && docker build --build-arg RUSTC_VERSION=$RUSTC -t chevdor/srtool:$RUSTC .
+The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
 
 == Install
 
 === Pull image
 
-    docker pull {name}:<version>
+[subs="attributes+"]
+----
+    docker pull {name}:<version> # <1>
+----
 
-Where <version> is the rustc version you want to use.
+<1> where `<version>` is the rustc version you want to use.
 
 ...or just skip that step, the right image will be fetched at first run.
 
@@ -35,7 +32,32 @@ Creating an alias helps hiding the docker complexity behind one simple command.
 
     export RUSTC=1.39.0 && alias srtool='docker run --rm -it -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'
 
+NOTE: The part `-v /tmp/cargo:/root/.cargo` exposes the docker container's cargo cache on your local machine. This helps making subsequent builds faster.
+
 == Use
 
+Now that you defined the srtool alias, you can use it as shown below:
+
+.See the help
     srtool help
+
+.Build the runtime
     srtool build
+
+.Advanced usage
+if you feel fancy, you may also:
+
+    srtool bash
+
+
+== Build the Docker image
+
+While you don't have to build the image yourself, you still may!
+
+First you may want to double check what rustc versions are available as you will HAVE to build an image for a given version:
+
+    rustup check
+
+So say you want to build a builder for rustc 1.39.0:
+
+    RUSTC=1.39.0 && docker build --build-arg RUSTC_VERSION=$RUSTC -t chevdor/srtool:$RUSTC .

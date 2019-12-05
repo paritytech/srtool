@@ -1,17 +1,39 @@
 #!/usr/bin/env bash
 
-# export PATH=$PATH:$HOME/.cargo/bin # TODO this should be in the image
+# If the user sends a SIGINT, we want to exit the entire script
+trap "exit" INT
+
+# This is where docker expects our substrate/polkadot repo to be
+cd /build
 
 echo "Substrate Runtime Toolbox"
 
-echo "Building $PACKAGE as $PROFILE"
+# srtool only makes sense when called from a Cargo folder
+if [ ! -f Cargo.toml ]; then
+    echo "  !!! The folder on your host computer does not look like a Cargo project. Are you really in your repo?"
+    exit 1
+fi
 
-rustc -V
+echo "  Cache size:" `du -sh $HOME/.cargo`
+echo "  Building $PACKAGE as $PROFILE"
+echo "  That can take a little while, be patient..."
 
-cd /build
+# Build the runtime and time it :)
+time cargo build --$PROFILE -p $PACKAGE --target-dir srtool
 
-cargo build --$PROFILE -p $PACKAGE
+# The following would be nice but not in rust stable yet
+#--out-dir srtool-out
 
-find . | grep *.wasm | grep release | xargs ls -al
-find . | grep *.wasm | grep release | xargs shasum -a 256
+echo "Your runtime is ready!"
 
+find . | grep *.wasm | grep $PROFILE | xargs ls -al
+find . | grep *.wasm | grep $PROFILE | xargs shasum -a 256
+
+WASM=`find . | grep *.wasm | grep $PROFILE | grep -v deps | head -1`
+ls -al  $WASM
+
+echo "Summary:"
+echo "  Used" `rustc -V`
+echo "  Your wasm should be $WASM"
+echo "  Size: " `du -sh $WASM`
+echo "  SHA256: " `shasum -a 256 $WASM`

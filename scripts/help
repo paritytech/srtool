@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-echo "Check out the doc at https://gitlab.com/chevdor/srtool"
+cat /srtool/help.txt
