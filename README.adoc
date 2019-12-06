@@ -32,6 +32,11 @@ Creating an alias helps hiding the docker complexity behind one simple command.
 
     export RUSTC=1.39.0; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'
 
+You likely want to make this persistent with:
+
+    echo "export RUSTC=1.39.0; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'" >> ~/.bash_profile && source ~/.bash_profile
+
+
 If you wish to see more (it takes a little longer), you may set the `VERBOSE` ENV variable:
 
     export RUSTC=1.39.0; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -e VERBOSE=1 -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'

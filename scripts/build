@@ -7,24 +7,29 @@ trap "exit" INT
 cd /build
 
 echo "🧰 Substrate Runtime Toolbox 🧰"
+echo "        - by Chevdor -"
 
-# srtool only makes sense when called from a Cargo folder
+# srtool only makes sense when called from a Cargo folder so we check that
 if [ ! -f Cargo.toml ]; then
     echo "  !!! The folder on your host computer does not look like a Cargo project. Are you really in your repo?"
     exit 1
 fi
 
-if [ ! -z "$VERBOSE" ]
-then
+if [ ! -z "$VERBOSE" ]; then
     echo "Checking cache size. Give it a few seconds..."
     echo -e "📦 Cache size:" `du -sh $HOME/.cargo`
 fi
 
-echo -e "🏗  Building $PACKAGE as $PROFILE"
-echo -e "⏳ That can take a little while, be patient... Subsequent builds will be faster."
+echo -e "🏗  Building $PACKAGE as $PROFILE using" `rustc -V`
+echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
 
 # Build the runtime and time it :)
-time cargo build --$PROFILE -p $PACKAGE --target-dir srtool
+CMD="cargo build --$PROFILE -p $PACKAGE --target-dir srtool"
+if [ ! -z "$VERBOSE" ]; then
+    time $CMD
+else
+    $CMD
+fi
 
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
@@ -43,10 +48,11 @@ PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; h
 
 YELLOW='\033[0;33m'
 NC='\033[0m'
+MB=`du -sh $WASM | awk '{print $1}'`
+SZ=`du -s $WASM | awk '{print $1}'`
 
 echo "Summary:"
-echo "  Used" `rustc -V`
-echo "  Wasm   : $WASM"
-echo "  Content: $PREVIEW" 
-echo "  Size   :" `du -sh $WASM | awk '{print $1}'`
-printf "  SHA256 : ${YELLOW}$HASH${NC}\n" 
+echo "  Size    : $MB ($SZ)" 
+echo "  Content : $PREVIEW" 
+printf "  SHA256  : ${YELLOW}$HASH${NC}\n" 
+echo "  Wasm    : $WASM"
