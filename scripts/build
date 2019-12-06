@@ -6,7 +6,7 @@ trap "exit" INT
 # This is where docker expects our substrate/polkadot repo to be
 cd /build
 
-echo "Substrate Runtime Toolbox"
+echo "🧰 Substrate Runtime Toolbox 🧰"
 
 # srtool only makes sense when called from a Cargo folder
 if [ ! -f Cargo.toml ]; then
@@ -14,9 +14,14 @@ if [ ! -f Cargo.toml ]; then
     exit 1
 fi
 
-echo "  Cache size:" `du -sh $HOME/.cargo`
-echo "  Building $PACKAGE as $PROFILE"
-echo "  That can take a little while, be patient..."
+if [ ! -z "$VERBOSE" ]
+then
+    echo "Checking cache size. Give it a few seconds..."
+    echo -e "📦 Cache size:" `du -sh $HOME/.cargo`
+fi
+
+echo -e "🏗  Building $PACKAGE as $PROFILE"
+echo -e "⏳ That can take a little while, be patient... Subsequent builds will be faster."
 
 # Build the runtime and time it :)
 time cargo build --$PROFILE -p $PACKAGE --target-dir srtool
@@ -24,14 +29,24 @@ time cargo build --$PROFILE -p $PACKAGE --target-dir srtool
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
 
-echo "Your Substrate WASM Runtime is ready!"
+echo "✨ Your Substrate WASM Runtime is ready! ✨"
 
 #WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
 WASM=`find ./srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
 HASH=`shasum -a 256 $WASM | awk '{print $1}'`
 
+SIZE=`wc -c < $WASM`
+LENGTH=16
+SKIP=`echo $(($SIZE-$LENGTH))`
+# Some magic to show the first and last bytes of the blog as the UI does
+PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
+
+YELLOW='\033[0;33m'
+NC='\033[0m'
+
 echo "Summary:"
 echo "  Used" `rustc -V`
-echo "  Your wasm is $WASM"
-echo "  Size: " `du -sh $WASM`
-echo "  SHA256: $HASH" 
+echo "  Wasm   : $WASM"
+echo "  Content: $PREVIEW" 
+echo "  Size   :" `du -sh $WASM | awk '{print $1}'`
+printf "  SHA256 : ${YELLOW}$HASH${NC}\n" 
