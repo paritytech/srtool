@@ -48,11 +48,38 @@ Now that you defined the srtool alias, you can use it as shown below:
 .Build the runtime
     srtool build
 
+.Typical run
+
+Invoking `srtool build` with:
+
+    $ srtool build
+
+Looks like this:
+
+----
+    🧰 Substrate Runtime Toolbox 🧰
+    🏗  Building polkadot-runtime as release
+    ⏳ That can take a little while, be patient... Subsequent builds will be faster.
+        Finished release [optimized] target(s) in 37.43s
+
+    real	0m37.931s
+    user	0m1.560s
+    sys	0m3.220s
+    ✨ Your Substrate WASM Runtime is ready! ✨
+    Summary:
+    Used rustc 1.39.0 (4560ea788 2019-11-04)
+    Wasm   : ./srtool/release/wbuild/polkadot-runtime/polkadot_runtime.compact.wasm
+    Content: 0x0061736d0100000001a4022b60037f7f...3435663020323031392d31322d303429
+    Size   : 1.1M
+    SHA256 : d5930520676994fc55a29c547f0159ea860cb46edd710a5be35e62565af1ad8b
+----
+
 .Advanced usage
 if you feel fancy, you may also:
 
     srtool bash
 
+and look around the /srtool folder
 
 == Build the Docker image
 
