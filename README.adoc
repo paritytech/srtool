@@ -30,7 +30,7 @@ The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}
 
 Creating an alias helps hiding the docker complexity behind one simple command.
 
-    export RUSTC=1.39.0 && alias srtool='docker run --rm -it -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'
+    export RUSTC=1.39.0; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/root/.cargo chevdor/srtool:$RUSTC'
 
 NOTE: The part `-v /tmp/cargo:/root/.cargo` exposes the docker container's cargo cache on your local machine. This helps making subsequent builds faster.
 

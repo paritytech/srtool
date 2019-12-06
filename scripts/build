@@ -24,16 +24,14 @@ time cargo build --$PROFILE -p $PACKAGE --target-dir srtool
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
 
-echo "Your runtime is ready!"
+echo "Your Substrate WASM Runtime is ready!"
 
-find . | grep *.wasm | grep $PROFILE | xargs ls -al
-find . | grep *.wasm | grep $PROFILE | xargs shasum -a 256
-
-WASM=`find . | grep *.wasm | grep $PROFILE | grep -v deps | head -1`
-ls -al  $WASM
+#WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
+WASM=`find ./srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
+HASH=`shasum -a 256 $WASM | awk '{print $1}'`
 
 echo "Summary:"
 echo "  Used" `rustc -V`
-echo "  Your wasm should be $WASM"
+echo "  Your wasm is $WASM"
 echo "  Size: " `du -sh $WASM`
-echo "  SHA256: " `shasum -a 256 $WASM`
+echo "  SHA256: $HASH" 
