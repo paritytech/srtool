@@ -20,11 +20,15 @@ if [ ! -z "$VERBOSE" ]; then
     echo -e "📦 Cache size:" `du -sh $HOME/.cargo`
 fi
 
-echo -e "🏗  Building $PACKAGE as $PROFILE using" `rustc -V`
+RUSTCV=`rustc -V`
+
+echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV" 
 echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
+echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
+echo -e "   https://substrate.dev/docs/en/runtime/architecture-of-a-runtime"
 
 # Build the runtime and time it :)
-CMD="cargo build --$PROFILE -p $PACKAGE --target-dir srtool"
+CMD="cargo build --$PROFILE -p $PACKAGE --target-dir target/srtool"
 if [ ! -z "$VERBOSE" ]; then
     time $CMD
 else
@@ -37,22 +41,46 @@ fi
 echo "✨ Your Substrate WASM Runtime is ready! ✨"
 
 #WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
-WASM=`find ./srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
+WASM=`find ./target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
 HASH=`shasum -a 256 $WASM | awk '{print $1}'`
 
 SIZE=`wc -c < $WASM`
 LENGTH=16
 SKIP=`echo $(($SIZE-$LENGTH))`
-# Some magic to show the first and last bytes of the blog as the UI does
+# Some magic to show the first and last bytes of the blob the same way the UI does when you see
+# a setCode coming from a motion or referendun
 PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
 
 YELLOW='\033[0;33m'
 NC='\033[0m'
 MB=`du -sh $WASM | awk '{print $1}'`
-SZ=`du -s $WASM | awk '{print $1}'`
+SZ=`du -sb $WASM | awk '{print $1}'`
+TMSP=`date --utc +%FT%TZ`
 
-echo "Summary:"
-echo "  Size    : $MB ($SZ)" 
-echo "  Content : $PREVIEW" 
-printf "  SHA256  : ${YELLOW}$HASH${NC}\n" 
-echo "  Wasm    : $WASM"
+if [[ "$*" == *"--json"* ]]
+then
+    JSON=$( jq -n \
+        --arg gen "srtool" \
+        --arg rustc "$RUSTCV" \
+        --arg bytes "$SZ" \
+        --arg wasm "$WASM" \
+        --arg hash "$HASH" \
+        --arg tmsp "$TMSP" \
+        '{gen: $gen, rustc: $rustc, wasm: $wasm, size: $bytes, hash: $hash, tmsp: $tmsp}' )
+    echo "$JSON"      
+    if [[ "$*" == *"--save"* ]]
+    then
+        REPORT="./target/srtool/srtool-wasm-report-$TMSP.txt"
+        echo "$JSON" > $REPORT
+        echo "Report saved in $REPORT"
+    fi      
+else
+    echo "Summary:"
+    echo "  Tmsp    : $TMSP" 
+    echo "  Rustc   : $RUSTCV" 
+    echo "  Size    : $MB ($SZ)" 
+    echo "  Content : $PREVIEW" 
+    printf "  SHA256  : ${YELLOW}$HASH${NC}\n" 
+    echo "  Wasm    : $WASM"
+fi
+

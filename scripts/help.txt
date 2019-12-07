@@ -1,12 +1,14 @@
-Welcome to srtool!
+Welcome to srtool: the Substrate Runtime Toolbox 🧰
 
 First of all, make sure you are in your Substrate/Polkadot repo:
 
     cd /my/project/substrate
 
+Read the documentation at https://gitlab.com/chevdor/srtool
+Set the srtool alias/function (see the doc).
+
 Then run:
 
     srtool build
     
-That´s when you can go grab a coffee and read 
-the documentation at https://gitlab.com/chevdor/srtool"
+That´s when you can go grab a coffee.
