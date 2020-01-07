@@ -27,22 +27,50 @@ The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}
 
 ...or just skip that step, the right image will be fetched at first run.
 
-=== Create alias    
+=== Using an alias    
 
-Creating an alias helps hiding the docker complexity behind one simple command.
-
-.Recommended options
-Here is the recommended option:
+Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
 [subs="attributes+"]
 ----
-    export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+    export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
 ----
+
+NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will *always* check the kusama runtime. If you need more, check the next chapter. 
+
+NOTE: If you want to check what your alias is, use `type srtool`
 
 The command to invoke a build will then be `srtool build`.
 
-.Flexible option for advanced usage
-If you want flexibility:
+=== Power users
+
+If you want flexibility, using a *function* is slightly more complex but more flexible.
+
+If you already defined an alias (you can check with `type srtool`), you should first unset it with `unlias srtool`.
+
+NOTE: You cannot use both an alias and a function but you could make a function called fsrtool for instance for the function... 
+
+==== Hardcoded compiler version
+
+This option should be enough most of the time.
+
+[subs="attributes+"]
+----
+    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:nightly-2019-12-07 $2; }
+----
+
+The commands to use srtool are then:
+
+[subs="attributes+"]
+----
+    srtool kusama-runtime build
+----
+
+NOTE: The <kusama-runtime> keyword above specifies we will check the kusama runtime. If your runtime is called xyz-runtime, swap accordingly.
+
+==== Parametric compiler version
+
+Using this version is more powerful if you know what you are doing but also requires more typing.
 
 [subs="attributes+"]
 ----
@@ -56,6 +84,8 @@ The command to invoke a build will then be `srtool <package> <rust_version> buil
     srtool my-super-runtime {rsversion} build
     srtool polkadot-runtime nightly-2019-12-05 build
 ----
+
+WRNING: The second example is only there to illustrate how it works. If you try it today, it will likely *not* work as I did not build a container for this version yet.
 
 You likely want to make this persistent with:
 
@@ -109,6 +139,12 @@ Looks like this:
     Size   : 1.1M
     SHA256 : d5930520676994fc55a29c547f0159ea860cb46edd710a5be35e62565af1ad8b
 ----
+
+.JSON output
+
+You might find it more convenient to produce a json output, this is simple:
+
+    $ srtool build --json
 
 .Advanced usage
 if you feel fancy, you may also:
