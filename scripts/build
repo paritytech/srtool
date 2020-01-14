@@ -39,7 +39,11 @@ CMD="cargo build --$PROFILE -p $PACKAGE --target-dir target/srtool"
 if [ ! -z "$VERBOSE" ]; then
     time $CMD
 else
-    $CMD
+    if [[ "$*" == *"--json"* ]]; then
+        $CMD > /dev/null 2>&1
+    else
+        $CMD
+    fi
 fi
 
 # The following would be nice but not in rust stable yet
