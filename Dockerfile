@@ -37,5 +37,6 @@ RUN  export PATH=/cargo-home/bin:/rustup-home:$PATH && \
 
 # we copy those only at the end which makes testing of new scripts faster as the other layers are cached
 COPY ./scripts/* /srtool/ 
+COPY VERSION /srtool/
 
 CMD ["/srtool/build"]

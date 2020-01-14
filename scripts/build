@@ -6,8 +6,13 @@ trap "exit" INT
 # This is where docker expects our substrate/polkadot repo to be
 cd /build
 
-echo "🧰 Substrate Runtime Toolbox 🧰"
-echo "        - by Chevdor -"
+VERSION=`cat /srtool/VERSION`
+GEN="srtool v$VERSION"
+
+if [[ ! "$*" == *"--json"* ]]; then
+    echo "🧰 Substrate Runtime Toolbox - $GEN 🧰"
+    echo "              - by Chevdor -"
+fi
 
 # srtool only makes sense when called from a Cargo folder so we check that
 if [ ! -f Cargo.toml ]; then
@@ -22,10 +27,12 @@ fi
 
 RUSTCV=`rustc -V`
 
-echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV" 
-echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
-echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
-echo -e "   https://substrate.dev/docs/en/runtime/architecture-of-a-runtime"
+if [[ ! "$*" == *"--json"* ]]; then
+    echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV" 
+    echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
+    echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
+    echo -e "   https://substrate.dev/docs/en/runtime/architecture-of-a-runtime"
+fi
 
 # Build the runtime and time it :)
 CMD="cargo build --$PROFILE -p $PACKAGE --target-dir target/srtool"
@@ -38,7 +45,9 @@ fi
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
 
-echo "✨ Your Substrate WASM Runtime is ready! ✨"
+if [[ ! "$*" == *"--json"* ]]; then
+    echo "✨ Your Substrate WASM Runtime is ready! ✨"
+fi
 
 #WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
 WASM=`find ./target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
@@ -76,7 +85,7 @@ esac
 if [[ "$*" == *"--json"* ]]
 then
     JSON=$( jq -n \
-        --arg gen "srtool" \
+        --arg gen "$GEN" \
         --arg rustc "$RUSTCV" \
         --arg bytes "$SZ" \
         --arg wasm "$WASM" \
@@ -94,12 +103,13 @@ then
     fi      
 else
     echo "Summary:"
-    echo "  Time     : $TMSP" 
-    echo "  Rustc    : $RUSTCV" 
-    echo "  Size     : $MB ($SZ)" 
-    echo "  Content  : $PREVIEW" 
-  printf "  Package  : ${PKG_COLOR}$PACKAGE${NC}\n"
-  printf "  Proposal : ${YELLOW}$PROP${NC}\n"
-    echo "  SHA256   : $SHA256" 
-    echo "  Wasm     : $WASM"
+    echo "  Generator : $GEN" 
+    echo "  Time      : $TMSP" 
+    echo "  Rustc     : $RUSTCV" 
+    echo "  Size      : $MB ($SZ)" 
+    echo "  Content   : $PREVIEW" 
+  printf "  Package   : ${PKG_COLOR}$PACKAGE${NC}\n"
+  printf "  Proposal  : ${YELLOW}$PROP${NC}\n"
+    echo "  SHA256    : $SHA256" 
+    echo "  Wasm      : $WASM"
 fi
