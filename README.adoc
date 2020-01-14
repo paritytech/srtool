@@ -119,7 +119,7 @@ Invoking `srtool build` with:
 
     $ srtool build
 
-Looks like this:
+Will output something that looks like this:
 
 [subs="attributes+"]
 ----
@@ -134,17 +134,47 @@ Looks like this:
     ✨ Your Substrate WASM Runtime is ready! ✨
     Summary:
     Used rustc {rsversion} (4560ea788 2019-11-04)
-    Wasm   : ./srtool/release/wbuild/polkadot-runtime/polkadot_runtime.compact.wasm
-    Content: 0x0061736d0100000001a4022b60037f7f...3435663020323031392d31322d303429
-    Size   : 1.1M
-    SHA256 : d5930520676994fc55a29c547f0159ea860cb46edd710a5be35e62565af1ad8b
+    Wasm     : ./srtool/release/wbuild/polkadot-runtime/polkadot_runtime.compact.wasm
+    Content  : 0x0061736d0100000001a4022b60037f7f...3435663020323031392d31322d303429
+    Size     : 1.1M
+    Proposal : 0x5931690e71e9d3d9f04a43d8c15e45e0968e563858dd87ad6485b2368a286a8f
+    SHA256   : d5930520676994fc55a29c547f0159ea860cb46edd710a5be35e62565af1ad8b
 ----
 
 .JSON output
-
-You might find it more convenient to produce a json output, this is simple:
+If you prefer a json output, srtool has you covered:
 
     $ srtool build --json
+
+Will give you such an output:
+
+[subs="attributes+"]
+----
+{
+  "gen": "srtool",
+  "rustc": "rustc 1.41.0-nightly (ae1b871cc 2019-12-06)",
+  "wasm": "./target/srtool/release/wbuild/kusama-runtime/kusama_runtime.compact.wasm",
+  "size": "1205052",
+  "pkg": "kusama-runtime",
+  "prop": "0x5931690e71e9d3d9f04a43d8c15e45e0968e563858dd87ad6485b2368a286a8f",
+  "sha256": "d93126c814f8366b651e425e34390212a98f8e77a8b73f9e1d2b07fc229a25f1",
+  "tmsp": "2020-01-14T10:15:28Z"
+}
+----
+
+== Proposal field
+
+What is important in the output of srtool is the `Proposal` field:
+
+[subs="attributes+"]
+----
+    🧰 Substrate Runtime Toolbox 🧰
+    ... Bla bla ...
+    Proposal : 0x5931690e71e9d3d9f04a43d8c15e45e0968e563858dd87ad6485b2368a286a8f
+    ... more blabla ...
+----
+
+The `Proposal` field value should should match the value of the proposal you can see in the Polkadot UI.
 
 .Advanced usage
 if you feel fancy, you may also:

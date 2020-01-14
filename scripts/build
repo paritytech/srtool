@@ -42,7 +42,7 @@ echo "✨ Your Substrate WASM Runtime is ready! ✨"
 
 #WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
 WASM=`find ./target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
-HASH=`shasum -a 256 $WASM | awk '{print $1}'`
+SHA256=`shasum -a 256 $WASM | awk '{print $1}'`
 
 SIZE=`wc -c < $WASM`
 LENGTH=16
@@ -51,11 +51,27 @@ SKIP=`echo $(($SIZE-$LENGTH))`
 # a setCode coming from a motion or referendun
 PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
 
+# Some color definitions
 YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
+
 MB=`du -sh $WASM | awk '{print $1}'`
 SZ=`du -sb $WASM | awk '{print $1}'`
 TMSP=`date --utc +%FT%TZ`
+PROP=`substrate-runtime-hasher $WASM`
+
+case "$PACKAGE" in
+    *"kusama"*)
+        PKG_COLOR='\033[0;36m' # Cyan
+        ;;
+        
+    *"polkadot"*)
+        PKG_COLOR='\033[0;35m' # Purple
+        ;;
+    *)
+        PKG_COLOR='\033[0;37m' # White
+esac
 
 if [[ "$*" == *"--json"* ]]
 then
@@ -64,9 +80,11 @@ then
         --arg rustc "$RUSTCV" \
         --arg bytes "$SZ" \
         --arg wasm "$WASM" \
-        --arg hash "$HASH" \
+        --arg prop "$PROP" \
+        --arg sha256 "$SHA256" \
         --arg tmsp "$TMSP" \
-        '{gen: $gen, rustc: $rustc, wasm: $wasm, size: $bytes, hash: $hash, tmsp: $tmsp}' )
+        --arg pkg "$PACKAGE" \
+        '{gen: $gen, rustc: $rustc, wasm: $wasm, size: $bytes, pkg: $pkg, prop: $prop, sha256: $sha256, tmsp: $tmsp}' )
     echo "$JSON"      
     if [[ "$*" == *"--save"* ]]
     then
@@ -76,11 +94,12 @@ then
     fi      
 else
     echo "Summary:"
-    echo "  Tmsp    : $TMSP" 
-    echo "  Rustc   : $RUSTCV" 
-    echo "  Size    : $MB ($SZ)" 
-    echo "  Content : $PREVIEW" 
-    printf "  SHA256  : ${YELLOW}$HASH${NC}\n" 
-    echo "  Wasm    : $WASM"
+    echo "  Time     : $TMSP" 
+    echo "  Rustc    : $RUSTCV" 
+    echo "  Size     : $MB ($SZ)" 
+    echo "  Content  : $PREVIEW" 
+  printf "  Package  : ${PKG_COLOR}$PACKAGE${NC}\n"
+  printf "  Proposal : ${YELLOW}$PROP${NC}\n"
+    echo "  SHA256   : $SHA256" 
+    echo "  Wasm     : $WASM"
 fi
-
