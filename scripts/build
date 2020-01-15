@@ -9,6 +9,66 @@ cd /build
 VERSION=`cat /srtool/VERSION`
 GEN="srtool v$VERSION"
 
+LATEST_VERSION=$(curl -s https://gitlab.com/chevdor/srtool/raw/master/VERSION)
+
+# A function to compare versions
+vercomp () {
+    if [[ $1 == $2 ]]
+    then
+        return 0
+    fi
+    local IFS=.
+    local i ver1=($1) ver2=($2)
+    # fill empty fields in ver1 with zeros
+    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
+    do
+        ver1[i]=0
+    done
+    for ((i=0; i<${#ver1[@]}; i++))
+    do
+        if [[ -z ${ver2[i]} ]]
+        then
+            # fill empty fields in ver2 with zeros
+            ver2[i]=0
+        fi
+        if ((10#${ver1[i]} > 10#${ver2[i]}))
+        then
+            return 1
+        fi
+        if ((10#${ver1[i]} < 10#${ver2[i]}))
+        then
+            return 2
+        fi
+    done
+    return 0
+}
+
+vercomp $LATEST_VERSION $VERSION 
+
+case $? in
+    0) op='=';;
+    1) op='>';;
+    2) op='<';;
+esac
+
+if [[ "$op" == ">" && ! "$*" == *"--json"* ]]; then
+    echo "_____________________________________________________________________________________"
+    echo ""
+    echo "  You are using srtool v$VERSION. A newer version: v$LATEST_VERSION is now available."
+    echo "  You should upgrade asap with the following command:"
+    echo "    docker images | grep srtool | awk '{ print $3}' | xargs docker rmi"
+    echo "_____________________________________________________________________________________"
+fi
+
+# echo $VERSION $op $LATEST_VERSION
+# if [[ "$op" == "=" ]]; then
+#     echo "You are using the latest version of srtool: v$VERSION"
+# fi
+
+# if [[ "$op" == "<" ]]; then
+#     echo "You are using srtool v$VERSION, it looks newer than the latest version :)"
+# fi
+
 if [[ ! "$*" == *"--json"* ]]; then
     echo "🧰 Substrate Runtime Toolbox - $GEN 🧰"
     echo "              - by Chevdor -"
@@ -73,6 +133,9 @@ MB=`du -sh $WASM | awk '{print $1}'`
 SZ=`du -sb $WASM | awk '{print $1}'`
 TMSP=`date --utc +%FT%TZ`
 PROP=`substrate-runtime-hasher $WASM`
+GIT_TAG=`git describe --tags --abbrev=0`
+GIT_COMMIT_REF=`git rev-parse HEAD`
+GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 case "$PACKAGE" in
     *"kusama"*)
@@ -97,7 +160,22 @@ then
         --arg sha256 "$SHA256" \
         --arg tmsp "$TMSP" \
         --arg pkg "$PACKAGE" \
-        '{gen: $gen, rustc: $rustc, wasm: $wasm, size: $bytes, pkg: $pkg, prop: $prop, sha256: $sha256, tmsp: $tmsp}' )
+        --arg git_tag "$GIT_TAG" \
+        --arg git_commit_ref "$GIT_COMMIT_REF" \
+        --arg git_branch "$GIT_BRANCH" \
+        '{
+            gen: $gen,
+            commit: $git_commit_ref,
+            tag: $git_tag, 
+            branch: $git_branch,
+            tmsp: $tmsp, 
+            rustc: $rustc, 
+            size: $bytes, 
+            pkg: $pkg, 
+            prop: $prop, 
+            sha256: $sha256, 
+            wasm: $wasm
+        }' )
     echo "$JSON"      
     if [[ "$*" == *"--save"* ]]
     then
@@ -107,13 +185,16 @@ then
     fi      
 else
     echo "Summary:"
-    echo "  Generator : $GEN" 
-    echo "  Time      : $TMSP" 
-    echo "  Rustc     : $RUSTCV" 
-    echo "  Size      : $MB ($SZ)" 
-    echo "  Content   : $PREVIEW" 
-  printf "  Package   : ${PKG_COLOR}$PACKAGE${NC}\n"
-  printf "  Proposal  : ${YELLOW}$PROP${NC}\n"
-    echo "  SHA256    : $SHA256" 
-    echo "  Wasm      : $WASM"
+    echo "  Generator  : $GEN" 
+    echo "  GIT commit : $GIT_COMMIT_REF"
+    echo "  GIT tag    : $GIT_TAG"
+    echo "  GIT branch : $GIT_BRANCH"
+    echo "  Time       : $TMSP" 
+    echo "  Rustc      : $RUSTCV" 
+    echo "  Size       : $MB ($SZ)" 
+    echo "  Content    : $PREVIEW" 
+  printf "  Package    : ${PKG_COLOR}$PACKAGE${NC}\n"
+  printf "  Proposal   : ${YELLOW}$PROP${NC}\n"
+    echo "  SHA256     : $SHA256" 
+    echo "  Wasm       : $WASM"
 fi
