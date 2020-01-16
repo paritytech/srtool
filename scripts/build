@@ -121,7 +121,7 @@ SIZE=`wc -c < $WASM`
 LENGTH=16
 SKIP=`echo $(($SIZE-$LENGTH))`
 # Some magic to show the first and last bytes of the blob the same way the UI does when you see
-# a setCode coming from a motion or referendun
+# a setCode coming from a motion or referendum
 PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
 
 # Some color definitions
@@ -129,8 +129,8 @@ YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-MB=`du -sh $WASM | awk '{print $1}'`
 SZ=`du -sb $WASM | awk '{print $1}'`
+KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
 PROP=`substrate-runtime-hasher $WASM`
 GIT_TAG=`git describe --tags --abbrev=0`
@@ -140,8 +140,7 @@ GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 case "$PACKAGE" in
     *"kusama"*)
         PKG_COLOR='\033[0;36m' # Cyan
-        ;;
-        
+        ;; 
     *"polkadot"*)
         PKG_COLOR='\033[0;35m' # Purple
         ;;
@@ -191,7 +190,7 @@ else
     echo "  GIT branch : $GIT_BRANCH"
     echo "  Time       : $TMSP" 
     echo "  Rustc      : $RUSTCV" 
-    echo "  Size       : $MB ($SZ)" 
+    echo "  Size       : $KB KB ($SZ bytes)" 
     echo "  Content    : $PREVIEW" 
   printf "  Package    : ${PKG_COLOR}$PACKAGE${NC}\n"
   printf "  Proposal   : ${YELLOW}$PROP${NC}\n"
