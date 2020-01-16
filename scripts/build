@@ -56,7 +56,7 @@ if [[ "$op" == ">" && ! "$*" == *"--json"* ]]; then
     echo ""
     echo "  You are using srtool v$VERSION. A newer version: v$LATEST_VERSION is now available."
     echo "  You should upgrade asap with the following command:"
-    echo "    docker images | grep srtool | awk '{ print $3}' | xargs docker rmi"
+    echo "    docker images | grep srtool | awk '{ print \$3 }' | xargs docker rmi --force"
     echo "_____________________________________________________________________________________"
 fi
 
