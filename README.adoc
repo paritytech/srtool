@@ -1,6 +1,6 @@
 
 :name: chevdor/srtool
-:rsversion: nightly-2019-12-07
+:rsversion: nightly-2020-03-12
 :toc:
 :sectnums:
 
@@ -56,7 +56,7 @@ This option should be enough most of the time.
 
 [subs="attributes+"]
 ----
-    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:nightly-2019-12-07 $2; }
+    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:nightly-2020-03-12 $2; }
 ----
 
 The commands to use srtool are then:
@@ -191,9 +191,9 @@ First you may want to double check what rustc versions are available as you will
 
     rustup check
 
-So say you want to build a builder for rustc nightly-2019-12-07:
+So say you want to build a builder for rustc nightly-2020-03-12:
 
 [subs="attributes+"]
 ----
-    RUSTC_VERSION=nightly-2019-12-07 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
+    RUSTC_VERSION=nightly-2020-03-12 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
 ----
