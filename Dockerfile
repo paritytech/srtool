@@ -2,7 +2,7 @@ FROM phusion/baseimage:0.11 as builder
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains."
 
-ARG RUSTC_VERSION="1.42.0"
+ARG RUSTC_VERSION="nightly-2020-03-12"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
