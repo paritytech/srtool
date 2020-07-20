@@ -1,6 +1,6 @@
 
 :name: chevdor/srtool
-:rsversion: nightly-2020-03-12
+:rsversion: nightly-2020-06-03
 :toc:
 :sectnums:
 
@@ -56,7 +56,7 @@ This option should be enough most of the time.
 
 [subs="attributes+"]
 ----
-    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:nightly-2020-03-12 $2; }
+    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:{rsversion} $2; }
 ----
 
 The commands to use srtool are then:

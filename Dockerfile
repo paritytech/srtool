@@ -2,7 +2,7 @@ FROM phusion/baseimage:0.11 as builder
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains."
 
-ARG RUSTC_VERSION="nightly-2020-03-12"
+ARG RUSTC_VERSION="nightly-2020-05-08"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
@@ -10,7 +10,7 @@ ENV PACKAGE=polkadot-runtime
 RUN mkdir -p /cargo-home /rustup-home
 WORKDIR /build
 ENV RUSTUP_HOME="/rustup-home"
-ENv CARGO_HOME="/cargo-home"
+ENV CARGO_HOME="/cargo-home"
 
 # We first init as much as we can in the first layers
 COPY ./scripts/init.sh /srtool/
