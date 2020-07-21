@@ -1,8 +1,8 @@
-FROM phusion/baseimage:0.11 as builder
+FROM phusion/baseimage:18.04-1.0.0 as builder
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains."
 
-ARG RUSTC_VERSION="nightly-2020-05-08"
+ARG RUSTC_VERSION="nightly-2020-07-20"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
@@ -18,7 +18,7 @@ RUN apt-get update && \
         apt-get upgrade -y && \
 	apt-get install --no-install-recommends -y \
                 cmake pkg-config libssl-dev \
-                git clang bsdmainutils jq && \
+                git clang bsdmainutils jq ca-certificates && \
         curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
         rm -rf /var/lib/apt/lists/*
 
