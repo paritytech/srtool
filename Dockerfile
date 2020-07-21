@@ -15,19 +15,19 @@ ENV CARGO_HOME="/cargo-home"
 # We first init as much as we can in the first layers
 COPY ./scripts/init.sh /srtool/
 RUN apt-get update && \
-        apt-get upgrade -y && \
-	apt-get install --no-install-recommends -y \
-                cmake pkg-config libssl-dev \
-                git clang bsdmainutils jq ca-certificates && \
-        curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
-        rm -rf /var/lib/apt/lists/*
+    apt-get upgrade -y && \
+    apt-get install --no-install-recommends -y \
+        cmake pkg-config libssl-dev \
+        git clang bsdmainutils jq ca-certificates && \
+    curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV PATH="/srtool:/cargo-home/bin:$PATH"
 RUN  export PATH=/cargo-home/bin:/rustup-home:$PATH && \
-        /srtool/init.sh && \
-        cargo install --git https://gitlab.com/chevdor/substrate-runtime-hasher.git && \
-        mv -f /cargo-home/bin/* /bin && \
-        rustup show && rustc -V
+    /srtool/init.sh && \
+    cargo install --git https://gitlab.com/chevdor/substrate-runtime-hasher.git && \
+    mv -f /cargo-home/bin/* /bin && \
+    rustup show && rustc -V
 
 # We copy the .cargo/bin away for 2 reasons.
 # - easier with paths
