@@ -91,7 +91,7 @@ if [[ ! "$*" == *"--json"* ]]; then
     echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV" 
     echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
     echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
-    echo -e "   https://substrate.dev/docs/en/runtime/architecture-of-a-runtime"
+    echo -e "   https://substrate.dev/docs/en/#architecture"
 fi
 
 # Build the runtime and time it :)
