@@ -1,4 +1,3 @@
-
 :name: chevdor/srtool
 :rsversion: nightly-2020-07-20
 :toc:
@@ -161,6 +160,35 @@ Will give you such an output:
   "tmsp": "2020-01-14T10:15:28Z"
 }
 ----
+
+== Troubleshooting
+
+=== Outdated repo
+
+If you run into issues while running `srtool`, make sure you are using a decently recent version of Polkadot/Substrate:
+
+Then run the following commands:
+
+    rm -rf target/srtool
+    cargo clean
+    cargo update
+
+You can now try running `srtool build` again.
+
+=== `srtool` tells me the folder is not a cargo project
+
+The error is probably: `!!! The folder on your host computer does not look like a Cargo project. Are you really in your repo?``
+
+Run the following command:
+
+    alias srtool
+
+And make sure that you see `$PWD:/build/` and not `/home/your_name/:/build`.
+If you are running into this issue, your `.bash_profile` likely contains double quotes (") where you should have used single ones (').
+
+=== Other cases
+
+If you still run into troubles, please open a new issue and describe the error you see and the steps you took. 
 
 == Proposal field
 
