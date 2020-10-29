@@ -1,4 +1,4 @@
-FROM phusion/baseimage:18.04-1.0.0 as builder
+FROM ubuntu:bionic as builder
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains."
 
@@ -18,7 +18,7 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
         cmake pkg-config libssl-dev \
-        git clang bsdmainutils jq ca-certificates && \
+        git clang bsdmainutils jq ca-certificates curl && \
     curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
     rm -rf /var/lib/apt/lists/*
 
