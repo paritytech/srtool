@@ -2,10 +2,10 @@ FROM ubuntu:bionic as builder
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains."
 
-ARG RUSTC_VERSION="nightly-2020-10-27"
+ARG RUSTC_VERSION="nightly-2020-09-30"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV PROFILE=release
-ENV PACKAGE=polkadot-runtime
+ENV PACKAGE=chainx-runtime
 
 RUN mkdir -p /cargo-home /rustup-home
 WORKDIR /build
@@ -25,6 +25,7 @@ RUN apt-get update && \
 ENV PATH="/srtool:/cargo-home/bin:$PATH"
 RUN  export PATH=/cargo-home/bin:/rustup-home:$PATH && \
     /srtool/init.sh && \
+    rustup target add wasm32-unknown-unknown --toolchain $RUSTC_VERSION && \
     cargo install --git https://gitlab.com/chevdor/substrate-runtime-hasher.git && \
     mv -f /cargo-home/bin/* /bin && \
     rustup show && rustc -V
