@@ -1,0 +1,19 @@
+name: Pushlish build tools.
+
+on: [push]
+
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@v2.3.2
+        name: Checkout code.
+
+      - uses: mr-smithers-excellent/docker-build-push@v4
+        name: Build & push docker image.
+        with:
+          image: chainxcn/srtools
+          tag: ${{secrets.DOCKER_TAG}}
+          registry: docker.io
+          dockerfile: Dockerfile
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}

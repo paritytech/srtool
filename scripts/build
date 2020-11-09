@@ -42,7 +42,7 @@ vercomp () {
     done
     return 0
 }
-
+echo "nightly-2020-09-30" > rust-toolchain 
 vercomp $LATEST_VERSION $VERSION 
 
 case $? in
@@ -105,6 +105,7 @@ else
         $CMD
     fi
 fi
+echo "stable" > rust-toolchain
 
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
@@ -138,7 +139,7 @@ GIT_COMMIT_REF=`git rev-parse HEAD`
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 case "$PACKAGE" in
-    *"kusama"*)
+    *"chainx"*)
         PKG_COLOR='\033[0;36m' # Cyan
         ;; 
     *"polkadot"*)

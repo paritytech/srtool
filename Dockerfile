@@ -1,6 +1,6 @@
 FROM ubuntu:bionic as builder
-LABEL maintainer "chevdor@gmail.com"
-LABEL description="This image contains tools for Substrate blockchains."
+LABEL maintainer "alanxornerd@chainnet.tech"
+LABEL description="This image contains tools for Chainx blockchains."
 
 ARG RUSTC_VERSION="nightly-2020-09-30"
 ENV RUSTC_VERSION=$RUSTC_VERSION
