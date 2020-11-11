@@ -12,7 +12,7 @@ jobs:
       - uses: mr-smithers-excellent/docker-build-push@v4
         name: Build & push docker image.
         with:
-          image: chainxcn/srtools
+          image: chainxorg/srtools
           tag: ${{secrets.DOCKER_TAG}}
           registry: docker.io
           dockerfile: Dockerfile
