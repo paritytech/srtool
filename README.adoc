@@ -1,6 +1,6 @@
 :name: chevdor/srtool
 :rsversion: nightly-2020-10-27
-:toc:
+:toc: right
 :sectnums:
 
 = Substrate Runtime Toolbox: srtool
@@ -223,5 +223,5 @@ So say you want to build a builder for rustc nightly-2020-03-12:
 
 [subs="attributes+"]
 ----
-    RUSTC_VERSION=nightly-2020-10-27 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
+    RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
 ----
