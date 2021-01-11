@@ -17,7 +17,7 @@ COPY ./scripts/init.sh /srtool/
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
-        cmake pkg-config libssl-dev \
+        cmake pkg-config libssl-dev make \
         git clang bsdmainutils jq ca-certificates curl && \
     curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
     rm -rf /var/lib/apt/lists/*

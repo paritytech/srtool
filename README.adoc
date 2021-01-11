@@ -32,7 +32,7 @@ Creating an alias helps hiding the docker complexity behind one simple command. 
 
 [subs="attributes+"]
 ----
-    export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+    export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$RUSTC_VERSION'
 ----
 
 NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will *always* check the kusama runtime. If you need more, check the next chapter. 
@@ -55,7 +55,7 @@ This option should be enough most of the time.
 
 [subs="attributes+"]
 ----
-    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:{rsversion} $2; }
+    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:{rsversion} $2; }
 ----
 
 The commands to use srtool are then:
@@ -73,7 +73,7 @@ Using this version is more powerful if you know what you are doing but also requ
 
 [subs="attributes+"]
 ----
-    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$2 $3; }
+    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$2 $3; }
 ----
 
 The command to invoke a build will then be `srtool <package> <rust_version> build`. For instance:
@@ -90,14 +90,14 @@ You likely want to make this persistent with:
 
 [subs="attributes+"]
 ----
-    echo "export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'" >> ~/.bash_profile && source ~/.bash_profile
+    echo "export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$RUSTC_VERSION'" >> ~/.bash_profile && source ~/.bash_profile
 ----
 
 If you wish to see more (it takes a little longer), you may set the `VERBOSE` ENV variable:
 
 [subs="attributes+"]
 ----
-    export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -e VERBOSE=1 -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+    export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -e VERBOSE=1 -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$RUSTC_VERSION'
 ----
 
 NOTE: The part `-v /tmp/cargo:/cargo-home` exposes the docker container's cargo cache on your local machine. This helps making subsequent builds faster.
@@ -223,5 +223,5 @@ So say you want to build a builder for rustc nightly-2020-03-12:
 
 [subs="attributes+"]
 ----
-    RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
+    RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t {name}:$RUSTC_VERSION .
 ----
