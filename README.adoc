@@ -1,5 +1,5 @@
 :name: chevdor/srtool
-:rsversion: nightly-2020-10-27
+:rsversion: nightly-2021-02-25
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:
@@ -239,7 +239,7 @@ First you may want to double check what rustc versions are available as you will
 
     rustup check
 
-So say you want to build a builder for rustc nightly-2020-03-12:
+So say you want to build a builder for rustc {rsversion}:
 
 [subs="attributes+"]
 ----
