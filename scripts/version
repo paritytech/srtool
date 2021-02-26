@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+VERSION=`cat VERSION`
+RUSTC_VERSION=`cat RUSTC_VERSION`
+
+jq -cn \
+    --arg name srtool \
+    --arg version "$VERSION" \
+    --arg rustc "$RUSTC_VERSION" \
+    '{
+        name: $name,
+        version: $version,
+        rustc: $rustc
+    }'
