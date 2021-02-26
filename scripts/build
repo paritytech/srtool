@@ -69,7 +69,7 @@ fi
 #     echo "You are using srtool v$VERSION, it looks newer than the latest version :)"
 # fi
 
-if [[ ! "$*" == *"--json"* ]]; then
+if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo "🧰 Substrate Runtime Toolbox - $GEN 🧰"
     echo "              - by Chevdor -"
 fi
@@ -87,7 +87,7 @@ fi
 
 RUSTCV=`rustc -V`
 
-if [[ ! "$*" == *"--json"* ]]; then
+if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV" 
     echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
     echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
@@ -95,27 +95,33 @@ if [[ ! "$*" == *"--json"* ]]; then
 fi
 
 # Build the runtime and time it :)
-CMD="cargo build --$PROFILE -p $PACKAGE --target-dir target/srtool"
+if [[ "$*" =~ --app ]]; then
+    COLOR=never
+else
+    COLOR=always
+fi
+
+CMD="cargo build --color=$COLOR --$PROFILE -p $PACKAGE --target-dir target/srtool"
 if [ ! -z "$VERBOSE" ]; then
     time $CMD
 else
-    if [[ "$*" == *"--json"* ]]; then
+    if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
         $CMD > /dev/null 2>&1
     else
-        $CMD
+        $CMD 
     fi
 fi
 
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
 
-if [[ ! "$*" == *"--json"* ]]; then
+if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo "✨ Your Substrate WASM Runtime is ready! ✨"
 fi
 
 #WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
 WASM=`find ./target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
-SHA256=`shasum -a 256 $WASM | awk '{print $1}'`
+SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
 
 SIZE=`wc -c < $WASM`
 LENGTH=16
@@ -148,8 +154,7 @@ case "$PACKAGE" in
         PKG_COLOR='\033[0;37m' # White
 esac
 
-if [[ "$*" == *"--json"* ]]
-then
+if [[ ! "$*" =~ --json || "$*" =~ --app ]]; then
     JSON=$( jq -n \
         --arg gen "$GEN" \
         --arg rustc "$RUSTCV" \
@@ -175,9 +180,15 @@ then
             sha256: $sha256, 
             wasm: $wasm
         }' )
-    echo "$JSON"      
-    if [[ "$*" == *"--save"* ]]
-    then
+    
+    # if using --app, the json output fits on a single line
+    if [[ "$*" == *"--app"* ]]; then
+        echo "$JSON" | jq -c     
+    else
+        echo "$JSON" | jq
+    fi
+    
+    if [[ "$*" == *"--save"* ]]; then
         REPORT="./target/srtool/srtool-wasm-report-$TMSP.txt"
         echo "$JSON" > $REPORT
         echo "Report saved in $REPORT"

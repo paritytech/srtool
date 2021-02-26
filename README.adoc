@@ -1,5 +1,6 @@
 :name: chevdor/srtool
 :rsversion: nightly-2020-10-27
+// :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:
 
@@ -205,11 +206,11 @@ What is important in the output of srtool is the `Proposal` field:
 The `Proposal` field value should should match the value of the proposal you can see in the Polkadot UI.
 
 .Advanced usage
-if you feel fancy, you may also:
+if you feel fancy, you may also run:
 
     srtool bash
 
-and look around the /srtool folder
+and look around the `/srtool` folder
 
 == ZSH/ Zinit users
 
