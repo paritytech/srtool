@@ -3,7 +3,7 @@
 VERSION=`cat VERSION`
 RUSTC_VERSION=`cat RUSTC_VERSION`
 
-jq -cn \
+jq -n $@ \
     --arg name srtool \
     --arg version "$VERSION" \
     --arg rustc "$RUSTC_VERSION" \
