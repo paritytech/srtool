@@ -245,3 +245,14 @@ So say you want to build a builder for rustc {rsversion}:
 ----
     RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t {name}:$RUSTC_VERSION .
 ----
+
+== Scripts
+
+You can see the list of available scripts in the `/scripts` folder:
+
+- `help`: Show some help
+- `version`: Show some version. *DEPRECATED*: use `info` instead
+- `info`: Show systems infos and version
+- `build`: Run the actual build
+
+NOTE: The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:nightly-2021-02-25 info -cM` shows a monochrome output on a single line.

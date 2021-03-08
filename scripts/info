@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# This script returns all the build information available *BEFORE* having to run the build
+# So you get a summary of data such as git repo, package name, rustc version, etc...
+# but you will not get the runtime, its hash, etc...
+
+VERSION=`cat VERSION`
+RUSTCV=`rustc -V`
+
+cd /build/
+GIT_TAG=`git describe --tags --abbrev=0`
+GIT_COMMIT_REF=`git rev-parse HEAD`
+GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+JSON=$( jq -n \
+    --arg gen "srtool" \
+    --arg version "$VERSION" \
+    --arg rustc "$RUSTCV" \
+    --arg pkg "$PACKAGE" \
+    --arg profile "$PROFILE" \
+    --arg git_tag "$GIT_TAG" \
+    --arg git_commit_ref "$GIT_COMMIT_REF" \
+    --arg git_branch "$GIT_BRANCH" \
+    '{
+        gen: { 
+            name: $gen, 
+            version: $version 
+        },
+        git: {
+            commit: $git_commit_ref,
+            tag: $git_tag, 
+            branch: $git_branch,
+        },
+        rustc: $rustc, 
+        pkg: $pkg, 
+        profile: $profile, 
+    }' )
+
+echo "$JSON" | jq $@

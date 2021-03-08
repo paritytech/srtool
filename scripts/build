@@ -108,7 +108,7 @@ else
     if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
         $CMD > /dev/null 2>&1
     else
-        $CMD 
+        $CMD 2>&1
     fi
 fi
 
