@@ -105,7 +105,7 @@ fi
 # runtime directory itself
 RUNTIME_NAME="${PACKAGE/-*/}"
 
-pushd "runtime/$RUNTIME_NAME" || exit 1
+pushd "runtime/$RUNTIME_NAME" > /dev/null || exit 1
   CMD="cargo build --features on-chain-release-build --color=$COLOR --$PROFILE --target-dir target/srtool"
   if [ ! -z "$VERBOSE" ]; then
       time $CMD
@@ -116,7 +116,7 @@ pushd "runtime/$RUNTIME_NAME" || exit 1
           $CMD 2>&1
       fi
   fi
-popd || exit 1
+popd > /dev/null || exit 1
 
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
