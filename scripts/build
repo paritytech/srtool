@@ -101,16 +101,22 @@ else
     COLOR=always
 fi
 
-CMD="cargo build --color=$COLOR --$PROFILE -p $PACKAGE --target-dir target/srtool"
-if [ ! -z "$VERBOSE" ]; then
-    time $CMD
-else
-    if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
-        $CMD > /dev/null 2>&1
-    else
-        $CMD 2>&1
-    fi
-fi
+# As of https://github.com/paritytech/polkadot/pull/2522 we need to cd to the
+# runtime directory itself
+RUNTIME_NAME="${PACKAGE/-*/}"
+
+pushd "runtime/$RUNTIME_NAME" || exit 1
+  CMD="cargo build --features on-chain-release-build --color=$COLOR --$PROFILE --target-dir target/srtool"
+  if [ ! -z "$VERBOSE" ]; then
+      time $CMD
+  else
+      if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
+          $CMD > /dev/null 2>&1
+      else
+          $CMD 2>&1
+      fi
+  fi
+popd || exit 1
 
 # The following would be nice but not in rust stable yet
 #--out-dir srtool-out
@@ -120,7 +126,7 @@ if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
 fi
 
 #WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
-WASM=`find ./target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
+WASM=`find runtime/$RUNTIME_NAME/target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
 SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
 
 SIZE=`wc -c < $WASM`
