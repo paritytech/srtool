@@ -101,7 +101,7 @@ If you wish to see more (it takes a little longer), you may set the `VERBOSE` EN
     export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -e VERBOSE=1 -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$RUSTC_VERSION'
 ----
 
-NOTE: The part `-v /tmp/cargo:/cargo-home` exposes the docker container's cargo cache on your local machine. This helps making subsequent builds faster.
+NOTE: The part `-v /tmp/cargo:/cargo-home` exposes the docker container's cargo cache on your local machine. This helps making subsequent builds faster. If you omit that part, no cache will be used and you will perform a full build every single time. It is NOT advised to point to your local dev cache folder and you should use an empty (not for long) new folder.
 
 == Use
 
@@ -250,13 +250,32 @@ So say you want to build a builder for rustc {rsversion}:
     RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t {name}:$RUSTC_VERSION .
 ----
 
-== Scripts
+== User Scripts
 
 You can see the list of available scripts in the `/scripts` folder:
 
 - `help`: Show some help
-- `version`: Show some version. *DEPRECATED*: use `info` instead
-- `info`: Show systems infos and version
+- `version`: Show some version.
+- `info`: Show systems infos that are available before running a build
 - `build`: Run the actual build
 
 NOTE: The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:{rsversion} info -cM` shows a monochrome output on a single line.
+
+== Build your custom chain
+
+Building the runtime for your custom chain may not work with the default used for Kusama, Polkadot and Co.
+You can however help `srtool` making the right choices using ENV VARs. You will need to make a new alias as shown below 
+
+Here is for instance how to build the runtime for the substrate-node-template:
+
+    alias mysrtool='docker run --rm -it --name mysrtool -e RUNTIME_DIR=runtime -e BUILD_OPTS=" " -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+
+NOTE: `BUILD_OPTS` is set to a space, not an empty string.
+
+== Export the runtime
+
+In order to easily export your runtime, it will be copied in the container into the `/out` folder.
+If you mount this docker volume, you will find the wasm on your local filesystem once the run is complete.
+
+    docker run ... -v /tmp/out:/out ...
+

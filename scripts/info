@@ -4,13 +4,22 @@
 # So you get a summary of data such as git repo, package name, rustc version, etc...
 # but you will not get the runtime, its hash, etc...
 
-VERSION=`cat VERSION`
+VERSION=`cat /srtool/VERSION || echo 0.0.0`
 RUSTCV=`rustc -V`
+PROFILE="${PROFILE:-release}" 
 
 cd /build/
-GIT_TAG=`git describe --tags --abbrev=0`
-GIT_COMMIT_REF=`git rev-parse HEAD`
-GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+if [ -d ".git" ]; then
+    SRC='git'
+    GIT_TAG=`git describe --tags --abbrev=0`
+    GIT_COMMIT_REF=`git rev-parse HEAD`
+    GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+else
+    SRC='zip'
+fi
+
+CARGO_VERSION=`toml get /build/Cargo.toml package.version | jq -r`
 
 JSON=$( jq -n \
     --arg gen "srtool" \
@@ -21,11 +30,15 @@ JSON=$( jq -n \
     --arg git_tag "$GIT_TAG" \
     --arg git_commit_ref "$GIT_COMMIT_REF" \
     --arg git_branch "$GIT_BRANCH" \
+    --arg cargo_version "$CARGO_VERSION" \
+    --arg src "$SRC" \
     '{
         gen: { 
             name: $gen, 
             version: $version 
         },
+        src: $src,
+        version: $cargo_version,
         git: {
             commit: $git_commit_ref,
             tag: $git_tag, 

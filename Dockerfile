@@ -7,7 +7,7 @@ ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
 
-RUN mkdir -p /cargo-home /rustup-home
+RUN mkdir -p /cargo-home /rustup-home 
 WORKDIR /build
 ENV RUSTUP_HOME="/rustup-home"
 ENV CARGO_HOME="/cargo-home"
@@ -18,15 +18,27 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
         cmake pkg-config libssl-dev make \
-        git clang bsdmainutils jq ca-certificates curl && \
+        git clang bsdmainutils ca-certificates curl && \
+    curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && \
+    chmod a+x /usr/bin/jq && \
     curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
-    rm -rf /var/lib/apt/lists/*
+    curl -L https://dist.ipfs.io/go-ipfs/v0.8.0/go-ipfs_v0.8.0_linux-amd64.tar.gz --output /tmp/ipfs.tar.gz && \
+    tar -xvzf /tmp/ipfs.tar.gz -C /tmp/ && \
+    /tmp/go-ipfs/install.sh && \
+    ipfs init && \
+    ipfs --version && \
+    rm -rf /var/lib/apt/lists/* /tmp/*
+
+# ipfs init could be remove in the future once https://github.com/ipfs/go-ipfs/issues/7990 gets fixed
+# We install jq manually as version 1.5 is broken
 
 ENV PATH="/srtool:/cargo-home/bin:$PATH"
-RUN  export PATH=/cargo-home/bin:/rustup-home:$PATH && \
+RUN export PATH=/cargo-home/bin:/rustup-home:$PATH && \
     /srtool/init.sh && \
     cargo install --git https://gitlab.com/chevdor/substrate-runtime-hasher.git && \
+    cargo install toml-cli && \
     mv -f /cargo-home/bin/* /bin && \
+    mkdir /out && \
     rustup show && rustc -V
 
 # We copy the .cargo/bin away for 2 reasons.
@@ -40,6 +52,7 @@ COPY ./scripts/* /srtool/
 COPY VERSION /srtool/
 COPY RUSTC_VERSION /srtool/
 
+VOLUME [ "/build", "/cargo-home", "/out" ]
 WORKDIR /srtool
 
 CMD ["/srtool/build"]

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+CDIR=`dirname "$0"`
+source "$CDIR/lib.sh"
 
 # If the user sends a SIGINT, we want to exit the entire script
 trap "exit" INT
@@ -6,42 +8,9 @@ trap "exit" INT
 # This is where docker expects our substrate/polkadot repo to be
 cd /build
 
-VERSION=`cat /srtool/VERSION`
+VERSION=`cat /srtool/VERSION || echo 0.0.0`
 GEN="srtool v$VERSION"
-
 LATEST_VERSION=$(curl -s https://gitlab.com/chevdor/srtool/raw/master/VERSION)
-
-# A function to compare versions
-vercomp () {
-    if [[ $1 == $2 ]]
-    then
-        return 0
-    fi
-    local IFS=.
-    local i ver1=($1) ver2=($2)
-    # fill empty fields in ver1 with zeros
-    for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
-    do
-        ver1[i]=0
-    done
-    for ((i=0; i<${#ver1[@]}; i++))
-    do
-        if [[ -z ${ver2[i]} ]]
-        then
-            # fill empty fields in ver2 with zeros
-            ver2[i]=0
-        fi
-        if ((10#${ver1[i]} > 10#${ver2[i]}))
-        then
-            return 1
-        fi
-        if ((10#${ver1[i]} < 10#${ver2[i]}))
-        then
-            return 2
-        fi
-    done
-    return 0
-}
 
 vercomp $LATEST_VERSION $VERSION 
 
@@ -104,31 +73,34 @@ fi
 # As of https://github.com/paritytech/polkadot/pull/2522 we need to cd to the
 # runtime directory itself
 RUNTIME_NAME="${PACKAGE/-*/}"
+GET_OPTS_CMD="${CDIR}/getBuildOpts.sh"
+GET_OPTS=`$GET_OPTS_CMD`
+BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}" 
+PROFILE="${PROFILE:-release}" 
+RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}" 
 
-pushd "runtime/$RUNTIME_NAME" > /dev/null || exit 1
-  CMD="cargo build --features on-chain-release-build --color=$COLOR --$PROFILE --target-dir target/srtool"
+pushd "$RUNTIME_DIR" > /dev/null || exit 1
+  CMD="cargo build ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
   if [ ! -z "$VERBOSE" ]; then
-      time $CMD
+      time $CMD || exit 1
   else
       if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
-          $CMD > /dev/null 2>&1
+          $CMD > /dev/null 2>&1 || exit 1
       else
-          $CMD 2>&1
+          $CMD 2>&1 || exit 1
       fi
   fi
 popd > /dev/null || exit 1
-
-# The following would be nice but not in rust stable yet
-#--out-dir srtool-out
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo "✨ Your Substrate WASM Runtime is ready! ✨"
 fi
 
-#WASM=`find . -type f -name *.wasm | grep $PROFILE | grep -v deps | grep compact | head -1`
-WASM=`find runtime/$RUNTIME_NAME/target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
-SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
+WASM=`find $RUNTIME_DIR/target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
+cp -f "$WASM" /out/
 
+SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
+MULTIHASH=`ipfs add -n -Q $WASM`
 SIZE=`wc -c < $WASM`
 LENGTH=16
 SKIP=`echo $(($SIZE-$LENGTH))`
@@ -145,9 +117,16 @@ SZ=`du -sb $WASM | awk '{print $1}'`
 KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
 PROP=`substrate-runtime-hasher $WASM`
-GIT_TAG=`git describe --tags --abbrev=0`
-GIT_COMMIT_REF=`git rev-parse HEAD`
-GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+# If we work on a snapshot, we will NOT get a .git folder to work on
+if [ -d ".git" ]; then
+    SRC='git'
+    GIT_TAG=`git describe --tags --abbrev=0`
+    GIT_COMMIT_REF=`git rev-parse HEAD`
+    GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
+else
+    SRC='zip'
+fi
 
 case "$PACKAGE" in
     *"kusama"*)
@@ -160,7 +139,9 @@ case "$PACKAGE" in
         PKG_COLOR='\033[0;37m' # White
 esac
 
-if [[ ! "$*" =~ --json || "$*" =~ --app ]]; then
+CARGO_VERSION=`toml get /build/Cargo.toml package.version | jq -r`
+
+if [[ "$*" =~ --json || "$*" =~ --app ]]; then
     JSON=$( jq -n \
         --arg gen "$GEN" \
         --arg rustc "$RUSTCV" \
@@ -173,8 +154,13 @@ if [[ ! "$*" =~ --json || "$*" =~ --app ]]; then
         --arg git_tag "$GIT_TAG" \
         --arg git_commit_ref "$GIT_COMMIT_REF" \
         --arg git_branch "$GIT_BRANCH" \
+        --arg cargo_version "$CARGO_VERSION" \
+        --arg src "$SRC" \
+        --arg ipfs "$MULTIHASH" \
         '{
             gen: $gen,
+            src: $src,
+            version: $cargo_version,
             commit: $git_commit_ref,
             tag: $git_tag, 
             branch: $git_branch,
@@ -182,7 +168,8 @@ if [[ ! "$*" =~ --json || "$*" =~ --app ]]; then
             rustc: $rustc, 
             size: $bytes, 
             pkg: $pkg, 
-            prop: $prop, 
+            prop: $prop,
+            ipfs: $ipfs,
             sha256: $sha256, 
             wasm: $wasm
         }' )
@@ -202,6 +189,7 @@ if [[ ! "$*" =~ --json || "$*" =~ --app ]]; then
 else
     echo "Summary:"
     echo "  Generator  : $GEN" 
+    echo "  Version    : $CARGO_VERSION" 
     echo "  GIT commit : $GIT_COMMIT_REF"
     echo "  GIT tag    : $GIT_TAG"
     echo "  GIT branch : $GIT_BRANCH"
@@ -211,6 +199,7 @@ else
     echo "  Content    : $PREVIEW" 
   printf "  Package    : ${PKG_COLOR}$PACKAGE${NC}\n"
   printf "  Proposal   : ${YELLOW}$PROP${NC}\n"
+    echo "  IPFS       : $MULTIHASH" 
     echo "  SHA256     : $SHA256" 
     echo "  Wasm       : $WASM"
 fi
