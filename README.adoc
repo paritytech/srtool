@@ -209,6 +209,10 @@ What is important in the output of srtool is the `Proposal` field:
 
 The `Proposal` field value should should match the value of the proposal you can see in the Polkadot UI.
 
+== IPFS Hash
+
+Starting with version 0.9.8, the IPFS hash is computed and added to the output. `srtool` is only computing the hash. It does not publish the the file to IPFS nor connect to IPFS.
+
 .Advanced usage
 if you feel fancy, you may also run:
 
