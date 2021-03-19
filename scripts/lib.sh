@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 
-A="${A:-''}" 
-B="${B:-''}" 
-
 # A function to compare semver versions
 vercomp () {
-    if [[ $A == $B ]]
+    if [[ $1 == $2 ]]
     then
         return 0
     fi
     local IFS=.
-    local i ver1=($A) ver2=($B)
+    local i ver1=($1) ver2=($2)
     # fill empty fields in ver1 with zeros
     for ((i=${#ver1[@]}; i<${#ver2[@]}; i++))
     do

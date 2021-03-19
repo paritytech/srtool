@@ -38,6 +38,7 @@ RUN export PATH=/cargo-home/bin:/rustup-home:$PATH && \
     cargo install --git https://gitlab.com/chevdor/substrate-runtime-hasher.git && \
     cargo install toml-cli && \
     mv -f /cargo-home/bin/* /bin && \
+    touch /cargo-home/env && \
     mkdir /out && \
     rustup show && rustc -V
 
