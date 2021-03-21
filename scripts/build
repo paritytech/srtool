@@ -176,7 +176,7 @@ if [[ "$*" =~ --json || "$*" =~ --app ]]; then
     
     # if using --app, the json output fits on a single line
     if [[ "$*" == *"--app"* ]]; then
-        echo "$JSON" | jq -c     
+        echo "$JSON" | jq -cM     
     else
         echo "$JSON" | jq
     fi
