@@ -2,7 +2,7 @@ FROM ubuntu:bionic as builder
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains."
 
-ARG RUSTC_VERSION="nightly-2020-10-27"
+ARG RUSTC_VERSION="nightly-2021-03-15"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime

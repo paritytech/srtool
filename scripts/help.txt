@@ -5,10 +5,12 @@ First of all, make sure you are in your Substrate/Polkadot repo:
     cd /my/project/substrate
 
 Read the documentation at https://gitlab.com/chevdor/srtool
-Set the srtool alias/function (see the doc).
+First set the srtool alias (see the README at the link above).
 
-Then run:
-
-    srtool build
+You may use one of the following commands:
+    $ export PACKAGE=kusama-runtime 
+    $ srtool version
+    $ srtool info
+    $ srtool build
     
-That´s when you can go grab a coffee.
+The last one is when you can go grab a coffee.
