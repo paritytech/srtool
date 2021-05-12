@@ -18,11 +18,10 @@ source "$CDIR/lib.sh"
 
 PKG_VERSION=`toml get Cargo.toml package.version | jq -r`
 REF_VERSION="0.8.30"
-DEFAULT_FEATURES="--features on-chain-release-build"
-
-vercomp $PKG_VERSION $REF_VERSION 
+DEFAULT_FEATURES="${DEFAULT_FEATURES:---features on-chain-release-build}" 
 
 if [[ "$PACKAGE" =~ ^(kusama|polkadot)-runtime$ ]]; then
+    vercomp $PKG_VERSION $REF_VERSION 
     case $? in
         0) opts="${DEFAULT_FEATURES}";;
         1) opts="${DEFAULT_FEATURES}";;

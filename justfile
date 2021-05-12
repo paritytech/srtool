@@ -11,7 +11,7 @@ build:
 publish: build
     #!/usr/bin/env bash
     echo Pushing docker image $REPO:$RUSTC_VERSION
-    docker push $REPO:$RUSTC_VERSION 
+    docker push $REPO:$RUSTC_VERSION
 
 tag:
     #!/bin/sh
