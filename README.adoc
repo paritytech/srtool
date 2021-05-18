@@ -6,6 +6,8 @@
 
 = Substrate Runtime Toolbox: srtool
 
+image::resources/srtool-docker_512px.png[align=center, width=256px]
+
 == Intro
 
 srtool is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development.
