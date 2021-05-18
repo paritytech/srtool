@@ -12,24 +12,25 @@ image::resources/srtool-docker_512px.png[align=center, width=256px]
 
 srtool is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development.
 
-It especially helps with building and verifying Wasm Runtime Blobs. 
-  
+It especially helps with building and verifying Wasm Runtime Blobs.
+
 The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
 
 == Install
 
-=== Pull image
+=== Install the srtool command
 
-[subs="attributes+"]
-----
-    docker pull {name}:<version> # <1>
-----
+==== Using the srtool-cli
 
-<1> where `<version>` is the rustc version you want to use.
+Since the `srtool-cli` (https://gitlab.com/chevdor/srtool-cli) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
 
-...or just skip that step, the right image will be fetched at first run.
+The `srtool-cli` is a command line utility written in Rust, you can read more in https://gitlab.com/chevdor/srtool-cli[its repository], the installation process is described in more details there. In short:
 
-=== Using an alias    
+    cargo install --git https://gitlab.com/chevdor/srtool-cli
+
+==== Using an alias
+
+IMPORTANT: This method is legacy and will be deprecated, prefer the `srtool-cli` utility mentioned above. it is left here however for documentation purpose.
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
@@ -38,72 +39,11 @@ Creating an alias helps hiding the docker complexity behind one simple command. 
     export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home {name}:$RUSTC_VERSION'
 ----
 
-NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will *always* check the kusama runtime. If you need more, check the next chapter. 
+NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will *always* check the kusama runtime. If you need more, check the next chapter.
 
 NOTE: If you want to check what your alias is, use `type srtool`
 
 The command to invoke a build will then be `srtool build`.
-
-=== Power users
-
-If you want flexibility, using a *function* is slightly more complex but more flexible.
-
-If you already defined an alias (you can check with `type srtool`), you should first unset it with `unlias srtool`.
-
-NOTE: You cannot use both an alias and a function but you could make a function called fsrtool for instance for the function... 
-
-==== Hardcoded compiler version
-
-This option should be enough most of the time.
-
-[subs="attributes+"]
-----
-    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v $TMPDIR/cargo:/cargo-home {name}:{rsversion} $2; }
-----
-
-The commands to use srtool are then:
-
-[subs="attributes+"]
-----
-    srtool kusama-runtime build
-----
-
-NOTE: The <kusama-runtime> keyword above specifies we will check the kusama runtime. If your runtime is called xyz-runtime, swap accordingly.
-
-==== Parametric compiler version
-
-Using this version is more powerful if you know what you are doing but also requires more typing.
-
-[subs="attributes+"]
-----
-    function srtool() { docker run --rm -it -e PACKAGE=$1 -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$2 $3; }
-----
-
-The command to invoke a build will then be `srtool <package> <rust_version> build`. For instance:
-
-[subs="attributes+"]
-----
-    srtool my-super-runtime {rsversion} build
-    srtool polkadot-runtime nightly-2019-12-05 build
-----
-
-WRNING: The second example is only there to illustrate how it works. If you try it today, it will likely *not* work as I did not build a container for this version yet.
-
-You likely want to make this persistent with:
-
-[subs="attributes+"]
-----
-    echo "export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$RUSTC_VERSION'" >> ~/.bash_profile && source ~/.bash_profile
-----
-
-If you wish to see more (it takes a little longer), you may set the `VERBOSE` ENV variable:
-
-[subs="attributes+"]
-----
-    export RUSTC_VERSION={rsversion}; export PACKAGE=polkadot-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -e VERBOSE=1 -v $PWD:/build -v /tmp/cargo:/cargo-home {name}:$RUSTC_VERSION'
-----
-
-NOTE: The part `-v /tmp/cargo:/cargo-home` exposes the docker container's cargo cache on your local machine. This helps making subsequent builds faster. If you omit that part, no cache will be used and you will perform a full build every single time. It is NOT advised to point to your local dev cache folder and you should use an empty (not for long) new folder.
 
 == Use
 
