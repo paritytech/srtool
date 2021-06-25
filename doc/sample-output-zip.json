@@ -1,0 +1,78 @@
+{
+	"gen": "srtool v0.9.12",
+	"src": "zip",
+	"version": "1.2.3",
+	"commit": "56b9e95a9b634695f59a7c699bc68a5cfb695f03",
+	"tag": "moonriver-genesis",
+	"branch": "master",
+	"rustc": "rustc 1.54.0-nightly (657bc0188 2021-05-31)",
+	"docker_image": "chevdor/srtool",
+	"docker_tag": "nightly-2021-06-20",
+	"pkg": "moonriver-runtime",
+	"tmsp": "2021-06-15T17:48:34Z",
+	"size": "2081495",
+	"prop": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
+	"ipfs": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
+	"sha256": "0x9d00f4c83ad2bbec37e6d9e9bc2a4aecaeeebbf24f68b69766ba6851b4745173",
+	"wasm": "runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.wasm",
+	"runtimes": {
+		"compact": {
+			"tmsp": "2021-06-15T17:48:17Z",
+			"size": "2081495",
+			"prop": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
+			"blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453",
+			"ipfs": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
+			"sha256": "0x9d00f4c83ad2bbec37e6d9e9bc2a4aecaeeebbf24f68b69766ba6851b4745173",
+			"wasm": "/build/runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.wasm",
+			"subwasm": {
+				"size": 2081495,
+				"compression": {
+					"size_compressed": 2081495,
+					"size_decompressed": 2081495,
+					"compressed": false
+				},
+				"reserved_meta": [
+					109,
+					101,
+					116,
+					97
+				],
+				"reserved_meta_valid": true,
+				"metadata_version": 13,
+				"core_version": "moonriver-51 (moonriver-1.tx2.au3)",
+				"proposal_hash": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
+				"ipfs_hash": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
+				"blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453"
+			}
+		},
+		"compressed": {
+			"tmsp": "2021-06-15T17:48:17Z",
+			"size": "608158",
+			"prop": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
+			"blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453",
+			"ipfs": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
+			"sha256": "0x7659960c8e875f2a3fdcfd95ec029b28019344a88eeb7bfd278e0c1a39ce4546",
+			"wasm": "/build/runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.compressed.wasm",
+			"subwasm": {
+				"size": 2081495,
+				"compression": {
+					"size_compressed": 608158,
+					"size_decompressed": 2081495,
+					"compressed": true
+				},
+				"reserved_meta": [
+					109,
+					101,
+					116,
+					97
+				],
+				"reserved_meta_valid": true,
+				"metadata_version": 13,
+				"core_version": "moonriver-51 (moonriver-1.tx2.au3)",
+				"proposal_hash": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
+				"ipfs_hash": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
+				"blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453"
+			}
+		}
+	}
+}

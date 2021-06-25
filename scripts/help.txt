@@ -8,9 +8,9 @@ Read the documentation at https://gitlab.com/chevdor/srtool
 First set the srtool alias (see the README at the link above).
 
 You may use one of the following commands:
-    $ export PACKAGE=kusama-runtime 
+    $ export PACKAGE=kusama-runtime
     $ srtool version
     $ srtool info
     $ srtool build
-    
+
 The last one is when you can go grab a coffee.

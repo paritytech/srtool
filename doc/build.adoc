@@ -1,0 +1,15 @@
+
+== Build the Docker image
+
+While you don't have to build the image yourself, you still may!
+
+First you may want to double check what rustc versions are available as you will HAVE to build an image for a given version:
+
+    rustup check
+
+So say you want to build a builder for rustc {rsversion}:
+
+[subs="attributes+"]
+----
+    RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t {name}:$RUSTC_VERSION .
+----
