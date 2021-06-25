@@ -40,7 +40,7 @@ This method is legacy and deprecated, prefer the `srtool-cli` utility mentioned 
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
-        export RUSTC_VERSION=nightly-2021-06-20; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+        export RUSTC_VERSION=1.53.0; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
 
 Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will **always** check the kusama runtime. If you need more, check the next chapter.
 
@@ -111,81 +111,106 @@ If you prefer a json output, srtool has you covered:
 Will give you such an output:
 
     {
-        "gen": "srtool v0.9.12",
+        "gen": "srtool v0.9.13",
         "src": "git",
-        "version": "null",
-        "commit": "56b9e95a9b634695f59a7c699bc68a5cfb695f03",
-        "tag": "moonriver-genesis",
-        "branch": "master",
-        "rustc": "rustc 1.54.0-nightly (657bc0188 2021-05-31)",
-        "pkg": "moonriver-runtime",
-        "tmsp": "2021-06-15T17:48:34Z",
-        "size": "2081495",
-        "prop": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
-        "ipfs": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
-        "sha256": "0x9d00f4c83ad2bbec37e6d9e9bc2a4aecaeeebbf24f68b69766ba6851b4745173",
-        "wasm": "runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.wasm",
-        "details": {
-            "compact": {
-                "tmsp": "2021-06-15T17:48:17Z",
-                "size": "2081495",
-                "prop": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
-                "blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453",
-                "ipfs": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
-                "sha256": "0x9d00f4c83ad2bbec37e6d9e9bc2a4aecaeeebbf24f68b69766ba6851b4745173",
-                "wasm": "/build/runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.wasm",
-                "subwasm": {
-                    "size": 2081495,
-                    "compression": {
-                        "size_compressed": 2081495,
-                        "size_decompressed": 2081495,
-                        "compressed": false
-                    },
-                    "reserved_meta": [
-                        109,
-                        101,
-                        116,
-                        97
-                    ],
-                    "reserved_meta_valid": true,
-                    "metadata_version": 13,
-                    "core_version": "moonriver-51 (moonriver-1.tx2.au3)",
-                    "proposal_hash": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
-                    "ipfs_hash": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
-                    "blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453"
-                }
-            },
-            "compressed": {
-                "tmsp": "2021-06-15T17:48:17Z",
-                "size": "608158",
-                "prop": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
-                "blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453",
-                "ipfs": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
-                "sha256": "0x7659960c8e875f2a3fdcfd95ec029b28019344a88eeb7bfd278e0c1a39ce4546",
-                "wasm": "/build/runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.compressed.wasm",
-                "subwasm": {
-                    "size": 2081495,
-                    "compression": {
-                        "size_compressed": 608158,
-                        "size_decompressed": 2081495,
-                        "compressed": true
-                    },
-                    "reserved_meta": [
-                        109,
-                        101,
-                        116,
-                        97
-                    ],
-                    "reserved_meta_valid": true,
-                    "metadata_version": 13,
-                    "core_version": "moonriver-51 (moonriver-1.tx2.au3)",
-                    "proposal_hash": "0x63a4e0751531b190a910a1d5ae3e7d196f26451014c71455dd708eac05a9d5d6",
-                    "ipfs_hash": "QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1",
-                    "blake2_256": "0x6acb9ca6508efba0791551d4acaa3f2089b019c9a38434a9b1011d3a2dbf9453"
-                }
+        "version": "1.0.0",
+        "commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
+        "tag": "statemine-v1.0.0",
+        "branch": "wk-gh-actions",
+        "rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+        "pkg": "statemine-runtime",
+        "tmsp": "2021-06-22T18:08:50Z",
+        "size": "1538747",
+        "prop": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+        "ipfs": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+        "sha256": "0x0fa6fc0110e95bcf61a828d146d1e5a683664415d2c10755875ad3943f42b001",
+        "wasm": "polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.wasm",
+        "info": {
+          "generator": {
+            "name": "srtool",
+            "version": "0.9.13"
+          },
+          "src": "git",
+          "version": "1.0.0",
+          "git": {
+            "commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
+            "tag": "statemine-v1.0.0",
+            "branch": "wk-gh-actions"
+          },
+          "rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+          "pkg": "statemine-runtime",
+          "profile": "release"
+        },
+        "context": {
+          "package": "statemine-runtime",
+          "runtime_dir": "polkadot-parachains/statemine-runtime",
+          "docker": {
+            "image": "chevdor/srtool",
+            "tag": "nightly-2021-06-20"
+          },
+          "profile": "release"
+        },
+        "runtimes": {
+          "compact": {
+            "tmsp": "2021-06-22T18:08:30Z",
+            "size": "1538747",
+            "prop": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+            "blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d",
+            "ipfs": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+            "sha256": "0x0fa6fc0110e95bcf61a828d146d1e5a683664415d2c10755875ad3943f42b001",
+            "wasm": "/build/polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.wasm",
+            "subwasm": {
+              "size": 1538747,
+              "compression": {
+                "size_compressed": 1538747,
+                "size_decompressed": 1538747,
+                "compressed": false
+              },
+              "reserved_meta": [
+                109,
+                101,
+                116,
+                97
+              ],
+              "reserved_meta_valid": true,
+              "metadata_version": 13,
+              "core_version": "statemine-1 (statemine-1.tx1.au1)",
+              "proposal_hash": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+              "ipfs_hash": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+              "blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d"
             }
+          },
+          "compressed": {
+            "tmsp": "2021-06-22T18:08:30Z",
+            "size": "452258",
+            "prop": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+            "blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d",
+            "ipfs": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+            "sha256": "0x90d8a93bfa6d69ea0a2ac1c8983e5777f3af10b0ca8506cd86c8de9ec0f462b8",
+            "wasm": "/build/polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.compressed.wasm",
+            "subwasm": {
+              "size": 1538747,
+              "compression": {
+                "size_compressed": 452258,
+                "size_decompressed": 1538747,
+                "compressed": true
+              },
+              "reserved_meta": [
+                109,
+                101,
+                116,
+                97
+              ],
+              "reserved_meta_valid": true,
+              "metadata_version": 13,
+              "core_version": "statemine-1 (statemine-1.tx1.au1)",
+              "proposal_hash": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+              "ipfs_hash": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+              "blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d"
+            }
+          }
         }
-    }
+      }
 
 ## Troubleshooting
 
@@ -265,9 +290,9 @@ First you may want to double check what rustc versions are available as you will
 
     rustup check
 
-So say you want to build a builder for rustc nightly-2021-06-20:
+So say you want to build a builder for rustc 1.53.0:
 
-        RUSTC_VERSION=nightly-2021-06-20 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
+        RUSTC_VERSION=1.53.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
 
 ## User Scripts
 
@@ -281,7 +306,7 @@ You can see the list of available scripts in the `/scripts` folder:
 
 -   `build`: Run the actual build
 
-The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:nightly-2021-06-20 info -cM` shows a monochrome output on a single line.
+The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.53.0 info -cM` shows a monochrome output on a single line.
 
 ## Build your custom chain / parachain
 

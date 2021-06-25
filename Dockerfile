@@ -1,10 +1,9 @@
 FROM docker.io/library/ubuntu:20.04
 
-# FROM ubuntu:bionic
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 
-ARG RUSTC_VERSION="nightly-2021-06-20"
+ARG RUSTC_VERSION="1.53.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="chevdor/srtool"
 ENV PROFILE=release
@@ -24,8 +23,7 @@ RUN apt update && \
     apt install --no-install-recommends -y \
         cmake pkg-config libssl-dev make \
         git clang bsdmainutils ca-certificates curl && \
-    curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && \
-    chmod a+x /usr/bin/jq && \
+    curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && chmod a+x /usr/bin/jq && \
     curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
     rm -rf /var/lib/apt/lists/* /tmp/* && apt clean
 

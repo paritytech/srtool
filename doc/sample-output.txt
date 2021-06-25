@@ -20,4 +20,3 @@ Summary:
   IPFS       : QmVAVAHMak2zTm3sjNiZXmrZHofQBTxQx7PBooPsRp22R1
   SHA256     : 0x9d00f4c83ad2bbec37e6d9e9bc2a4aecaeeebbf24f68b69766ba6851b4745173
   Wasm       : runtime/moonriver/target/srtool/release/wbuild/moonriver-runtime/moonriver_runtime.compact.wasm
-  

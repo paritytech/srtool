@@ -31,5 +31,5 @@ Summary generated with {{ gen }} using the docker image {{ context.docker.image 
  BLAKE2_256  : {{ runtimes.compressed.blake2_256 }}
  Wasm        : {{ runtimes.compressed.wasm }}
 {% else  %}
-No compressed runtime found
+ No compressed runtime found
 {% endif %}
