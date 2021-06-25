@@ -1,0 +1,19 @@
+
+== ZSH/ Zinit users
+
+If you are using `zsh` and `zinit`, you may benefit from using the srtool snippet I am maintaining.
+
+To do so, add the following to your `zshconfig`:
+
+```
+MY_REPO="https://gitlab.com/chevdor/dotfiles/-/raw/master/zsh-plugins"
+for plugin (git cargo srtool); { <1>
+  SNIPPET="$MY_REPO/$plugin/$plugin.plugin.zsh"
+  zinit snippet $SNIPPET
+}
+```
+<1> Chose the snippets you want, the one called `srtool` here is the interesting one.
+
+After that, make sure to:
+- upgrade your snippets: `zplugin update --all`
+- restart/source your shell: `. ~/.zshrc`

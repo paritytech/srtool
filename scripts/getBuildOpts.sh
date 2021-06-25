@@ -4,7 +4,7 @@ source "$CDIR/lib.sh"
 
 # This script helps since version v0.8.30. Starting with this version
 # a few feature has been introduced and is highly required to build
-# 0.8.30 and above for Polkadot and Kusama. 
+# 0.8.30 and above for Polkadot and Kusama.
 # Lower version however, do not support this feature.
 #
 # This script checks the project version and return to stdout either:
@@ -18,10 +18,10 @@ source "$CDIR/lib.sh"
 
 PKG_VERSION=`toml get Cargo.toml package.version | jq -r`
 REF_VERSION="0.8.30"
-DEFAULT_FEATURES="${DEFAULT_FEATURES:---features on-chain-release-build}" 
+DEFAULT_FEATURES="${DEFAULT_FEATURES:---features on-chain-release-build}"
 
 if [[ "$PACKAGE" =~ ^(kusama|polkadot)-runtime$ ]]; then
-    vercomp $PKG_VERSION $REF_VERSION 
+    vercomp $PKG_VERSION $REF_VERSION
     case $? in
         0) opts="${DEFAULT_FEATURES}";;
         1) opts="${DEFAULT_FEATURES}";;

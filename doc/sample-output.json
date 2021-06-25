@@ -1,0 +1,102 @@
+{
+	"gen": "srtool v0.9.13",
+	"src": "git",
+	"version": "1.0.0",
+	"commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
+	"tag": "statemine-v1.0.0",
+	"branch": "wk-gh-actions",
+	"rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+	"pkg": "statemine-runtime",
+	"tmsp": "2021-06-22T18:08:50Z",
+	"size": "1538747",
+	"prop": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+	"ipfs": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+	"sha256": "0x0fa6fc0110e95bcf61a828d146d1e5a683664415d2c10755875ad3943f42b001",
+	"wasm": "polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.wasm",
+	"info": {
+	  "generator": {
+		"name": "srtool",
+		"version": "0.9.13"
+	  },
+	  "src": "git",
+	  "version": "1.0.0",
+	  "git": {
+		"commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
+		"tag": "statemine-v1.0.0",
+		"branch": "wk-gh-actions"
+	  },
+	  "rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+	  "pkg": "statemine-runtime",
+	  "profile": "release"
+	},
+	"context": {
+	  "package": "statemine-runtime",
+	  "runtime_dir": "polkadot-parachains/statemine-runtime",
+	  "docker": {
+		"image": "chevdor/srtool",
+		"tag": "nightly-2021-06-20"
+	  },
+	  "profile": "release"
+	},
+	"runtimes": {
+	  "compact": {
+		"tmsp": "2021-06-22T18:08:30Z",
+		"size": "1538747",
+		"prop": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+		"blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d",
+		"ipfs": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+		"sha256": "0x0fa6fc0110e95bcf61a828d146d1e5a683664415d2c10755875ad3943f42b001",
+		"wasm": "/build/polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.wasm",
+		"subwasm": {
+		  "size": 1538747,
+		  "compression": {
+			"size_compressed": 1538747,
+			"size_decompressed": 1538747,
+			"compressed": false
+		  },
+		  "reserved_meta": [
+			109,
+			101,
+			116,
+			97
+		  ],
+		  "reserved_meta_valid": true,
+		  "metadata_version": 13,
+		  "core_version": "statemine-1 (statemine-1.tx1.au1)",
+		  "proposal_hash": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+		  "ipfs_hash": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+		  "blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d"
+		}
+	  },
+	  "compressed": {
+		"tmsp": "2021-06-22T18:08:30Z",
+		"size": "452258",
+		"prop": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+		"blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d",
+		"ipfs": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+		"sha256": "0x90d8a93bfa6d69ea0a2ac1c8983e5777f3af10b0ca8506cd86c8de9ec0f462b8",
+		"wasm": "/build/polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.compressed.wasm",
+		"subwasm": {
+		  "size": 1538747,
+		  "compression": {
+			"size_compressed": 452258,
+			"size_decompressed": 1538747,
+			"compressed": true
+		  },
+		  "reserved_meta": [
+			109,
+			101,
+			116,
+			97
+		  ],
+		  "reserved_meta_valid": true,
+		  "metadata_version": 13,
+		  "core_version": "statemine-1 (statemine-1.tx1.au1)",
+		  "proposal_hash": "0xaf313fb7d1fb37d75080de43d0a0a3c06801c2be302d16f560b1acf1bda53c28",
+		  "ipfs_hash": "QmRkiTxXEhT8Goxx7Vv2RwRuHV3ZD3AAQhFBovYFuKtaCE",
+		  "blake2_256": "0x9cf51f8803bc2181ffbc6a9b9c91cd3471e6050b2fb3ed6146d1cad21ad4dd4d"
+		}
+	  }
+	}
+  }
+  

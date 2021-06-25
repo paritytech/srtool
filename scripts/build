@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CDIR=`dirname "$0"`
+export CDIR=`dirname "$0"`
 source "$CDIR/lib.sh"
 
 # If the user sends a SIGINT, we want to exit the entire script
@@ -8,11 +8,11 @@ trap "exit" INT
 # This is where docker expects our substrate/polkadot repo to be
 cd /build
 
-VERSION=`cat /srtool/VERSION || echo 0.0.0`
-GEN="srtool v$VERSION"
-LATEST_VERSION=$(curl -s https://gitlab.com/chevdor/srtool/raw/master/VERSION)
+export VERSION=`cat /srtool/VERSION || echo 0.0.0`
+export GEN="srtool v$VERSION"
+export LATEST_VERSION=$(curl -s https://gitlab.com/chevdor/srtool/raw/master/VERSION)
 
-vercomp $LATEST_VERSION $VERSION 
+vercomp $LATEST_VERSION $VERSION
 
 case $? in
     0) op='=';;
@@ -54,10 +54,13 @@ if [ ! -z "$VERBOSE" ]; then
     echo -e "📦 Cache size:" `du -sh $HOME/.cargo`
 fi
 
-RUSTCV=`rustc -V`
+# The following is to prevent user's overrides to disturb srtool
+rustup override set $RUSTC_VERSION
+
+export RUSTCV=`rustc -V`
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
-    echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV" 
+    echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV"
     echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
     echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
     echo -e "   https://substrate.dev/docs/en/#architecture"
@@ -72,15 +75,21 @@ fi
 
 # As of https://github.com/paritytech/polkadot/pull/2522 we need to cd to the
 # runtime directory itself
-RUNTIME_NAME="${PACKAGE/-*/}"
-GET_OPTS_CMD="${CDIR}/getBuildOpts.sh"
-GET_OPTS=`$GET_OPTS_CMD`
-BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}" 
-PROFILE="${PROFILE:-release}" 
-RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}" 
+export RUNTIME_NAME="${PACKAGE/-*/}"
+export GET_OPTS_CMD="${CDIR}/getBuildOpts.sh"
+export GET_OPTS=`$GET_OPTS_CMD`
+export BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}"
+export PROFILE="${PROFILE:-release}"
+export RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}"
+
+if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
+    INT_OPTS="--quiet"
+else
+    INT_OPTS=""
+fi
 
 pushd "$RUNTIME_DIR" > /dev/null || exit 1
-  CMD="cargo build ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
+  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
   if [ ! -z "$VERBOSE" ]; then
       time $CMD || exit 1
   else
@@ -90,17 +99,22 @@ pushd "$RUNTIME_DIR" > /dev/null || exit 1
           $CMD 2>&1 || exit 1
       fi
   fi
+  WASM=`find target/srtool/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.wasm"`
+  Z_WASM=`find target/srtool/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.compressed.wasm"`
 popd > /dev/null || exit 1
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo "✨ Your Substrate WASM Runtime is ready! ✨"
 fi
 
-WASM=`find $RUNTIME_DIR/target/srtool/$PROFILE/wbuild/$PACKAGE/*.compact.wasm`
+export WASM=$RUNTIME_DIR/$WASM
+export Z_WASM=$RUNTIME_DIR/$Z_WASM
+
 cp -f "$WASM" /out/
+cp -f "$Z_WASM" /out/
 
 SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
-MULTIHASH=`ipfs add -n -Q $WASM`
+MULTIHASH=`subwasm -j info $WASM | jq -r .ipfs_hash`
 SIZE=`wc -c < $WASM`
 LENGTH=16
 SKIP=`echo $(($SIZE-$LENGTH))`
@@ -108,15 +122,10 @@ SKIP=`echo $(($SIZE-$LENGTH))`
 # a setCode coming from a motion or referendum
 PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
 
-# Some color definitions
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-NC='\033[0m'
-
 SZ=`du -sb $WASM | awk '{print $1}'`
 KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
-PROP=`substrate-runtime-hasher $WASM`
+PROP=`subwasm -j info $WASM | jq -r .proposal_hash`
 
 # If we work on a snapshot, we will NOT get a .git folder to work on
 if [ -d ".git" ]; then
@@ -128,78 +137,75 @@ else
     SRC='zip'
 fi
 
-case "$PACKAGE" in
-    *"kusama"*)
-        PKG_COLOR='\033[0;36m' # Cyan
-        ;; 
-    *"polkadot"*)
-        PKG_COLOR='\033[0;35m' # Purple
-        ;;
-    *)
-        PKG_COLOR='\033[0;37m' # White
-esac
+CARGO_VERSION=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
+COMPACT_DETAILS=`/srtool/analyse.sh /build/$WASM | tail -n 1`
 
-CARGO_VERSION=`toml get /build/Cargo.toml package.version | jq -r`
+if [ $Z_WASM ]; then
+    COMPRESSED_DETAILS=`/srtool/analyse.sh /build/$Z_WASM | tail -n 1`
+else
+    COMPRESSED_DETAILS={}
+fi
+
+INFO=$(/srtool/info -cM | tail -n 1)
+CONTEXT=$(/srtool/getContext.sh | tail -n 1)
+
+JSON=$( jq -n \
+    --arg gen "$GEN" \
+    --arg cargo_version "$CARGO_VERSION" \
+    --arg rustc "$RUSTCV" \
+    --arg pkg "$PACKAGE" \
+    --arg bytes "$SZ" \
+    --arg wasm "$WASM" \
+    --arg prop "$PROP" \
+    --arg sha256 "$SHA256" \
+    --arg tmsp "$TMSP" \
+    --arg git_tag "$GIT_TAG" \
+    --arg git_commit_ref "$GIT_COMMIT_REF" \
+    --arg git_branch "$GIT_BRANCH" \
+    --arg src "$SRC" \
+    --arg ipfs "$MULTIHASH" \
+    --argjson info "$INFO" \
+    --argjson context "$CONTEXT" \
+    --argjson compact "$COMPACT_DETAILS" \
+    --argjson compressed "$COMPRESSED_DETAILS" \
+    '{
+        gen: $gen,
+        src: $src,
+        version: $cargo_version,
+        commit: $git_commit_ref,
+        tag: $git_tag,
+        branch: $git_branch,
+        rustc: $rustc,
+        pkg: $pkg,
+        tmsp: $tmsp,
+        size: $bytes,
+        prop: $prop,
+        ipfs: $ipfs,
+        sha256: $sha256,
+        wasm: $wasm,
+
+        info: $info,
+        context: $context,
+
+        runtimes: {
+            compact: $compact,
+            compressed: $compressed
+        }
+    }' )
 
 if [[ "$*" =~ --json || "$*" =~ --app ]]; then
-    JSON=$( jq -n \
-        --arg gen "$GEN" \
-        --arg rustc "$RUSTCV" \
-        --arg bytes "$SZ" \
-        --arg wasm "$WASM" \
-        --arg prop "$PROP" \
-        --arg sha256 "$SHA256" \
-        --arg tmsp "$TMSP" \
-        --arg pkg "$PACKAGE" \
-        --arg git_tag "$GIT_TAG" \
-        --arg git_commit_ref "$GIT_COMMIT_REF" \
-        --arg git_branch "$GIT_BRANCH" \
-        --arg cargo_version "$CARGO_VERSION" \
-        --arg src "$SRC" \
-        --arg ipfs "$MULTIHASH" \
-        '{
-            gen: $gen,
-            src: $src,
-            version: $cargo_version,
-            commit: $git_commit_ref,
-            tag: $git_tag, 
-            branch: $git_branch,
-            tmsp: $tmsp, 
-            rustc: $rustc, 
-            size: $bytes, 
-            pkg: $pkg, 
-            prop: $prop,
-            ipfs: $ipfs,
-            sha256: $sha256, 
-            wasm: $wasm
-        }' )
-    
     # if using --app, the json output fits on a single line
     if [[ "$*" == *"--app"* ]]; then
-        echo "$JSON" | jq -cM     
+        echo "$JSON" | jq -cM
     else
         echo "$JSON" | jq
     fi
-    
+
     if [[ "$*" == *"--save"* ]]; then
         REPORT="./target/srtool/srtool-wasm-report-$TMSP.txt"
         echo "$JSON" > $REPORT
         echo "Report saved in $REPORT"
-    fi      
+    fi
 else
-    echo "Summary:"
-    echo "  Generator  : $GEN" 
-    echo "  Version    : $CARGO_VERSION" 
-    echo "  GIT commit : $GIT_COMMIT_REF"
-    echo "  GIT tag    : $GIT_TAG"
-    echo "  GIT branch : $GIT_BRANCH"
-    echo "  Time       : $TMSP" 
-    echo "  Rustc      : $RUSTCV" 
-    echo "  Size       : $KB KB ($SZ bytes)" 
-    echo "  Content    : $PREVIEW" 
-  printf "  Package    : ${PKG_COLOR}$PACKAGE${NC}\n"
-  printf "  Proposal   : ${YELLOW}$PROP${NC}\n"
-    echo "  IPFS       : $MULTIHASH" 
-    echo "  SHA256     : $SHA256" 
-    echo "  Wasm       : $WASM"
+    echo $JSON | tera --template /srtool/templates/output.txt --stdin --env --fail-on-collision
 fi

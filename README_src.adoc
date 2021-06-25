@@ -1,5 +1,5 @@
 :name: chevdor/srtool
-:rsversion: nightly-2021-03-15
+:rsversion: nightly-2021-06-20
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:
@@ -12,15 +12,24 @@ image::resources/srtool-docker_512px.png[align=center, width=256px]
 
 srtool is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development.
 
-It especially helps with building and verifying Wasm Runtime Blobs.
+It especially helps with building and verifying Wasm Runtime Blobs. The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
 
-The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
+There are a few other helpers you may want to chcek out when using `srtool`:
+
+- https://github.com/chevdor/srtool-cli[srtool-cli]: This Rust executable supersedes the preiviously recommended alias solution. It brings many benefits and is moreover much easier to use.
+- https://gitlab.com/chevdor/srtool-app[srtool-app]: The basic features of `srtool` as here available from a simple GUI accessible from a few clicks and available on multiple platforms.
+- https://github.com/chevdor/srtool-actions[srtool-actions]: This Github actions makes it much easier to integrate `srtool` in your CI.
+- ... and more to come
+
+image::resources/Frame 1_256.png[align=center]
+
+`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or parachain.
+
+You may also want to have a look at https://github.com/chevdor/subwasm[subwasm] as it is now part of the tooling included in `srtool`. `subwasm` can also be used independantly upon building your wasm with `srtool`.
 
 == Install
 
-=== Install the srtool command
-
-==== Using the srtool-cli
+=== Install the srtool-cli
 
 Since the `srtool-cli` (https://gitlab.com/chevdor/srtool-cli) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
 
@@ -28,9 +37,9 @@ The `srtool-cli` is a command line utility written in Rust, you can read more in
 
     cargo install --git https://gitlab.com/chevdor/srtool-cli
 
-==== Using an alias
+=== Using an alias
 
-IMPORTANT: This method is legacy and will be deprecated, prefer the `srtool-cli` utility mentioned above. it is left here however for documentation purpose.
+IMPORTANT: This method is legacy and deprecated, prefer the `srtool-cli` utility mentioned above. This information is left here however for documentation purpose but all the functions are now availabe in the `srtool-cli`.
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
@@ -50,10 +59,10 @@ The command to invoke a build will then be `srtool build`.
 Now that you defined the srtool alias, you can use it as shown below:
 
 .See the help
-    srtool help
+    $ srtool help
 
 .Build the runtime
-    srtool build
+    $ srtool build
 
 .Typical run
 
@@ -65,7 +74,7 @@ Will output something that looks like this:
 
 [subs="attributes+"]
 ----
-    🧰 Substrate Runtime Toolbox - srtool v0.9.6 🧰
+    🧰 Substrate Runtime Toolbox - srtool v0.9.11 🧰
               - by Chevdor -
     🏗  Building polkadot-runtime as release using rustc 1.49.0-nightly (fd542592f 2020-10-26)
     ⏳ That can take a little while, be patient... subsequent builds will be faster.
@@ -73,18 +82,13 @@ Will output something that looks like this:
     https://substrate.dev/docs/en/#architecture
 
         Finished release [optimized] target(s) in 37.43s
+----
 
-    real	0m37.931s
-    user	0m1.560s
-    sys	0m3.220s
-    ✨ Your Substrate WASM Runtime is ready! ✨
-    Summary:
-    Used rustc {rsversion} (4560ea788 2019-11-04)
-    Wasm     : ./[some path]/polkadot_runtime.compact.wasm
-    Content  : 0x0061736d0100000001a4022b60037f7f...3435663020323031392d31322d303429
-    Size     : 1.1M
-    Proposal : 0x5931690e71e9d3d9f04a43d8c15e45e0968e563858dd87ad6485b2368a286a8f
-    SHA256   : 0xd5930520676994fc55a29c547f0159ea860cb46edd710a5be35e62565af1ad8b
+some times later ...
+
+[subs="attributes+"]
+----
+include::doc/sample-output.txt[]
 ----
 
 .JSON output
@@ -96,16 +100,7 @@ Will give you such an output:
 
 [subs="attributes+"]
 ----
-{
-  "gen": "srtool",
-  "rustc": "rustc 1.41.0-nightly (ae1b871cc 2019-12-06)",
-  "wasm": "./target/srtool/release/wbuild/kusama-runtime/kusama_runtime.compact.wasm",
-  "size": "1205052",
-  "pkg": "kusama-runtime",
-  "prop": "0x5931690e71e9d3d9f04a43d8c15e45e0968e563858dd87ad6485b2368a286a8f",
-  "sha256": "0xd93126c814f8366b651e425e34390212a98f8e77a8b73f9e1d2b07fc229a25f1",
-  "tmsp": "2020-01-14T10:15:28Z"
-}
+include::doc/sample-output.json[]
 ----
 
 == Troubleshooting
@@ -135,7 +130,7 @@ If you are running into this issue, your `.bash_profile` likely contains double 
 
 === Other cases
 
-If you still run into troubles, please open a new issue and describe the error you see and the steps you took. 
+If you still run into troubles, please open a new issue and describe the error you see and the steps you took.
 
 == Proposal field
 
@@ -162,39 +157,9 @@ if you feel fancy, you may also run:
 
 and look around the `/srtool` folder
 
-== ZSH/ Zinit users
+include::doc/zsh.adoc[]
 
-If you are using `zsh` and `zinit`, you may benefit from using the srtool snippet I am maintaining.
-
-To do so, add the following to your `zshconfig`:
-
-```
-MY_REPO="https://gitlab.com/chevdor/dotfiles/-/raw/master/zsh-plugins"
-for plugin (git cargo srtool); { <1> 
-  SNIPPET="$MY_REPO/$plugin/$plugin.plugin.zsh"
-  zinit snippet $SNIPPET
-}
-```
-<1> Chose the snippets you want, the one called `srtool` here is the interesting one.
-
-After that, make sure to:
-- upgrade your snippets: `zplugin update --all`
-- restart/source your shell: `. ~/.zshrc`
-
-== Build the Docker image
-
-While you don't have to build the image yourself, you still may!
-
-First you may want to double check what rustc versions are available as you will HAVE to build an image for a given version:
-
-    rustup check
-
-So say you want to build a builder for rustc {rsversion}:
-
-[subs="attributes+"]
-----
-    RUSTC_VERSION={rsversion} && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t {name}:$RUSTC_VERSION .
-----
+include::doc/build.adoc[]
 
 == User Scripts
 
@@ -207,10 +172,10 @@ You can see the list of available scripts in the `/scripts` folder:
 
 NOTE: The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:{rsversion} info -cM` shows a monochrome output on a single line.
 
-== Build your custom chain
+== Build your custom chain / parachain
 
 Building the runtime for your custom chain may not work with the default used for Kusama, Polkadot and Co.
-You can however help `srtool` making the right choices using ENV VARs. You will need to make a new alias as shown below 
+You can however help `srtool` making the right choices using ENV VARs. You will need to make a new alias as shown below
 
 Here is for instance how to build the runtime for the substrate-node-template:
 
@@ -218,10 +183,11 @@ Here is for instance how to build the runtime for the substrate-node-template:
 
 NOTE: `BUILD_OPTS` is set to a space, not an empty string.
 
+NOTE: Using `srtool-cli` makes the above much easier...
+
 == Export the runtime
 
 In order to easily export your runtime, it will be copied in the container into the `/out` folder.
 If you mount this docker volume, you will find the wasm on your local filesystem once the run is complete.
 
     docker run ... -v /tmp/out:/out ...
-

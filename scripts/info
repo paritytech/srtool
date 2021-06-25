@@ -6,7 +6,7 @@
 
 VERSION=`cat /srtool/VERSION || echo 0.0.0`
 RUSTCV=`rustc -V`
-PROFILE="${PROFILE:-release}" 
+PROFILE="${PROFILE:-release}"
 
 cd /build/
 
@@ -19,7 +19,7 @@ else
     SRC='zip'
 fi
 
-CARGO_VERSION=`toml get /build/Cargo.toml package.version | jq -r`
+CARGO_VERSION=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
 
 JSON=$( jq -n \
     --arg gen "srtool" \
@@ -33,20 +33,20 @@ JSON=$( jq -n \
     --arg cargo_version "$CARGO_VERSION" \
     --arg src "$SRC" \
     '{
-        gen: { 
-            name: $gen, 
-            version: $version 
+        generator: {
+            name: $gen,
+            version: $version
         },
         src: $src,
         version: $cargo_version,
         git: {
             commit: $git_commit_ref,
-            tag: $git_tag, 
+            tag: $git_tag,
             branch: $git_branch,
         },
-        rustc: $rustc, 
-        pkg: $pkg, 
-        profile: $profile, 
+        rustc: $rustc,
+        pkg: $pkg,
+        profile: $profile,
     }' )
 
 echo "$JSON" | jq $@
