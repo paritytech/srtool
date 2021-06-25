@@ -68,6 +68,34 @@
 		  "blake2_256": "0xdf80452a18c352d3576829cc30b3cbeecd5e730193bebfbd59215c15504034c5"
 		}
 	  },
-	  "compressed": { }
+	  "compressed": {
+		"tmsp": "2021-06-24T11:03:41Z",
+		"size": "468943",
+		"prop": "0xe3e5dac726e5b1ffa2272037e19c65890b2c383b6b4c4475c376662ce01209f0",
+		"blake2_256": "0xdf80452a18c352d3576829cc30b3cbeecd5e730193bebfbd59215c15504034c5",
+		"ipfs": "QmPrj3C3KQRS5CWUZn5QbDFEjKtLxDNK1XCjCLNN3pjL2V",
+		"sha256": "0x68ef9b7d9cbdffbf56722890bd74d7446909157644bbdb3934fe74fc3958e8af",
+		"wasm": "/build/polkadot-parachains/statemine-runtime/target/srtool/release/wbuild/statemine-runtime/statemine_runtime.compact.compressed.wasm",
+		"subwasm": {
+		  "size": 1599997,
+		  "compression": {
+			"size_compressed": 468943,
+			"size_decompressed": 1599997,
+			"compressed": true
+		  },
+		  "reserved_meta": [
+			109,
+			101,
+			116,
+			97
+		  ],
+		  "reserved_meta_valid": true,
+		  "metadata_version": 13,
+		  "core_version": "statemine-1 (statemine-1.tx1.au1)",
+		  "proposal_hash": "0xe3e5dac726e5b1ffa2272037e19c65890b2c383b6b4c4475c376662ce01209f0",
+		  "ipfs_hash": "QmPrj3C3KQRS5CWUZn5QbDFEjKtLxDNK1XCjCLNN3pjL2V",
+		  "blake2_256": "0xdf80452a18c352d3576829cc30b3cbeecd5e730193bebfbd59215c15504034c5"
+		}
+	  }
 	}
   }

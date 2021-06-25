@@ -1,5 +1,5 @@
 :name: chevdor/srtool
-:rsversion: nightly-2021-06-20
+:rsversion: 1.53.0
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:

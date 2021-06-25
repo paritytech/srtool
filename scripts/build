@@ -82,6 +82,14 @@ export BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}"
 export PROFILE="${PROFILE:-release}"
 export RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}"
 
+export RUSTC_BOOTSTRAP=1
+
+if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
+    INT_OPTS="--quiet"
+else
+    INT_OPTS=""
+fi
+
 if [[ "$*" == *"--json"* && ! "$*" =~ --app ]]; then
     INT_OPTS="--quiet"
 else
@@ -108,10 +116,12 @@ if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
 fi
 
 export WASM=$RUNTIME_DIR/$WASM
-export Z_WASM=$RUNTIME_DIR/$Z_WASM
 
 cp -f "$WASM" /out/
-cp -f "$Z_WASM" /out/
+if [ $Z_WASM ]; then
+    export Z_WASM=$RUNTIME_DIR/$Z_WASM
+    cp -f "$Z_WASM" /out/
+fi
 
 SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
 MULTIHASH=`subwasm -j info $WASM | jq -r .ipfs_hash`
@@ -192,6 +202,14 @@ JSON=$( jq -n \
             compressed: $compressed
         }
     }' )
+
+COMPACT_DETAILS=`/srtool/analyse.sh /build/$WASM | tail -n 1`
+
+if [ $Z_WASM ]; then
+    COMPRESSED_DETAILS=`/srtool/analyse.sh /build/$Z_WASM | tail -n 1`
+else
+    COMPRESSED_DETAILS={}
+fi
 
 if [[ "$*" =~ --json || "$*" =~ --app ]]; then
     # if using --app, the json output fits on a single line
