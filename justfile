@@ -6,7 +6,7 @@ build:
     #!/usr/bin/env bash
     echo Building $REPO:$RUSTC_VERSION
     echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
-    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $REPO:$RUSTC_VERSION .
+    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $REPO:$RUSTC_VERSION-$TAG .
 
 publish: build
     #!/usr/bin/env bash
