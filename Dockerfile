@@ -15,6 +15,10 @@ ENV RUSTUP_HOME="/rustup-home"
 ENV CARGO_HOME="/cargo-home"
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Tooling
+ENV SUBWASM_VERSION=0.12.0
+ENV TERA_CLI_VERSION=0.1.3
+
 # We first init as much as we can in the first layers
 COPY ./scripts/init.sh /srtool/
 COPY ./templates /srtool/templates/
@@ -30,11 +34,11 @@ RUN apt update && \
 ENV PATH="/srtool:/cargo-home/bin:$PATH"
 RUN export PATH=/cargo-home/bin:/rustup-home:$PATH && \
     /srtool/init.sh && \
-    curl -L https://github.com/chevdor/subwasm/releases/download/v0.11.0/subwasm_linux_amd64_v0.11.0.deb --output subwasm_linux_amd64.deb && \
-    dpkg -i subwasm_linux_amd64.deb && subwasm --version && \
-    curl -L https://github.com/chevdor/tera-cli/releases/download/v0.1.3/tera-cli_linux_amd64.deb --output tera-cli_linux_amd64.deb && \
-    dpkg -i tera-cli_linux_amd64.deb && tera --version && \
-    cargo install toml-cli && \
+    curl -L https://github.com/chevdor/subwasm/releases/download/v${SUBWASM_VERSION}/subwasm_linux_amd64_v${SUBWASM_VERSION}.deb --output subwasm.deb && \
+    dpkg -i subwasm.deb && subwasm --version && \
+    curl -L https://github.com/chevdor/tera-cli/releases/download/v${TERA_CLI_VERSION}/tera-cli_linux_amd64.deb --output tera_cli.deb && \
+    dpkg -i tera_cli.deb && tera --version && \
+    cargo install --git https://github.com/chevdor/toml-cli --tag v0.2.0 && \
     mv -f /cargo-home/bin/* /bin && \
     touch /cargo-home/env && \
     mkdir /out && \
