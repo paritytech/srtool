@@ -1,0 +1,94 @@
+name: Build & Tests
+on:
+  push:
+    branches:
+      - "*"
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: "00 05 * * 1" # 5AM weekly on mondays
+
+jobs:
+  build:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        env:
+          IMG: paritytech/srtool
+        run: |
+          SRTOOL_VERSION=$(cat VERSION)
+          RUSTC_VERSION=$(cat RUSTC_VERSION)
+          TAG=$RUSTC_VERSION-$SRTOOL_VERSION
+          echo "IMG=$IMG" >> $GITHUB_ENV
+          echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
+          echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
+          echo "TAG=$TAG" >> $GITHUB_ENV
+
+          docker --version
+          docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $IMG:$TAG .
+          docker run -t --rm $IMG:$TAG version
+
+      - name: Check out Polkadot
+        uses: actions/checkout@v2
+        with:
+          repository: paritytech/polkadot
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+          path: polkadot
+
+      - name: Run srtool info
+        env:
+          PACKAGE: polkadot-runtime
+        working-directory: polkadot
+        run: |
+          docker run --rm -i \
+            -e PACKAGE=$PACKAGE \
+            -v "${PWD}":/build \
+            ${IMG}:${TAG} info
+
+      - name: Run srtool build
+        id: srtool_build
+        env:
+          PACKAGE: polkadot-runtime
+        working-directory: polkadot
+        run: |
+          CMD="docker run --rm -i \
+            -e PACKAGE=$PACKAGE \
+            -v ${PWD}:/build \
+            ${IMG}:${TAG} build --app --json"
+          echo ::debug::build::docker_run $CMD
+          stdbuf -oL $CMD | {
+            while IFS= read -r line
+            do
+              echo ║ $line
+              JSON="$line"
+            done
+
+            echo ::set-output name=json::$JSON
+            echo $JSON | jq .
+
+            WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
+            echo ::set-output name=wasm::$WASM
+
+            Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
+            echo ::set-output name=wasm_compressed::$Z_WASM
+          }
+
+      - name: Summary
+        run: |
+          echo $JSON | jq | tee polkadot-srtool-digest.json
+          echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
+          echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+
+      - name: Archive Artifacts for polkadot
+        uses: actions/upload-artifact@v2
+        with:
+          name: polkadot-runtime
+          path: |
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            polkadot-srtool-digest.json

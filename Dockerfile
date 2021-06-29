@@ -10,7 +10,7 @@ ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
 
 RUN mkdir -p /cargo-home /rustup-home /srtool/templates
-WORKDIR /build
+WORKDIR /tmp
 ENV RUSTUP_HOME="/rustup-home"
 ENV CARGO_HOME="/cargo-home"
 ENV DEBIAN_FRONTEND=noninteractive
@@ -52,6 +52,6 @@ COPY VERSION /srtool/
 COPY RUSTC_VERSION /srtool/
 
 VOLUME [ "/build", "/cargo-home", "/out" ]
-WORKDIR /srtool
+WORKDIR /build
 
 CMD ["/srtool/build"]

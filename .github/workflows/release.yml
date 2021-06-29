@@ -1,0 +1,14 @@
+name: Release
+on:
+  push:
+    tags:
+      - "*"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: todo
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo todo
