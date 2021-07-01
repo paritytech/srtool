@@ -52,6 +52,6 @@ COPY VERSION /srtool/
 COPY RUSTC_VERSION /srtool/
 
 VOLUME [ "/build", "/cargo-home", "/out" ]
-WORKDIR /build
+WORKDIR /srtool
 
 CMD ["/srtool/build"]
