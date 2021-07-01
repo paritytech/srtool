@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-VERSION=`cat VERSION`
-RUSTC_VERSION=`cat RUSTC_VERSION`
+VERSION=`cat /srtool/VERSION`
+RUSTC_VERSION=`cat /srtool/RUSTC_VERSION`
 
 jq -n $@ \
     --arg name srtool \
