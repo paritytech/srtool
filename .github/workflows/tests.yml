@@ -30,7 +30,22 @@ jobs:
 
           docker --version
           docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $IMG:$TAG .
-          docker run -t --rm $IMG:$TAG version
+
+      - name: Check the version
+        env:
+          IMG: paritytech/srtool
+        run: |
+          VERSION=$(docker run -t --rm $IMG:$TAG version -cM)
+          if [[ \
+            $( echo $VERSION | jq .name -cMr | wc -c ) -le 5 ||
+            $( echo $VERSION | jq .version -cMr | wc -c ) -le 5 ||
+            $( echo $VERSION | jq .rustc -cMr | wc -c ) -le 5 \
+            ]] ; then
+            echo "Invalid version output"
+            exit 1
+          else
+            echo $VERSION
+          fi
 
       - name: Check out Polkadot
         uses: actions/checkout@v2
@@ -45,10 +60,17 @@ jobs:
           PACKAGE: polkadot-runtime
         working-directory: polkadot
         run: |
-          docker run --rm -i \
+          INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
             -v "${PWD}":/build \
-            ${IMG}:${TAG} info
+            ${IMG}:${TAG} info -cM)
+
+          if [ $( echo $INFO | jq .src -r ) != "git"  ] ; then
+            echo Invalid info output, got $( echo $INFO | jq .src -r )
+            exit 1
+          else
+            echo $INFO
+          fi
 
       - name: Run srtool build
         id: srtool_build
@@ -69,6 +91,8 @@ jobs:
             done
 
             echo ::set-output name=json::$JSON
+            echo "JSON=$JSON" >> $GITHUB_ENV
+
             echo $JSON | jq .
 
             WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
@@ -80,7 +104,7 @@ jobs:
 
       - name: Summary
         run: |
-          echo $JSON | jq | tee polkadot-srtool-digest.json
+          echo $JSON | jq . | tee polkadot-srtool-digest.json
           echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
 
