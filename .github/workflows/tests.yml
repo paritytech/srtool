@@ -13,6 +13,7 @@ jobs:
   build:
     name: Build Docker image
     runs-on: ubuntu-latest
+    continue-on-error: false
     steps:
       - uses: actions/checkout@v2
 
@@ -46,6 +47,7 @@ jobs:
   common:
     runs-on: ubuntu-latest
     needs: build
+    continue-on-error: false
     steps:
       - uses: actions/download-artifact@v2
 
@@ -73,6 +75,7 @@ jobs:
   polkadot:
     runs-on: ubuntu-latest
     needs: build
+    continue-on-error: false
     strategy:
       fail-fast: false
       matrix:
@@ -118,6 +121,182 @@ jobs:
         run: |
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
+            -v ${PWD}:/build \
+            srtool build --app --json"
+          echo ::debug::build::docker_run $CMD
+          stdbuf -oL $CMD | {
+            while IFS= read -r line
+            do
+              echo ║ $line
+              JSON="$line"
+            done
+
+            echo ::set-output name=json::$JSON
+            echo "JSON=$JSON" >> $GITHUB_ENV
+
+            echo $JSON | jq .
+
+            WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
+            echo ::set-output name=wasm::$WASM
+
+            Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
+            echo ::set-output name=wasm_compressed::$Z_WASM
+          }
+
+      - name: Summary for ${{ matrix.chain }}
+        run: |
+          echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+          echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
+          echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+
+      - name: Archive Artifacts for ${{ matrix.chain }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.chain }}-runtime
+          path: |
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ matrix.chain }}-srtool-digest.json
+
+  cumulus:
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        chain: ["statemine", "statemint", "westmint", "rococo", "shell"]
+    steps:
+      - uses: actions/download-artifact@v2
+
+      - name: Load Docker image
+        run: |
+          docker load -i srtool-docker-image/srtool.tar.gz
+          docker images --digests
+
+      - name: Check out the Cumulus repo
+        uses: actions/checkout@v2
+        with:
+          repository: paritytech/cumulus
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+          path: cumulus
+
+      - name: Run srtool info
+        env:
+          PACKAGE: ${{ matrix.chain }}-runtime
+        working-directory: cumulus
+        run: |
+          INFO=$(docker run --rm -i \
+            -e PACKAGE=$PACKAGE \
+            -e RUNTIME_DIR=polkadot-parachains/${{ matrix.chain }} \
+            -v "${PWD}":/build \
+            srtool info -cM)
+
+          if [ $( echo $INFO | jq .src -r ) != "git"  ] ; then
+            echo Invalid info output, got $( echo $INFO | jq .src -r )
+            exit 1
+          else
+            echo $INFO
+          fi
+
+      - name: Run srtool build for ${{ matrix.chain }}
+        id: srtool_build
+        env:
+          PACKAGE: ${{ matrix.chain }}-runtime
+        working-directory: cumulus
+        run: |
+          CMD="docker run --rm -i \
+            -e PACKAGE=$PACKAGE \
+            -e RUNTIME_DIR=polkadot-parachains/${{ matrix.chain }} \
+            -v ${PWD}:/build \
+            srtool build --app --json"
+          echo ::debug::build::docker_run $CMD
+          stdbuf -oL $CMD | {
+            while IFS= read -r line
+            do
+              echo ║ $line
+              JSON="$line"
+            done
+
+            echo ::set-output name=json::$JSON
+            echo "JSON=$JSON" >> $GITHUB_ENV
+
+            echo $JSON | jq .
+
+            WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
+            echo ::set-output name=wasm::$WASM
+
+            Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
+            echo ::set-output name=wasm_compressed::$Z_WASM
+          }
+
+      - name: Summary for ${{ matrix.chain }}
+        run: |
+          echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+          echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
+          echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+
+      - name: Archive Artifacts for ${{ matrix.chain }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.chain }}-runtime
+          path: |
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ matrix.chain }}-srtool-digest.json
+
+  bridges:
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        chain: ["millau", "rialto"]
+    steps:
+      - uses: actions/download-artifact@v2
+
+      - name: Load Docker image
+        run: |
+          docker load -i srtool-docker-image/srtool.tar.gz
+          docker images --digests
+
+      - name: Check out the Bridges repo
+        uses: actions/checkout@v2
+        with:
+          repository: paritytech/parity-bridges-common
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+          path: bridges
+
+      - name: Run srtool info
+        env:
+          PACKAGE: ${{ matrix.chain }}-runtime
+        working-directory: bridges
+        run: |
+          INFO=$(docker run --rm -i \
+            -e PACKAGE=$PACKAGE \
+            -e RUNTIME_DIR=bin/${{ matrix.chain }}/runtime \
+            -v "${PWD}":/build \
+            srtool info -cM)
+
+          if [ $( echo $INFO | jq .src -r ) != "git"  ] ; then
+            echo Invalid info output, got $( echo $INFO | jq .src -r )
+            exit 1
+          else
+            echo $INFO
+          fi
+
+      - name: Run srtool build for ${{ matrix.chain }}
+        id: srtool_build
+        env:
+          PACKAGE: ${{ matrix.chain }}-runtime
+        working-directory: bridges
+        run: |
+          CMD="docker run --rm -i \
+            -e PACKAGE=$PACKAGE \
+            -e RUNTIME_DIR=bin/${{ matrix.chain }}/runtime \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
