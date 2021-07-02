@@ -11,24 +11,18 @@ on:
 
 jobs:
   build:
-    name: Build Docker image
+    name: Build Srtool Docker image
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
       - uses: actions/checkout@v2
 
       - name: Build image
-        # env:
-        #   IMG: paritytech/srtool
         run: |
           SRTOOL_VERSION=$(cat VERSION)
           RUSTC_VERSION=$(cat RUSTC_VERSION)
-          # TAG=$RUSTC_VERSION-$SRTOOL_VERSION
-          # echo "IMG=$IMG" >> $GITHUB_ENV
           echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
           echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
-          # echo "TAG=$TAG" >> $GITHUB_ENV
-
           docker --version
           docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t srtool .
           docker run -t --rm srtool version -cM
