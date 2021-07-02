@@ -93,10 +93,12 @@ jobs:
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
           INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
+            -e RUNTIME_DIR=$RUNTIME_DIR \
             -v "${PWD}":/build \
             srtool info -cM)
 
@@ -111,10 +113,12 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
+            -e RUNTIME_DIR=$RUNTIME_DIR \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
@@ -145,11 +149,13 @@ jobs:
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@v2
+        env:
+          RUNTIME_DIR: runtime/${{ matrix.chain }}
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
+            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
 
   cumulus:
@@ -179,11 +185,12 @@ jobs:
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: polkadot-parachains/${{ matrix.chain }}
         working-directory: cumulus
         run: |
           INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
-            -e RUNTIME_DIR=polkadot-parachains/${{ matrix.chain }} \
+            -e RUNTIME_DIR=$RUNTIME_DIR \
             -v "${PWD}":/build \
             srtool info -cM)
 
@@ -198,11 +205,12 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: polkadot-parachains/${{ matrix.chain }}
         working-directory: cumulus
         run: |
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
-            -e RUNTIME_DIR=polkadot-parachains/${{ matrix.chain }} \
+            -e RUNTIME_DIR=$RUNTIME_DIR \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
@@ -233,11 +241,13 @@ jobs:
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@v2
+        env:
+          RUNTIME_DIR: polkadot-parachains/${{ matrix.chain }}
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
+            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
 
   bridges:
@@ -267,11 +277,12 @@ jobs:
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
         working-directory: bridges
         run: |
           INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
-            -e RUNTIME_DIR=bin/${{ matrix.chain }}/runtime \
+            -e RUNTIME_DIR=$RUNTIME_DIR \
             -v "${PWD}":/build \
             srtool info -cM)
 
@@ -286,11 +297,12 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
         working-directory: bridges
         run: |
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
-            -e RUNTIME_DIR=bin/${{ matrix.chain }}/runtime \
+            -e RUNTIME_DIR=$RUNTIME_DIR \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
@@ -321,9 +333,11 @@ jobs:
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@v2
+        env:
+          RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
+            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
