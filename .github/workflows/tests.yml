@@ -35,6 +35,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: srtool-docker-image
+          retention-days: 3
           path: |
             srtool.tar.gz
 

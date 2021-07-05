@@ -2,13 +2,134 @@ name: Release
 on:
   push:
     tags:
-      - "*"
-
-  workflow_dispatch:
+      - "v*"
 
 jobs:
   build:
-    name: todo
+    name: Build Srtool Docker image
     runs-on: ubuntu-latest
+    continue-on-error: false
     steps:
-      - run: echo todo
+      - uses: actions/checkout@v2
+
+      - name: Build image
+        run: |
+          RUSTC_VERSION=$(cat RUSTC_VERSION)
+          echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
+          docker --version
+          docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t srtool .
+          docker run -t --rm srtool version -cM
+
+      - name: Export docker image
+        run: |
+          docker save srtool | gzip > srtool.tar.gz
+
+      - name: Archive Image
+        uses: actions/upload-artifact@v2
+        with:
+          name: srtool-docker-image
+          retention-days: 3
+          path: |
+            srtool.tar.gz
+
+  create_draft:
+    needs: ["build"]
+    name: Create Draft
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.create-release.outputs.html_url }}
+      asset_upload_url: ${{ steps.create-release.outputs.upload_url }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get Release Version
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+
+          SRTOOL_VERSION=$(cat VERSION)
+          RUSTC_VERSION=$(cat RUSTC_VERSION)
+          echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
+          echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
+          echo "REPO=chevdor/srtool" >> $GITHUB_ENV
+      - uses: actions/download-artifact@v2
+
+      - name: Install tera-cli
+        run: |
+          URL=https://github.com/chevdor/tera-cli/releases/download/v0.1.3/tera-cli_linux_amd64.deb
+          wget $URL
+          sudo dpkg -i tera-cli_linux_amd64.deb
+          tera --version
+
+      - name: Generate changelog
+        id: change_log
+        run: |
+          LAST_TAG=$(git describe --tags --abbrev=0 ${{ env.RELEASE_VERSION }}^ )
+          JSON=$(git log $LAST_TAG..HEAD \
+            --pretty=format:'{ "commit": "%H", "short_sha": "%h", "author": "%an", "date": "%ad", "message": "%s"},' \
+            $@ | \
+            perl -pe 'BEGIN{print "{ \"since\": \"'${LAST_TAG}'\",  \"commits\": ["}; END{print "]}"}' | \
+            perl -pe 's/},]/}]/')
+          echo $JSON | tera --template templates/changelog.md --stdin > changelog.md
+
+      - name: Render release notes
+        # env:
+          # REPO: ${{ env.REPO }}
+        run: |
+          export CHANGELOG=$(cat changelog.md)
+          export REPO=$REPO
+          export TAG=${{ env.RUSTC_VERSION }}-${{ env.SRTOOL_VERSION }}
+          tera --env --env-only --template templates/release.md > RELEASE_NOTES.md
+
+      - name: Create Release
+        id: create-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          release_name: Srtool ${{ env.RUSTC_VERSION }}-${{ env.SRTOOL_VERSION }} (${{ env.SHORT_SHA }})
+          body_path: ./RELEASE_NOTES.md
+          draft: true
+
+  publish-docker-image:
+    runs-on: ubuntu-latest
+    needs: ["create_draft"]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get Release Version
+        run: |
+          echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
+
+      - uses: actions/download-artifact@v2
+
+      - name: checks
+        run: |
+          echo Check that we have all we need:
+          echo RUSTC_VERSION=$RUSTC_VERSION
+          echo SRTOOL_VERSION=$SRTOOL_VERSION
+          echo REP: $$REPO
+          TAG=$RUSTC_VERSION-$SRTOOL_VERSION
+          echo TAG: $TAG
+
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # - name: Extract metadata (tags, labels) for Docker
+      #   id: meta
+      #   uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      #   with:
+      #     images: my-docker-hub-namespace/my-docker-hub-repository
+
+      # - name: Build and push Docker image
+      #   uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ steps.meta.outputs.tags }}
+      #     labels: ${{ steps.meta.outputs.labels }}
