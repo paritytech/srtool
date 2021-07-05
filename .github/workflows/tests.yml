@@ -51,8 +51,6 @@ jobs:
           docker images --digests
 
       - name: Check the version
-        env:
-          IMG: paritytech/srtool
         run: |
           VERSION=$(docker run -t --rm srtool version -cM)
           if [[ \

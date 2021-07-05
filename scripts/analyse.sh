@@ -1,18 +1,15 @@
 #!/usr/bin/env bash
 
-# takes the wasm path as input and provide all infos related to it
-
 WASM=$1
+WASM_FULLPATH=/build/$WASM
 
-# echo WASM: $WASM
-
-SZ=`du -sb $WASM | awk '{print $1}'`
-PROP=`subwasm -j info $WASM | jq -r .proposal_hash`
-MULTIHASH=`subwasm -j info $WASM | jq -r .ipfs_hash`
-SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
-TMSP=$(date --utc +%FT%TZ -d @$(stat -c "%Y" $WASM))
-BLAKE2_256=`subwasm -j info $WASM | jq -r .blake2_256`
-SUBWASM=`subwasm -j info $WASM`
+SZ=`du -sb $WASM_FULLPATH | awk '{print $1}'`
+PROP=`subwasm -j info $WASM_FULLPATH | jq -r .proposal_hash`
+MULTIHASH=`subwasm -j info $WASM_FULLPATH | jq -r .ipfs_hash`
+SHA256=0x`shasum -a 256 $WASM_FULLPATH | awk '{print $1}'`
+TMSP=$(date --utc +%FT%TZ -d @$(stat -c "%Y" $WASM_FULLPATH))
+BLAKE2_256=`subwasm -j info $WASM_FULLPATH | jq -r .blake2_256`
+SUBWASM=`subwasm -j info $WASM_FULLPATH`
 
 JSON=$( jq -n \
     --arg tmsp "$TMSP" \
