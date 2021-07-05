@@ -1,5 +1,5 @@
 export RUSTC_VERSION:=`cat RUSTC_VERSION`
-export REPO:="chevdor/srtool"
+export REPO:="paritytech/srtool"
 export TAG:=`cat VERSION`
 
 build:

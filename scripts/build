@@ -10,7 +10,7 @@ cd /build
 
 export VERSION=`cat /srtool/VERSION || echo 0.0.0`
 export GEN="srtool v$VERSION"
-export LATEST_VERSION=$(curl -s https://gitlab.com/chevdor/srtool/raw/master/VERSION)
+export LATEST_VERSION=$(curl -s https://github.com/paritytech/srtool/raw/master/VERSION)
 
 vercomp $LATEST_VERSION $VERSION
 

@@ -1,4 +1,4 @@
-:name: chevdor/srtool
+:name: paritytech/srtool
 :rsversion: 1.53.0
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
@@ -10,9 +10,12 @@ image::resources/srtool-docker_512px.png[align=center, width=256px]
 
 == Intro
 
-srtool is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development.
+`srtool` is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development. The project was initially developped from https://gitlab.com/chevdor[my Gitlab account].
+The project now moved to Github under the https://www.github.com/paritytech[Parity Technologies] organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
 
-It especially helps with building and verifying Wasm Runtime Blobs. The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
+The last version hosted on Gitlab has been built using Rust Stable 1.53.0. It is tagged as v0.9.14 and there is no plan on updating the Gitlab repository further. New versions will be available from https://www.github.com/paritytech/srtool. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The https://github.com/chevdor/srtool-actions[srtool-actions] will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+
+`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
 
 There are a few other helpers you may want to chcek out when using `srtool`:
 
@@ -23,7 +26,7 @@ There are a few other helpers you may want to chcek out when using `srtool`:
 
 image::resources/Frame 1_256.png[align=center]
 
-`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or parachain.
+`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or a parachain.
 
 You may also want to have a look at https://github.com/chevdor/subwasm[subwasm] as it is now part of the tooling included in `srtool`. `subwasm` can also be used independantly upon building your wasm with `srtool`.
 
@@ -31,11 +34,11 @@ You may also want to have a look at https://github.com/chevdor/subwasm[subwasm] 
 
 === Install the srtool-cli
 
-Since the `srtool-cli` (https://gitlab.com/chevdor/srtool-cli) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
+Since the `srtool-cli` (https://github.com/chevdor/srtool-cli) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
 
-The `srtool-cli` is a command line utility written in Rust, you can read more in https://gitlab.com/chevdor/srtool-cli[its repository], the installation process is described in more details there. In short:
+The `srtool-cli` is a command line utility written in Rust, you can read more in https://github.com/chevdor/srtool-cli[its repository], the installation process is described in more details there. In short:
 
-    cargo install --git https://gitlab.com/chevdor/srtool-cli
+    cargo install --git https://github.com/chevdor/srtool-cli
 
 === Using an alias
 

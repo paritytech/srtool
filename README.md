@@ -4,9 +4,12 @@
 
 ## Intro
 
-srtool is a collection of dockerized tools helping with [Substrate](https://substrate.dev) & [Polkadot](https://polkadot.network) Runtime development.
+`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.dev) & [Polkadot](https://polkadot.network) Runtime development. The project was initially developped from [my Gitlab account](https://gitlab.com/chevdor).
+The project now moved to Github under the [Parity Technologies](https://www.github.com/paritytech) organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
 
-It especially helps with building and verifying Wasm Runtime Blobs. The Docker image is `chevdor/srtool`. You can find it at <https://hub.docker.com/r/chevdor/srtool>.
+The last version hosted on Gitlab has been built using Rust Stable 1.53.0. It is tagged as v0.9.14 and there is no plan on updating the Gitlab repository further. New versions will be available from <https://www.github.com/paritytech/srtool>. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+
+`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is `paritytech/srtool`. You can find it at <https://hub.docker.com/r/paritytech/srtool>.
 
 There are a few other helpers you may want to chcek out when using `srtool`:
 
@@ -20,7 +23,7 @@ There are a few other helpers you may want to chcek out when using `srtool`:
 
 ![Frame 1 256](resources/Frame%201_256.png)
 
-`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or parachain.
+`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or a parachain.
 
 You may also want to have a look at [subwasm](https://github.com/chevdor/subwasm) as it is now part of the tooling included in `srtool`. `subwasm` can also be used independantly upon building your wasm with `srtool`.
 
@@ -28,11 +31,11 @@ You may also want to have a look at [subwasm](https://github.com/chevdor/subwasm
 
 ### Install the srtool-cli
 
-Since the `srtool-cli` (<https://gitlab.com/chevdor/srtool-cli>) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
+Since the `srtool-cli` (<https://github.com/chevdor/srtool-cli>) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
 
-The `srtool-cli` is a command line utility written in Rust, you can read more in [its repository](https://gitlab.com/chevdor/srtool-cli), the installation process is described in more details there. In short:
+The `srtool-cli` is a command line utility written in Rust, you can read more in [its repository](https://github.com/chevdor/srtool-cli), the installation process is described in more details there. In short:
 
-    cargo install --git https://gitlab.com/chevdor/srtool-cli
+    cargo install --git https://github.com/chevdor/srtool-cli
 
 ### Using an alias
 
@@ -40,7 +43,7 @@ This method is legacy and deprecated, prefer the `srtool-cli` utility mentioned 
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
-        export RUSTC_VERSION=1.53.0; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+        export RUSTC_VERSION=1.53.0; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home paritytech/srtool:$RUSTC_VERSION'
 
 Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will **always** check the kusama runtime. If you need more, check the next chapter.
 
@@ -271,12 +274,12 @@ If you are using `zsh` and `zinit`, you may benefit from using the srtool snippe
 To do so, add the following to your `zshconfig`:
 
     MY_REPO="https://gitlab.com/chevdor/dotfiles/-/raw/master/zsh-plugins"
-    for plugin (git cargo srtool); { 
+    for plugin (git cargo srtool); {
       SNIPPET="$MY_REPO/$plugin/$plugin.plugin.zsh"
       zinit snippet $SNIPPET
     }
 
--   Chose the snippets you want, the one called `srtool` here is the interesting one.
+- Chose the snippets you want, the one called `srtool` here is the interesting one.
 
 After that, make sure to:
 - upgrade your snippets: `zplugin update --all`
@@ -292,7 +295,7 @@ First you may want to double check what rustc versions are available as you will
 
 So say you want to build a builder for rustc 1.53.0:
 
-        RUSTC_VERSION=1.53.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t chevdor/srtool:$RUSTC_VERSION .
+        RUSTC_VERSION=1.53.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
 
 ## User Scripts
 

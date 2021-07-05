@@ -4,9 +4,7 @@ First of all, make sure you are in your Substrate/Polkadot repo:
 
     cd /my/project/substrate
 
-Read the documentation at https://gitlab.com/chevdor/srtool
-First set the srtool alias (see the README at the link above).
-
+Read the documentation at https://github.com/paritytech/srtool for more details.
 You may use one of the following commands:
     $ export PACKAGE=kusama-runtime
     $ srtool version
