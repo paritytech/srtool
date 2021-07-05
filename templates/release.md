@@ -1,5 +1,5 @@
 # Description
 
-The Docker image is `{{ REPO }}:{{ TAG }}`
+The latest Docker image is `{{ REPO }}:{{ TAG }}`.
 
 {{ CHANGELOG }}

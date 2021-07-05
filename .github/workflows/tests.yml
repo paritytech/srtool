@@ -31,24 +31,28 @@ jobs:
         run: |
           docker save srtool | gzip > srtool.tar.gz
 
-      - name: Archive Image
-        uses: actions/upload-artifact@v2
+      - name: Cache the image
+        uses: actions/cache@v2
         with:
-          name: srtool-docker-image
-          retention-days: 3
+          key: srtool-docker-image
           path: |
             srtool.tar.gz
-
+            
   common:
     runs-on: ubuntu-latest
     needs: build
     continue-on-error: false
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Cache the image
+        uses: actions/cache@v2
+        with:
+          key: srtool-docker-image
+          path: |
+            srtool.tar.gz
 
       - name: Load Docker image
         run: |
-          docker load -i srtool-docker-image/srtool.tar.gz
+          docker load -i srtool.tar.gz
           docker images --digests
 
       - name: Check the version
@@ -74,11 +78,17 @@ jobs:
       matrix:
         chain: ["polkadot", "kusama", "westend"]
     steps:
-      - uses: actions/download-artifact@v2
+      # - uses: actions/download-artifact@v2
+      - name: Cache the image
+        uses: actions/cache@v2
+        with:
+          key: srtool-docker-image
+          path: |
+            srtool.tar.gz
 
       - name: Load Docker image
         run: |
-          docker load -i srtool-docker-image/srtool.tar.gz
+          docker load -i srtool.tar.gz
           docker images --digests
 
       - name: Check out the Polkadot repo
@@ -166,11 +176,17 @@ jobs:
       matrix:
         chain: ["statemine", "statemint", "westmint", "rococo", "shell"]
     steps:
-      - uses: actions/download-artifact@v2
+      # - uses: actions/download-artifact@v2
+      - name: Cache the image
+        uses: actions/cache@v2
+        with:
+          key: srtool-docker-image
+          path: |
+            srtool.tar.gz
 
       - name: Load Docker image
         run: |
-          docker load -i srtool-docker-image/srtool.tar.gz
+          docker load -i srtool.tar.gz
           docker images --digests
 
       - name: Check out the Cumulus repo
@@ -258,11 +274,17 @@ jobs:
       matrix:
         chain: ["millau", "rialto"]
     steps:
-      - uses: actions/download-artifact@v2
+      # - uses: actions/download-artifact@v2
+      - name: Cache the image
+        uses: actions/cache@v2
+        with:
+          key: srtool-docker-image
+          path: |
+            srtool.tar.gz
 
       - name: Load Docker image
         run: |
-          docker load -i srtool-docker-image/srtool.tar.gz
+          docker load -i srtool.tar.gz
           docker images --digests
 
       - name: Check out the Bridges repo
