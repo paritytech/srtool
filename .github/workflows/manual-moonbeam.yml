@@ -29,7 +29,7 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
-        uses: chevdor/srtool-actions@v0.2.0
+        uses: chevdor/srtool-actions@v0.3.0
         with:
           chain: ${{ matrix.chain }}
           tag: ${{ github.event.inputs.srtool_tag }}
