@@ -8,7 +8,7 @@ on:
         required: false
       ref:
         description: The ref to be used for the repo
-        default: shiden
+        default: production/shiden
         required: false
   schedule:
     - cron: "00 03 * * 1" # 3AM weekly on mondays
@@ -23,7 +23,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: PlasmNetwork/Plasm
+          repository: PlasmNetwork/Astar
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
           submodules: true
@@ -34,7 +34,6 @@ jobs:
         with:
           chain: ${{ matrix.chain }}
           tag: ${{ github.event.inputs.srtool_tag }}
-          runtime_dir: runtime/shiden-runtime
 
       - name: Summary
         run: |
