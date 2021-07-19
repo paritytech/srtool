@@ -16,9 +16,9 @@ ENV CARGO_HOME="/cargo-home"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Tooling
-ENV SUBWASM_VERSION=0.12.1
-ENV TERA_CLI_VERSION=0.1.3
-ENV TOML_CLI_VERSION=0.2.1
+ARG SUBWASM_VERSION=0.12.1
+ARG TERA_CLI_VERSION=0.1.3
+ARG TOML_CLI_VERSION=0.2.1
 
 # We first init as much as we can in the first layers
 COPY ./scripts/init.sh /srtool/
