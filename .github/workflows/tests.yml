@@ -20,6 +20,8 @@ jobs:
     continue-on-error: false
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Build image
         run: |
