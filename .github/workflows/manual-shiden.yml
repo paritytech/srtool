@@ -1,4 +1,8 @@
 name: Manual Build - Shiden
+
+env:
+  REF_FOR_SCHEDULE: production/shiden
+
 on:
   workflow_dispatch:
     inputs:
@@ -24,7 +28,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           repository: PlasmNetwork/Astar
-          ref: ${{ github.event.inputs.ref }}
+          ref: ${{ github.event.inputs.ref || env.REF_FOR_SCHEDULE }}
           fetch-depth: 0
           submodules: true
 
