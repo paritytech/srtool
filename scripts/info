@@ -10,7 +10,7 @@ PROFILE="${PROFILE:-release}"
 
 cd /build/
 
-if git describe --all > /dev/null 2>&1;
+if git describe --all > /dev/null 2>&1; then
     SRC='git'
     GIT_TAG=`git describe --tags --abbrev=0`
     GIT_COMMIT_REF=`git rev-parse HEAD`
