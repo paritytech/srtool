@@ -2,7 +2,11 @@ name: Build & Tests
 on:
   push:
     branches:
-      - "*"
+      - master
+    tags:
+      - "!v*"
+
+  pull_request:
 
   workflow_dispatch:
 
@@ -16,11 +20,14 @@ jobs:
     continue-on-error: false
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Build image
         run: |
           SRTOOL_VERSION=$(cat VERSION)
           RUSTC_VERSION=$(cat RUSTC_VERSION)
+          echo Building tag $RUSTC_VERSION:$SRTOOL_VERSION
           echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
           echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
           docker --version
@@ -34,7 +41,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
@@ -46,7 +53,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
@@ -81,7 +88,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
@@ -178,7 +185,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
@@ -275,7 +282,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 

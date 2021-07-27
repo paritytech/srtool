@@ -2,13 +2,22 @@
 
 VERSION=`cat /srtool/VERSION`
 RUSTC_VERSION=`cat /srtool/RUSTC_VERSION`
+SUBWASM_VERSION=$(subwasm --version | awk '{ print $2}')
+TERA_VERSION=$(tera --version | awk '{ print $2}')
+TOML_VERSION=$(toml --version | awk '{ print $2}')
 
 jq -n $@ \
     --arg name srtool \
     --arg version "$VERSION" \
     --arg rustc "$RUSTC_VERSION" \
+    --arg subwasm "$SUBWASM_VERSION" \
+    --arg tera "$TERA_VERSION" \
+    --arg toml "$TOML_VERSION" \
     '{
         name: $name,
         version: $version,
-        rustc: $rustc
+        rustc: $rustc,
+        subwasm: $subwasm,
+        tera: $tera,
+        toml: $toml
     }'

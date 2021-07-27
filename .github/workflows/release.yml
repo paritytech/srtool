@@ -27,7 +27,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
@@ -54,7 +54,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
@@ -101,7 +101,7 @@ jobs:
       - name: Cache the image
         uses: actions/cache@v2
         with:
-          key: srtool-docker-image
+          key: srtool-docker-image-${{ github.sha }}
           path: |
             srtool.tar.gz
 
