@@ -3,12 +3,16 @@ export REPO:="paritytech/srtool"
 export TAG:=`cat VERSION`
 
 _default:
-    just --list
+    just --choose --chooser "fzf +s -x --tac --cycle"
+
+cleanup:
+    docker system prune
 
 # Build the docker image
 build:
     #!/usr/bin/env bash
     echo Building $REPO:$RUSTC_VERSION
+    echo If you encounter issues, try running `just cleanup` and try building again.
     echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
     docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $REPO:$RUSTC_VERSION-$TAG .
 
