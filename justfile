@@ -5,6 +5,7 @@ export TAG:=`cat VERSION`
 _default:
     just --choose --chooser "fzf +s -x --tac --cycle"
 
+# Runs a docker system prune to ensure we have the resources to build the image
 cleanup:
     docker system prune
 
