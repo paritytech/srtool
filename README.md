@@ -43,7 +43,7 @@ This method is legacy and deprecated, prefer the `srtool-cli` utility mentioned 
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
-        export RUSTC_VERSION=1.54.0; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home paritytech/srtool:$RUSTC_VERSION'
+        export RUSTC_VERSION=1.53.0; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home paritytech/srtool:$RUSTC_VERSION'
 
 Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will **always** check the kusama runtime. If you need more, check the next chapter.
 
@@ -89,7 +89,7 @@ some times later …​
       GIT commit : 56b9e95a9b634695f59a7c699bc68a5cfb695f03
       GIT tag    : moonriver-genesis
       GIT branch : master
-      Rustc      : rustc 1.54.0-nightly (657bc0188 2021-05-31)
+      Rustc      : rustc 1.53.0-nightly (657bc0188 2021-05-31)
       Package    : moonriver-runtime
       Time       : 2021-06-15T17:44:58Z
     === Compact:
@@ -293,9 +293,9 @@ First you may want to double check what rustc versions are available as you will
 
     rustup check
 
-So say you want to build a builder for rustc 1.54.0:
+So say you want to build a builder for rustc 1.53.0:
 
-        RUSTC_VERSION=1.54.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
+        RUSTC_VERSION=1.53.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
 
 ## User Scripts
 
@@ -309,7 +309,7 @@ You can see the list of available scripts in the `/scripts` folder:
 
 -   `build`: Run the actual build
 
-The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.54.0 info -cM` shows a monochrome output on a single line.
+The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.53.0 info -cM` shows a monochrome output on a single line.
 
 ## Build your custom chain / parachain
 

@@ -36,4 +36,6 @@ md:
 
 # Show version
 info:
-    echo $RUSTC_VERSION
+    @echo RUSTC_VERSION=$RUSTC_VERSION
+    @echo REPO=$REPO
+    @echo TAG=$TAG
