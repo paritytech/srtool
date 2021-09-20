@@ -16,8 +16,8 @@ ENV CARGO_HOME="/cargo-home"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Tooling
-ARG SUBWASM_VERSION=0.13.2
-ARG TERA_CLI_VERSION=0.1.3
+ARG SUBWASM_VERSION=0.14.0
+ARG TERA_CLI_VERSION=0.2.0
 ARG TOML_CLI_VERSION=0.2.1
 
 # We first init as much as we can in the first layers
