@@ -11,21 +11,21 @@ cleanup:
 
 # Build the docker image
 build:
-    echo Building $REPO:$RUSTC_VERSION
-    echo If you encounter issues, try running `just cleanup` and try building again.
-    echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
+    @echo Building $REPO:$RUSTC_VERSION
+    @echo If you encounter issues, try running `just cleanup` and try building again.
+    @echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
     docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $REPO:$RUSTC_VERSION-$TAG .
 
 # Build and Publish the docker image
 publish: build
-    echo Pushing docker image $REPO:$RUSTC_VERSION
+    @echo Pushing docker image $REPO:$RUSTC_VERSION
     docker push $REPO:$RUSTC_VERSION
 
 # Set a git tag
 tag:
-    echo Tagging version $TAG
-    git tag $TAG -f
-    git tag
+    @echo Tagging version $TAG
+    @git tag v$TAG -f
+    @git tag | sort --version-sort -r
 
 # Generate the readme as .md
 md:
