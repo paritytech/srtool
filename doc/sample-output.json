@@ -1,11 +1,11 @@
 {
-	"gen": "srtool v0.9.13",
+	"gen": "srtool v{version}",
 	"src": "git",
 	"version": "1.0.0",
 	"commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
 	"tag": "statemine-v1.0.0",
 	"branch": "wk-gh-actions",
-	"rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+	"rustc": "rustc {rsversion} (...)",
 	"pkg": "statemine-runtime",
 	"tmsp": "2021-06-22T18:08:50Z",
 	"size": "1538747",
@@ -16,7 +16,7 @@
 	"info": {
 	  "generator": {
 		"name": "srtool",
-		"version": "0.9.13"
+		"version": "{version}"
 	  },
 	  "src": "git",
 	  "version": "1.0.0",
@@ -25,7 +25,7 @@
 		"tag": "statemine-v1.0.0",
 		"branch": "wk-gh-actions"
 	  },
-	  "rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+	  "rustc": "rustc {rsversion} (...)",
 	  "pkg": "statemine-runtime",
 	  "profile": "release"
 	},

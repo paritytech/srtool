@@ -1,17 +1,32 @@
 # Substrate Runtime Toolbox: srtool
 
-![srtool docker 512px](resources/srtool-docker_512px.png)
+![srtool docker 128px](resources/srtool-docker_128px.png)
 
 ## Intro
 
-`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.dev) & [Polkadot](https://polkadot.network) Runtime development. The project was initially developped from [my Gitlab account](https://gitlab.com/chevdor).
-The project now moved to Github under the [Parity Technologies](https://www.github.com/paritytech) organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
+`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.dev) & [Polkadot](https://polkadot.network) Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
 
-The last version hosted on Gitlab has been built using Rust Stable 1.53.0. It is tagged as v0.9.14 and there is no plan on updating the Gitlab repository further. New versions will be available from <https://www.github.com/paritytech/srtool>. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+`srtool` can run on various Operating Systems supporting Docker. That includes Linux, MacOS and Windows.
 
-`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is `paritytech/srtool`. You can find it at <https://hub.docker.com/r/paritytech/srtool>.
+`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is named `paritytech/srtool`. You can find the project’s repository at <https://hub.docker.com/r/paritytech/srtool>.
 
-There are a few other helpers you may want to chcek out when using `srtool`:
+## Docker image naming scheme
+
+The Docker images are tagged with both the rustc version used internally as well as the version of the build script.
+
+You will find for instance the following:
+
+-   `paritytech/srtool:1.53.0-0.9.16`
+
+-   `paritytech/srtool:1.53.0-0.9.17`
+
+-   `paritytech/srtool:1.53.0`
+
+The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.53.0` is the same image than `paritytech/srtool:1.53.0-0.9.17`.
+
+## Related tools
+
+There are a few other helpers you may want to check out when using `srtool`:
 
 -   [srtool-cli](https://github.com/chevdor/srtool-cli): This Rust executable supersedes the preiviously recommended alias solution. It brings many benefits and is moreover much easier to use.
 
@@ -23,19 +38,24 @@ There are a few other helpers you may want to chcek out when using `srtool`:
 
 ![Frame 1 256](resources/Frame%201_256.png)
 
-`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or a parachain.
+`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit the runtime of a chain or a parachain.
 
 You may also want to have a look at [subwasm](https://github.com/chevdor/subwasm) as it is now part of the tooling included in `srtool`. `subwasm` can also be used independantly upon building your wasm with `srtool`.
+
+## History
+
+The project was initially developped from <https://gitlab.com/chevdor>.
+It now moved to Github under the [Parity Technologies](https://www.github.com/paritytech) organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
+
+The last version hosted on Gitlab has been built using Rust Stable 1.53.0. It is tagged as v0.9.17 and there is no plan on updating the Gitlab repository further. New versions will be available from <https://www.github.com/paritytech/srtool>. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
 
 ## Install
 
 ### Install the srtool-cli
 
-Since the `srtool-cli` (<https://github.com/chevdor/srtool-cli>) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
+Since the `srtool-cli` (<https://github.com/chevdor/srtool-cli>) exists, there is no reason to be using an alias anymore. Using the cli over the alias brings many advantages and will save you time.
 
-The `srtool-cli` is a command line utility written in Rust, you can read more in [its repository](https://github.com/chevdor/srtool-cli), the installation process is described in more details there. In short:
-
-    cargo install --git https://github.com/chevdor/srtool-cli
+The `srtool-cli` is a command line utility written in Rust, you can read more at [github.com/chevdor/srtool-cli](https://github.com/chevdor/srtool-cli), the installation process is described in more details there.
 
 ### Using an alias
 
@@ -69,11 +89,11 @@ Invoking `srtool build` with:
 
     $ srtool build
 
-Will output something that looks like this:
+will output something that looks like this:
 
-        🧰 Substrate Runtime Toolbox - srtool v0.9.11 🧰
+        🧰 Substrate Runtime Toolbox - srtool v0.9.17 🧰
                   - by Chevdor -
-        🏗  Building polkadot-runtime as release using rustc 1.49.0-nightly (fd542592f 2020-10-26)
+        🏗  Building polkadot-runtime as release using rustc 1.53.0
         ⏳ That can take a little while, be patient... subsequent builds will be faster.
         Since you have to wait a little, you may want to learn more about Substrate runtimes:
         https://substrate.dev/docs/en/#architecture
@@ -84,12 +104,12 @@ some times later …​
 
     ✨ Your Substrate WASM Runtime is ready! ✨
     Summary:
-      Generator  : srtool v0.9.12
+      Generator  : srtool v0.9.17
       Version    : null
       GIT commit : 56b9e95a9b634695f59a7c699bc68a5cfb695f03
       GIT tag    : moonriver-genesis
       GIT branch : master
-      Rustc      : rustc 1.54.0-nightly (657bc0188 2021-05-31)
+      Rustc      : rustc 1.53.0-nightly (657bc0188 2021-05-31)
       Package    : moonriver-runtime
       Time       : 2021-06-15T17:44:58Z
     === Compact:
@@ -114,13 +134,13 @@ If you prefer a json output, srtool has you covered:
 Will give you such an output:
 
     {
-        "gen": "srtool v0.9.13",
+        "gen": "srtool v0.9.17",
         "src": "git",
         "version": "1.0.0",
         "commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
         "tag": "statemine-v1.0.0",
         "branch": "wk-gh-actions",
-        "rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+        "rustc": "rustc 1.53.0 (...)",
         "pkg": "statemine-runtime",
         "tmsp": "2021-06-22T18:08:50Z",
         "size": "1538747",
@@ -131,7 +151,7 @@ Will give you such an output:
         "info": {
           "generator": {
             "name": "srtool",
-            "version": "0.9.13"
+            "version": "0.9.17"
           },
           "src": "git",
           "version": "1.0.0",
@@ -140,7 +160,7 @@ Will give you such an output:
             "tag": "statemine-v1.0.0",
             "branch": "wk-gh-actions"
           },
-          "rustc": "rustc 1.55.0-nightly (150fad30e 2021-06-19)",
+          "rustc": "rustc 1.53.0 (...)",
           "pkg": "statemine-runtime",
           "profile": "release"
         },
@@ -274,12 +294,12 @@ If you are using `zsh` and `zinit`, you may benefit from using the srtool snippe
 To do so, add the following to your `zshconfig`:
 
     MY_REPO="https://gitlab.com/chevdor/dotfiles/-/raw/master/zsh-plugins"
-    for plugin (git cargo srtool); {
+    for plugin (git cargo srtool); { 
       SNIPPET="$MY_REPO/$plugin/$plugin.plugin.zsh"
       zinit snippet $SNIPPET
     }
 
-- Chose the snippets you want, the one called `srtool` here is the interesting one.
+-   Chose the snippets you want, the one called `srtool` here is the interesting one.
 
 After that, make sure to:
 - upgrade your snippets: `zplugin update --all`

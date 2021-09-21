@@ -1,11 +1,11 @@
 {
-	"gen": "srtool v0.9.15",
+	"gen": "srtool v{version}",
 	"src": "git",
 	"version": "0.9.7",
 	"commit": "5d35bac7408a4cb12a578764217d06f3920b36aa",
 	"tag": "v0.9.7-rc3",
 	"branch": "heads/v0.9.7-rc3",
-	"rustc": "rustc 1.53.0 (53cb7b09b 2021-06-17)",
+	"rustc": "rustc {rsversion} (...)",
 	"pkg": "polkadot-runtime",
 	"tmsp": "2021-06-29T16:12:59Z",
 	"size": "2093380",
@@ -16,7 +16,7 @@
 	"info": {
 	  "generator": {
 		"name": "srtool",
-		"version": "0.9.15"
+		"version": "{version}"
 	  },
 	  "src": "git",
 	  "version": "0.9.7",
@@ -25,7 +25,7 @@
 		"tag": "v0.9.7-rc3",
 		"branch": "heads/v0.9.7-rc3"
 	  },
-	  "rustc": "rustc 1.53.0 (53cb7b09b 2021-06-17)",
+	  "rustc": "rustc {rsversion} (...)",
 	  "pkg": "polkadot-runtime",
 	  "profile": "release"
 	},

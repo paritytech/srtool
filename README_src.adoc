@@ -1,23 +1,37 @@
 :name: paritytech/srtool
 :rsversion: 1.53.0
+:version: 0.9.17
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:
 
 = Substrate Runtime Toolbox: srtool
 
-image::resources/srtool-docker_512px.png[align=center, width=256px]
+image::resources/srtool-docker_128px.png[align=center, width=128px]
 
 == Intro
 
-`srtool` is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development. The project was initially developped from https://gitlab.com/chevdor[my Gitlab account].
-The project now moved to Github under the https://www.github.com/paritytech[Parity Technologies] organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
+`srtool` is a collection of dockerized tools helping with https://substrate.dev[Substrate] & https://polkadot.network[Polkadot] Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
 
-The last version hosted on Gitlab has been built using Rust Stable 1.53.0. It is tagged as v0.9.14 and there is no plan on updating the Gitlab repository further. New versions will be available from https://www.github.com/paritytech/srtool. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The https://github.com/chevdor/srtool-actions[srtool-actions] will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+`srtool` can run on various Operating Systems supporting Docker. That includes Linux, MacOS and Windows.
 
-`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is `{name}`. You can find it at https://hub.docker.com/r/{name}.
+`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is named `{name}`. You can find the project's repository at https://hub.docker.com/r/{name}.
 
-There are a few other helpers you may want to chcek out when using `srtool`:
+== Docker image naming scheme
+
+The Docker images are tagged with both the rustc version used internally as well as the version of the build script.
+
+You will find for instance the following:
+
+- `{name}:{rsversion}-0.9.16`
+- `{name}:{rsversion}-{version}`
+- `{name}:{rsversion}`
+
+The tags not mentioning the build version always point to the latest one. In the example above, `{name}:{rsversion}` is the same image than `{name}:{rsversion}-{version}`.
+
+== Related tools
+
+There are a few other helpers you may want to check out when using `srtool`:
 
 - https://github.com/chevdor/srtool-cli[srtool-cli]: This Rust executable supersedes the preiviously recommended alias solution. It brings many benefits and is moreover much easier to use.
 - https://gitlab.com/chevdor/srtool-app[srtool-app]: The basic features of `srtool` as here available from a simple GUI accessible from a few clicks and available on multiple platforms.
@@ -26,19 +40,24 @@ There are a few other helpers you may want to chcek out when using `srtool`:
 
 image::resources/Frame 1_256.png[align=center]
 
-`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit a chain or a parachain.
+`srtool` is a tool for chain builders, it is widely used in CI such as Github Actions, it can also be used by anyone who wants to indenpendantly check and audit the runtime of a chain or a parachain.
 
 You may also want to have a look at https://github.com/chevdor/subwasm[subwasm] as it is now part of the tooling included in `srtool`. `subwasm` can also be used independantly upon building your wasm with `srtool`.
+
+== History
+
+The project was initially developped from https://gitlab.com/chevdor.
+It now moved to Github under the https://www.github.com/paritytech[Parity Technologies] organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
+
+The last version hosted on Gitlab has been built using Rust Stable {rsversion}. It is tagged as v{version} and there is no plan on updating the Gitlab repository further. New versions will be available from https://www.github.com/paritytech/srtool. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The https://github.com/chevdor/srtool-actions[srtool-actions] will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
 
 == Install
 
 === Install the srtool-cli
 
-Since the `srtool-cli` (https://github.com/chevdor/srtool-cli) exists, there is no reason to be using an alias. Using the cli over the alias brings many advantages and will save you time.
+Since the `srtool-cli` (https://github.com/chevdor/srtool-cli) exists, there is no reason to be using an alias anymore. Using the cli over the alias brings many advantages and will save you time.
 
-The `srtool-cli` is a command line utility written in Rust, you can read more in https://github.com/chevdor/srtool-cli[its repository], the installation process is described in more details there. In short:
-
-    cargo install --git https://github.com/chevdor/srtool-cli
+The `srtool-cli` is a command line utility written in Rust, you can read more at https://github.com/chevdor/srtool-cli[github.com/chevdor/srtool-cli], the installation process is described in more details there.
 
 === Using an alias
 
@@ -73,13 +92,13 @@ Invoking `srtool build` with:
 
     $ srtool build
 
-Will output something that looks like this:
+will output something that looks like this:
 
 [subs="attributes+"]
 ----
-    🧰 Substrate Runtime Toolbox - srtool v0.9.11 🧰
+    🧰 Substrate Runtime Toolbox - srtool v{version} 🧰
               - by Chevdor -
-    🏗  Building polkadot-runtime as release using rustc 1.49.0-nightly (fd542592f 2020-10-26)
+    🏗  Building polkadot-runtime as release using rustc {rsversion}
     ⏳ That can take a little while, be patient... subsequent builds will be faster.
     Since you have to wait a little, you may want to learn more about Substrate runtimes:
     https://substrate.dev/docs/en/#architecture

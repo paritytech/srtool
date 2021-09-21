@@ -1,11 +1,11 @@
 {
-	"gen": "srtool v0.9.12",
+	"gen": "srtool v{version}",
 	"src": "zip",
 	"version": "1.2.3",
 	"commit": "56b9e95a9b634695f59a7c699bc68a5cfb695f03",
 	"tag": "moonriver-genesis",
 	"branch": "master",
-	"rustc": "rustc 1.54.0-nightly (657bc0188 2021-05-31)",
+	"rustc": "rustc {rsversion} (...)",
 	"docker_image": "chevdor/srtool",
 	"docker_tag": "nightly-2021-06-20",
 	"pkg": "moonriver-runtime",
