@@ -1,6 +1,6 @@
 ✨ Your Substrate WASM Runtime is ready! ✨
 Summary:
-  Generator  : srtool v0.9.12
+  Generator  : srtool v{version}
   Version    : null
   GIT commit : 56b9e95a9b634695f59a7c699bc68a5cfb695f03
   GIT tag    : moonriver-genesis
