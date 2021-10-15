@@ -4,7 +4,7 @@
 
 ## Intro
 
-`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.dev) & [Polkadot](https://polkadot.network) Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
+`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.io) & [Polkadot](https://polkadot.network) Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
 
 `srtool` can run on various Operating Systems supporting Docker. That includes Linux, MacOS and Windows.
 
@@ -96,7 +96,7 @@ will output something that looks like this:
         🏗  Building polkadot-runtime as release using rustc 1.55.0
         ⏳ That can take a little while, be patient... subsequent builds will be faster.
         Since you have to wait a little, you may want to learn more about Substrate runtimes:
-        https://substrate.dev/docs/en/#architecture
+        https://docs.substrate.io/v3/getting-started/architecture/
 
             Finished release [optimized] target(s) in 37.43s
 
