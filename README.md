@@ -4,7 +4,7 @@
 
 ## Intro
 
-`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.dev) & [Polkadot](https://polkadot.network) Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
+`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.io) & [Polkadot](https://polkadot.network) Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
 
 `srtool` can run on various Operating Systems supporting Docker. That includes Linux, MacOS and Windows.
 
@@ -16,13 +16,13 @@ The Docker images are tagged with both the rustc version used internally as well
 
 You will find for instance the following:
 
--   `paritytech/srtool:1.53.0-0.9.16`
+-   `paritytech/srtool:1.56.1-0.9.16`
 
--   `paritytech/srtool:1.53.0-0.9.17`
+-   `paritytech/srtool:1.56.1-0.9.18`
 
--   `paritytech/srtool:1.53.0`
+-   `paritytech/srtool:1.56.1`
 
-The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.53.0` is the same image than `paritytech/srtool:1.53.0-0.9.17`.
+The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.56.1` is the same image than `paritytech/srtool:1.56.1-0.9.18`.
 
 ## Related tools
 
@@ -47,7 +47,7 @@ You may also want to have a look at [subwasm](https://github.com/chevdor/subwasm
 The project was initially developped from <https://gitlab.com/chevdor>.
 It now moved to Github under the [Parity Technologies](https://www.github.com/paritytech) organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
 
-The last version hosted on Gitlab has been built using Rust Stable 1.53.0. It is tagged as v0.9.17 and there is no plan on updating the Gitlab repository further. New versions will be available from <https://www.github.com/paritytech/srtool>. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+The last version hosted on Gitlab has been built using Rust Stable 1.56.1. It is tagged as v0.9.18 and there is no plan on updating the Gitlab repository further. New versions will be available from <https://www.github.com/paritytech/srtool>. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
 
 ## Install
 
@@ -63,7 +63,7 @@ This method is legacy and deprecated, prefer the `srtool-cli` utility mentioned 
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
-        export RUSTC_VERSION=1.53.0; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home paritytech/srtool:$RUSTC_VERSION'
+        export RUSTC_VERSION=1.56.1; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home paritytech/srtool:$RUSTC_VERSION'
 
 Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will **always** check the kusama runtime. If you need more, check the next chapter.
 
@@ -91,12 +91,12 @@ Invoking `srtool build` with:
 
 will output something that looks like this:
 
-        🧰 Substrate Runtime Toolbox - srtool v0.9.17 🧰
+        🧰 Substrate Runtime Toolbox - srtool v0.9.18 🧰
                   - by Chevdor -
-        🏗  Building polkadot-runtime as release using rustc 1.53.0
+        🏗  Building polkadot-runtime as release using rustc 1.56.1
         ⏳ That can take a little while, be patient... subsequent builds will be faster.
         Since you have to wait a little, you may want to learn more about Substrate runtimes:
-        https://substrate.dev/docs/en/#architecture
+        https://docs.substrate.io/v3/getting-started/architecture/
 
             Finished release [optimized] target(s) in 37.43s
 
@@ -104,7 +104,7 @@ some times later …​
 
     ✨ Your Substrate WASM Runtime is ready! ✨
     Summary:
-      Generator  : srtool v0.9.17
+      Generator  : srtool v0.9.18
       Version    : null
       GIT commit : 56b9e95a9b634695f59a7c699bc68a5cfb695f03
       GIT tag    : moonriver-genesis
@@ -134,13 +134,13 @@ If you prefer a json output, srtool has you covered:
 Will give you such an output:
 
     {
-        "gen": "srtool v0.9.17",
+        "gen": "srtool v0.9.18",
         "src": "git",
         "version": "1.0.0",
         "commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
         "tag": "statemine-v1.0.0",
         "branch": "wk-gh-actions",
-        "rustc": "rustc 1.53.0 (...)",
+        "rustc": "rustc 1.56.1 (...)",
         "pkg": "statemine-runtime",
         "tmsp": "2021-06-22T18:08:50Z",
         "size": "1538747",
@@ -151,7 +151,7 @@ Will give you such an output:
         "info": {
           "generator": {
             "name": "srtool",
-            "version": "0.9.17"
+            "version": "0.9.18"
           },
           "src": "git",
           "version": "1.0.0",
@@ -160,7 +160,7 @@ Will give you such an output:
             "tag": "statemine-v1.0.0",
             "branch": "wk-gh-actions"
           },
-          "rustc": "rustc 1.53.0 (...)",
+          "rustc": "rustc 1.56.1 (...)",
           "pkg": "statemine-runtime",
           "profile": "release"
         },
@@ -313,9 +313,9 @@ First you may want to double check what rustc versions are available as you will
 
     rustup check
 
-So say you want to build a builder for rustc 1.53.0:
+So say you want to build a builder for rustc 1.56.1:
 
-        RUSTC_VERSION=1.53.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
+        RUSTC_VERSION=1.56.1 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
 
 ## User Scripts
 
@@ -329,7 +329,7 @@ You can see the list of available scripts in the `/scripts` folder:
 
 -   `build`: Run the actual build
 
-The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.53.0 info -cM` shows a monochrome output on a single line.
+The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.56.1 info -cM` shows a monochrome output on a single line.
 
 ## Build your custom chain / parachain
 

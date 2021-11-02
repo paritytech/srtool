@@ -3,7 +3,7 @@ FROM docker.io/library/ubuntu:20.04
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 
-ARG RUSTC_VERSION="1.53.0"
+ARG RUSTC_VERSION="1.56.1"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
@@ -16,7 +16,7 @@ ENV CARGO_HOME="/cargo-home"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Tooling
-ARG SUBWASM_VERSION=0.14.1
+ARG SUBWASM_VERSION=0.15.0
 ARG TERA_CLI_VERSION=0.2.0
 ARG TOML_CLI_VERSION=0.2.1
 

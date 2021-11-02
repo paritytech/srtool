@@ -1,7 +1,7 @@
 name: Manual Build - Shiden
 
 env:
-  SUBWASM_VERSION: 0.14.1
+  SUBWASM_VERSION: 0.15.0
   REF_FOR_SCHEDULE: development/shiden
 
 on:
@@ -9,7 +9,7 @@ on:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.53.0
+        default: 1.56.1
         required: false
       ref:
         description: The ref to be used for the repo
