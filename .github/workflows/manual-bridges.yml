@@ -1,14 +1,14 @@
 name: Manual Build - Bridges
 
 env:
-  SUBWASM_VERSION: 0.14.1
+  SUBWASM_VERSION: 0.15.0
 
 on:
   workflow_dispatch:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.55.0
+        default: 1.56.1
         required: false
       ref:
         description: The ref to be used for the repo
