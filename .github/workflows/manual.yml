@@ -1,0 +1,102 @@
+name: Manual Build
+
+env:
+  SUBWASM_VERSION: 0.15.0
+
+on:
+  workflow_dispatch:
+    inputs:
+      srtool_tag:
+        description: The SRTOOL tag to use
+        default: 1.56.1
+        required: false
+      srtool_image:
+        description: The SRTOOL image to use
+        default: paritytech/srtool
+        required: false
+      chain:
+        description: The chain to use
+        default: node-template
+        required: false
+      package:
+        description: The package to be used
+        default: node-template-runtime
+        required: true
+      repository:
+        description: The repository to be used
+        default: paritytech/substrate
+        required: true
+      runtime_dir:
+        description: The runtime_dir to be used
+        default: bin/node-template/runtime/
+        required: true
+      ref:
+        description: The ref to be used for the repo
+        default: master
+        required: false
+jobs:
+  build:
+    name: Build ${{ github.event.inputs.respository }}/${{ github.event.inputs.package }} ${{ github.event.inputs.ref }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ github.event.inputs.respository }}
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+
+      - name: Srtool build
+        id: srtool_build
+        uses: chevdor/srtool-actions@v0.3.0
+        with:
+          chain: ${{ github.event.inputs.chain }}
+          package: ${{ github.event.inputs.package }}
+          image: ${{ github.event.inputs.srtool_image }}
+          tag: ${{ github.event.inputs.srtool_tag }}
+          runtime_dir: ${{ github.event.inputs.runtime_dir }}
+
+      - name: Summary
+        run: |
+          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${{ github.event.inputs.chain }}-srtool-digest.json
+          cat ${{ github.event.inputs.chain }}-srtool-digest.json
+          echo "Runtime location: ${{ steps.srtool_build.outputs.wasm }}"
+
+      # it takes a while to build the runtime, so let's save the artifact as soon as we have it
+      - name: Archive Artifacts for ${{ github.event.inputs.chain }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.inputs.chain }}-runtime
+          path: |
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ github.event.inputs.chain }}-srtool-digest.json
+
+      # We now get extra information thanks to subwasm,
+      - name: Install subwasm ${{ env.SUBWASM_VERSION }}
+        run: |
+          wget https://github.com/chevdor/subwasm/releases/download/v${{ env.SUBWASM_VERSION }}/subwasm_linux_amd64_v${{ env.SUBWASM_VERSION }}.deb
+          sudo dpkg -i subwasm_linux_amd64_v${{ env.SUBWASM_VERSION }}.deb
+          subwasm --version
+      - name: Show Runtime information
+        run: |
+          subwasm info ${{ steps.srtool_build.outputs.wasm }}
+          subwasm info ${{ steps.srtool_build.outputs.wasm_compressed }}
+          subwasm --json info ${{ steps.srtool_build.outputs.wasm }} > ${{ github.event.inputs.chain }}-info.json
+          subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ github.event.inputs.chain }}-info_compressed.json
+      - name: Extract the metadata
+        run: |
+          subwasm meta ${{ steps.srtool_build.outputs.wasm }}
+          subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ github.event.inputs.chain }}-metadata.json
+      - name: Check the metadata diff
+        run: |
+          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ github.event.inputs.chain }} | tee ${{ github.event.inputs.chain }}-diff.txt
+
+      - name: Archive Subwasm results
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ github.event.inputs.chain }}-runtime
+          path: |
+            ${{ github.event.inputs.chain }}-info.json
+            ${{ github.event.inputs.chain }}-info_compressed.json
+            ${{ github.event.inputs.chain }}-metadata.json
+            ${{ github.event.inputs.chain }}-diff.txt
