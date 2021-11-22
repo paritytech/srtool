@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chain: ["statemine", "statemint", "westmint", "rococo", "shell"]
+        chain: ["statemine", "statemint", "westmint", "rococo-parachain", "shell"]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
