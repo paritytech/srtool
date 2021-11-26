@@ -67,7 +67,7 @@ Creating an alias helps hiding the docker complexity behind one simple command. 
 
 [subs="attributes+"]
 ----
-    export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home {name}:$RUSTC_VERSION'
+    export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; export TMPDIR=`mktemp -d`; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home {name}:$RUSTC_VERSION'
 ----
 
 NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will *always* check the kusama runtime. If you need more, check the next chapter.
