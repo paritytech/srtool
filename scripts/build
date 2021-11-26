@@ -227,3 +227,6 @@ if [[ "$*" =~ --json || "$*" =~ --app ]]; then
 else
     echo $JSON | tera --template /srtool/templates/output.txt --stdin --env --fail-on-collision
 fi
+
+# change permissions
+chmod -R 0777 $RUNTIME_DIR/target
