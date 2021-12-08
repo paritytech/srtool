@@ -46,22 +46,22 @@ You may also want to have a look at https://github.com/chevdor/subwasm[subwasm] 
 
 == History
 
-The project was initially developped from https://gitlab.com/chevdor.
-It now moved to Github under the https://www.github.com/paritytech[Parity Technologies] organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
+The project was initially developed from https://gitlab.com/chevdor.
+It has now moved to Github under the https://www.github.com/paritytech[Parity Technologies] organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
 
-The last version hosted on Gitlab has been built using Rust Stable {rsversion}. It is tagged as v{version} and there is no plan on updating the Gitlab repository further. New versions will be available from https://www.github.com/paritytech/srtool. The functionnalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The https://github.com/chevdor/srtool-actions[srtool-actions] will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+The last version hosted on Gitlab has been built using Rust Stable {rsversion}. It is tagged as v{version} and there is no plan on updating the Gitlab repository further. New versions will be available from https://www.github.com/paritytech/srtool[this repository] only. The functionalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The https://github.com/chevdor/srtool-actions[srtool-actions] will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
 
 == Install
 
 === Install the srtool-cli
 
-Since the `srtool-cli` (https://github.com/chevdor/srtool-cli) exists, there is no reason to be using an alias anymore. Using the cli over the alias brings many advantages and will save you time.
+Since the https://github.com/chevdor/srtool-cli[`srtool-cli`] exists, there is no reason to be using an alias anymore. Using the cli over the alias brings many advantages and will save you time.
 
-The `srtool-cli` is a command line utility written in Rust, you can read more at https://github.com/chevdor/srtool-cli[github.com/chevdor/srtool-cli], the installation process is described in more details there.
+The `srtool-cli` is a command line utility written in Rust. You can read more about the installation process https://github.com/chevdor/srtool-cli[here].
 
 === Using an alias
 
-IMPORTANT: This method is legacy and deprecated, prefer the `srtool-cli` utility mentioned above. This information is left here however for documentation purpose but all the functions are now availabe in the `srtool-cli`.
+IMPORTANT: This method is legacy and deprecated. It is recommended to use the `srtool-cli` utility mentioned above. This information is left here however for documentation purposes -- all the functions are now availabe in the `srtool-cli`.
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
@@ -70,7 +70,7 @@ Creating an alias helps hiding the docker complexity behind one simple command. 
     export RUSTC_VERSION={rsversion}; export PACKAGE=kusama-runtime; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home {name}:$RUSTC_VERSION'
 ----
 
-NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as show above means you will *always* check the kusama runtime. If you need more, check the next chapter.
+NOTE: Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as shown above means you will *always* check the Kusama runtime. If you need more, check the next chapter.
 
 NOTE: If you want to check what your alias is, use `type srtool`
 
@@ -78,7 +78,7 @@ The command to invoke a build will then be `srtool build`.
 
 == Use
 
-Now that you defined the srtool alias, you can use it as shown below:
+Now that you have defined the srtool alias, you can use it as shown below:
 
 .See the help
     $ srtool help
@@ -88,7 +88,7 @@ Now that you defined the srtool alias, you can use it as shown below:
 
 .Typical run
 
-Invoking `srtool build` with:
+Invoking `srtool build` with
 
     $ srtool build
 
@@ -106,7 +106,7 @@ will output something that looks like this:
         Finished release [optimized] target(s) in 37.43s
 ----
 
-some times later ...
+and finally ...
 
 [subs="attributes+"]
 ----
@@ -118,7 +118,7 @@ If you prefer a json output, srtool has you covered:
 
     $ srtool build --json
 
-Will give you such an output:
+The output will look something like:
 
 [subs="attributes+"]
 ----
@@ -152,7 +152,7 @@ If you are running into this issue, your `.bash_profile` likely contains double 
 
 === Other cases
 
-If you still run into troubles, please open a new issue and describe the error you see and the steps you took.
+If you still run into any trouble, please open a new issue and describe the error you see and the steps you took.
 
 == Proposal field
 
@@ -170,10 +170,10 @@ The `Proposal` field value should should match the value of the proposal you can
 
 == IPFS Hash
 
-Starting with version 0.9.8, the IPFS hash is computed and added to the output. `srtool` is only computing the hash. It does not publish the the file to IPFS nor connect to IPFS.
+Starting with version 0.9.8, the IPFS hash is computed and added to the output. `srtool` is only computing the hash. It neither publishes the file to IPFS nor connects to IPFS.
 
 .Advanced usage
-if you feel fancy, you may also run:
+if you're feeling fancy, you may also run:
 
     srtool bash
 
@@ -189,17 +189,17 @@ You can see the list of available scripts in the `/scripts` folder:
 
 - `help`: Show some help
 - `version`: Show some version.
-- `info`: Show systems infos that are available before running a build
-- `build`: Run the actual build
+- `info`: Show systems infos that are available before running a build.
+- `build`: Run the actual build.
 
 NOTE: The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M`(monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:{rsversion} info -cM` shows a monochrome output on a single line.
 
 == Build your custom chain / parachain
 
 Building the runtime for your custom chain may not work with the default used for Kusama, Polkadot and Co.
-You can however help `srtool` making the right choices using ENV VARs. You will need to make a new alias as shown below
+You can however help `srtool` making the right choices using ENV VARs. You will need to make a new alias as shown below.
 
-Here is for instance how to build the runtime for the substrate-node-template:
+Here's how to build the runtime for the substrate-node-template, for instance:
 
     alias mysrtool='docker run --rm -it --name mysrtool -e RUNTIME_DIR=runtime -e BUILD_OPTS=" " -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
 
