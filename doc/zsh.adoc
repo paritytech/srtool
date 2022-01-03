@@ -1,7 +1,7 @@
 
 == ZSH/ Zinit users
 
-If you are using `zsh` and `zinit`, you may benefit from using the srtool snippet I am maintaining.
+If you're using `zsh` and `zinit`, you may benefit from using the srtool snippet maintained https://gitlab.com/chevdor/dotfiles/-/tree/master/zsh-plugins[here].
 
 To do so, add the following to your `zshconfig`:
 
