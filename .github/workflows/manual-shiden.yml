@@ -9,7 +9,7 @@ on:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.56.1
+        default: 1.57.0
         required: false
       ref:
         description: The ref to be used for the repo
