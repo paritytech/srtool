@@ -10,7 +10,3 @@ echo "*** Initializing WASM build environment"
 # For now, only nightlies will work.
 # rustup toolchain install $RUSTC_VERSION
 rustup target add wasm32-unknown-unknown --toolchain $RUSTC_VERSION
-
-# Install wasm-gc. It's useful for stripping slimming down wasm binaries.
-command -v wasm-gc || \
-	cargo +$RUSTC_VERSION install --git https://github.com/alexcrichton/wasm-gc --force
