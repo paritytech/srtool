@@ -1,7 +1,7 @@
 name: Manual Build - Bridges
 
 env:
-  SUBWASM_VERSION: 0.15.0
+  SUBWASM_VERSION: 0.16.1
 
 on:
   workflow_dispatch:

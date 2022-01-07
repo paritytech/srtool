@@ -1,7 +1,7 @@
 name: Manual Build - Shiden
 
 env:
-  SUBWASM_VERSION: 0.15.0
+  SUBWASM_VERSION: 0.16.1
   REF_FOR_SCHEDULE: development/shiden
 
 on:
