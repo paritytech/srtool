@@ -1,6 +1,6 @@
 :name: paritytech/srtool
-:rsversion: 1.56.1
-:version: 0.9.18
+:rsversion: 1.57.0
+:version: 0.9.19
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:
@@ -21,7 +21,7 @@ image::resources/srtool-docker_128px.png[align=center, width=128px]
 
 The Docker images are tagged with both the rustc version used internally as well as the version of the build script.
 
-You will find for instance the following:
+You may find for instance the following:
 
 - `{name}:{rsversion}-0.9.16`
 - `{name}:{rsversion}-{version}`
