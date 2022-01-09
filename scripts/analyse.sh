@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 WASM=$1
-WASM_FULLPATH=/build/$WASM
+WASM_FULLPATH=$WASM
 
 SZ=`du -sb $WASM_FULLPATH | awk '{print $1}'`
 PROP=`subwasm -j info $WASM_FULLPATH | jq -r .proposal_hash`

@@ -6,9 +6,9 @@ source "$CDIR/lib.sh"
 trap "exit" INT
 
 # This is where docker expects our substrate/polkadot repo to be
-cd /build
+cd build
 
-export VERSION=`cat /srtool/VERSION || echo 0.0.0`
+export VERSION=`cat ../VERSION || echo 0.0.0`
 export GEN="srtool v$VERSION"
 export LATEST_VERSION=$(curl -L -s https://github.com/paritytech/srtool/raw/master/VERSION)
 
@@ -85,8 +85,8 @@ if [ ! -f Cargo.toml ]; then
     exit 1
 fi
 
-CRATE_VERSION=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
-CRATE_NAME=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.name | jq -r`
+CRATE_VERSION=`toml get "$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
+CRATE_NAME=`toml get "$RUNTIME_DIR/Cargo.toml" package.name | jq -r`
 
 if [[ $CRATE_NAME != $PACKAGE ]]; then
     echo "!!! The PACKAGE '$PACKAGE' does not match the crate name at '$RUNTIME_DIR'. Did you mean '$CRATE_NAME'?"
@@ -106,7 +106,7 @@ else
 fi
 
 pushd "$RUNTIME_DIR" > /dev/null || exit 1
-  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
+  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir ${TARGET_DIR} --out-dir ${OUT_DIR} -Z unstable-options"
   if [ ! -z "$VERBOSE" ]; then
       time $CMD || exit 1
   else
@@ -116,20 +116,20 @@ pushd "$RUNTIME_DIR" > /dev/null || exit 1
           $CMD 2>&1 || exit 1
       fi
   fi
-  WASM=`find target/srtool/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.wasm"`
-  Z_WASM=`find target/srtool/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.compressed.wasm"`
+  WASM=`find $TARGET_DIR/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.wasm"`
+  Z_WASM=`find $TARGET_DIR/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.compressed.wasm"`
 popd > /dev/null || exit 1
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo "✨ Your Substrate WASM Runtime is ready! ✨"
 fi
 
-export WASM=$RUNTIME_DIR/$WASM
+export WASM=$WASM
 
-cp -f "$WASM" /out/
+cp -f "$WASM" $OUT_DIR
 if [ $Z_WASM ]; then
-    export Z_WASM=$RUNTIME_DIR/$Z_WASM
-    cp -f "$Z_WASM" /out/
+    export Z_WASM=$Z_WASM
+    cp -f "$Z_WASM" $OUT_DIR
 fi
 
 SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
@@ -156,16 +156,16 @@ else
     SRC='zip'
 fi
 
-COMPACT_DETAILS=`/srtool/analyse.sh $WASM | tail -n 1`
+COMPACT_DETAILS=`$CDIR/analyse.sh $WASM | tail -n 1`
 
 if [ $Z_WASM ]; then
-    COMPRESSED_DETAILS=`/srtool/analyse.sh $Z_WASM | tail -n 1`
+    COMPRESSED_DETAILS=`$CDIR/analyse.sh $Z_WASM | tail -n 1`
 else
     COMPRESSED_DETAILS={}
 fi
 
-INFO=$(/srtool/info -cM | tail -n 1)
-CONTEXT=$(/srtool/getContext.sh | tail -n 1)
+INFO=$($CDIR/info -cM | tail -n 1)
+CONTEXT=$($CDIR/getContext.sh | tail -n 1)
 
 JSON=$( jq -n \
     --arg gen "$GEN" \
@@ -220,13 +220,10 @@ if [[ "$*" =~ --json || "$*" =~ --app ]]; then
     fi
 
     if [[ "$*" == *"--save"* ]]; then
-        REPORT="./target/srtool/srtool-wasm-report-$TMSP.txt"
+        REPORT="$TARGET_DIR/srtool-wasm-report-$TMSP.txt"
         echo "$JSON" > $REPORT
         echo "Report saved in $REPORT"
     fi
 else
-    echo $JSON | tera --template /srtool/templates/output.txt --stdin --env --fail-on-collision
+    echo $JSON | tera --template ../templates/output.txt --stdin --env --fail-on-collision
 fi
-
-# change permissions
-chmod -R 0777 $RUNTIME_DIR/target

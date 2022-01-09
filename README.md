@@ -63,7 +63,7 @@ This method is legacy and deprecated. It is recommended to use the `srtool-cli` 
 
 Creating an alias helps hiding the docker complexity behind one simple command. We will see more powerful options but this one is simple enough.
 
-        export RUSTC_VERSION=1.57.0; export PACKAGE=kusama-runtime; export TMPDIR=`mktemp -d`; alias srtool='docker run --rm -it -e PACKAGE=$PACKAGE -v $PWD:/build -v $TMPDIR/cargo:/cargo-home paritytech/srtool:$RUSTC_VERSION'
+        export RUSTC_VERSION=1.57.0; export PACKAGE=kusama-runtime; alias srtool='docker run -it --name mysrtool -e PACKAGE=$PACKAGE -v $PWD:/home/builder/build paritytech/srtool:$RUSTC_VERSION; docker cp mysrtool:/home/builder/out .; docker rm -f mysrtool'
 
 Note that defining the alias as done above will hardcode the runtime. Using `kusama-runtime` as shown above means you will **always** check the Kusama runtime. If you need more, check the next chapter.
 
@@ -257,7 +257,7 @@ Run the following command:
 
     alias srtool
 
-And make sure that you see `$PWD:/build/` and not `/home/your_name/:/build`.
+And make sure that you see `$PWD:/home/builder/build` and not `/home/your_name/:/home/builder/build`.
 If you’re running into this issue, your `.bash_profile` likely contains double quotes (") where you should have used single ones (').
 
 ### Other cases
@@ -315,7 +315,7 @@ First you may want to double check what rustc versions are available as you will
 
 So say you want to build a builder for rustc 1.57.0:
 
-        RUSTC_VERSION=1.57.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
+        RUSTC_VERSION=1.57.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t paritytech/srtool:$RUSTC_VERSION .
 
 ## User Scripts
 
@@ -329,7 +329,7 @@ You can see the list of available scripts in the `/scripts` folder:
 
 -   `build`: Run the actual build.
 
-The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M` (monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.57.0 info -cM` shows a monochrome output on a single line.
+The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M` (monochrome), `-C` color output. For instance `docker run -it -v $PWD:/home/builder/build chevdor/srtool:1.57.0 info -cM` shows a monochrome output on a single line.
 
 ## Build your custom chain / parachain
 
@@ -338,7 +338,7 @@ You can however help `srtool` make the right choices using ENV VARs. You will ne
 
 Here’s how to build the runtime for the substrate-node-template, for instance:
 
-    alias mysrtool='docker run --rm -it --name mysrtool -e RUNTIME_DIR=runtime -e BUILD_OPTS=" " -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+    alias mysrtool='docker run -it --name mysrtool -e RUNTIME_DIR=runtime -e BUILD_OPTS=" " -e PACKAGE=$PACKAGE -v $PWD:/home/builder/build chevdor/srtool:$RUSTC_VERSION'
 
 `BUILD_OPTS` is set to a space, not an empty string.
 
@@ -346,7 +346,7 @@ Using `srtool-cli` makes the above much easier…​
 
 ## Export the runtime
 
-To easily export your runtime, it will be copied in the container into the `/out` folder.
+To easily export your runtime, it will be copied in the container into the `/home/builder/out` folder.
 If you mount this docker volume, you will find the wasm on your local filesystem once the run is complete.
 
-    docker run ... -v /tmp/out:/out ...
+    docker run ... -v /tmp/out:/home/builder/out ...
