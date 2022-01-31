@@ -2,7 +2,6 @@ name: Manual Build - Shiden
 
 env:
   SUBWASM_VERSION: 0.16.1
-  REF_FOR_SCHEDULE: development/shiden
 
 on:
   workflow_dispatch:
@@ -13,7 +12,7 @@ on:
         required: false
       ref:
         description: The ref to be used for the repo
-        default: development/shiden
+        default: master
         required: false
   schedule:
     - cron: "00 03 * * 1" # 3AM weekly on mondays
@@ -28,8 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          repository: PlasmNetwork/Astar
-          ref: ${{ github.event.inputs.ref || env.REF_FOR_SCHEDULE }}
+          repository: AstarNetwork/Astar
+          ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
           submodules: true
 
