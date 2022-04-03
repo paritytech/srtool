@@ -3,12 +3,14 @@ FROM docker.io/library/ubuntu:20.04
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 
-ARG RUSTC_VERSION="1.57.0"
+ARG RUSTC_VERSION="1.59.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
 
+RUN groupadd -g 1000 builder && \
+    useradd --no-log-init  -m -u 1000 -s /bin/bash -d /builder -r -g builder builder
 RUN mkdir -p /cargo-home /rustup-home /srtool/templates
 WORKDIR /tmp
 ENV RUSTUP_HOME="/rustup-home"
@@ -16,7 +18,7 @@ ENV CARGO_HOME="/cargo-home"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Tooling
-ARG SUBWASM_VERSION=0.16.1
+ARG SUBWASM_VERSION=0.17.0
 ARG TERA_CLI_VERSION=0.2.1
 ARG TOML_CLI_VERSION=0.2.1
 
@@ -56,5 +58,5 @@ COPY RUSTC_VERSION /srtool/
 
 VOLUME [ "/build", "/cargo-home", "/out" ]
 WORKDIR /srtool
-
+USER builder
 CMD ["/srtool/build"]
