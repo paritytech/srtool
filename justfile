@@ -41,4 +41,7 @@ info:
 
 
 test *args='':
-    container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/main.yaml --verbosity debug "$@"
+    container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/quick.yaml --verbosity debug "$@"
+
+test_long *args='':
+    container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/long.yaml --verbosity debug "$@"
