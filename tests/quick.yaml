@@ -1,4 +1,6 @@
 schemaVersion: '2.0.0'
+
+# Quick set of ttest
 fileExistenceTests:
   - name: 'Check srtool build script'
     path: '/srtool/build'
@@ -6,10 +8,6 @@ fileExistenceTests:
     uid: 0
     gid: 0
     isExecutableBy: other
-# fileContentTests:
-#   - name: 'Cache folder config'
-#     path: '/home/user/.bazelrc'
-#     expectedContents: ['.*build --repository_cache=/bazel/cache.*']
 commandTests:
   - name: "root"
     setup: []
@@ -35,3 +33,20 @@ commandTests:
     command: "bash"
     args: ["-c", "echo foo >> /srtool/build"]
     exitCode: 1
+metadataTest:
+  env:
+    - key: DOCKER_IMAGE
+      value: paritytech/srtool
+    - key: RUSTC_VERSION
+      value: '^\d+\.\d+\.\d+$'
+      isRegex: true
+  labels:
+    - key: maintainer
+      value: chevdor@gmail.com
+
+  exposedPorts: []
+  volumes: [ "/build", "/cargo-home", "/out" ]
+  entrypoint: []
+  cmd: ["/srtool/build"]
+  workdir: "/srtool"
+  user: "builder"

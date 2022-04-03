@@ -132,19 +132,19 @@ if [ $Z_WASM ]; then
     cp -f "$Z_WASM" /out/
 fi
 
-SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
-MULTIHASH=`subwasm -j info $WASM | jq -r .ipfs_hash`
-SIZE=`wc -c < $WASM`
+SIZE=`wc -c < $Z_WASM`
 LENGTH=16
 SKIP=`echo $(($SIZE-$LENGTH))`
 # Some magic to show the first and last bytes of the blob the same way the UI does when you see
 # a setCode coming from a motion or referendum
-PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
+PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $Z_WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $Z_WASM`
 
-SZ=`du -sb $WASM | awk '{print $1}'`
+SZ=`du -sb $Z_WASM | awk '{print $1}'`
 KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
-PROP=`subwasm -j info $WASM | jq -r .proposal_hash`
+SHA256=0x`shasum -a 256 $Z_WASM | awk '{print $1}'`
+PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
+MULTIHASH=`subwasm -j info $Z_WASM | jq -r .ipfs_hash`
 
 # If we work on a snapshot, we will NOT get a .git folder to work on
 if [ -d ".git" ]; then
@@ -174,6 +174,7 @@ JSON=$( jq -n \
     --arg pkg "$PACKAGE" \
     --arg bytes "$SZ" \
     --arg wasm "$WASM" \
+    --arg z_wasm "$Z_WASM" \
     --arg prop "$PROP" \
     --arg sha256 "$SHA256" \
     --arg tmsp "$TMSP" \
@@ -200,7 +201,7 @@ JSON=$( jq -n \
         prop: $prop,
         ipfs: $ipfs,
         sha256: $sha256,
-        wasm: $wasm,
+        wasm: $z_wasm,
 
         info: $info,
         context: $context,

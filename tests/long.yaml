@@ -1,0 +1,24 @@
+schemaVersion: '2.0.0'
+globalEnvVars:
+  - key: RUSTC_VERSION
+    value: 1.59.0
+  - key: PACKAGE
+    value: kusama-runtime
+
+commandTests:
+  - name: Pwd
+    command: pwd
+    expectedOutput: ["/srtool"]
+  - name: Git
+    command: git
+    args: ["--version"]
+    expectedOutput: ["git version"]
+  - name: "Build"
+    # setup: [["echo", "setup"],["ls", "-al"], ["git","clone", "https://github.com/paritytech/polkadot", "/build/"]]
+    command: "bash"
+    args:
+      - -c
+      - |
+        git clone https://github.com/paritytech/polkadot /build/
+        ls -al /build
+    # expectedOutput: ["builder"]
