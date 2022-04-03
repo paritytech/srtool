@@ -9,6 +9,8 @@ ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
 
+RUN groupadd -g 1000 builder && \
+    useradd --no-log-init  -m -u 1000 -s /bin/bash -d /builder -r -g builder builder
 RUN mkdir -p /cargo-home /rustup-home /srtool/templates
 WORKDIR /tmp
 ENV RUSTUP_HOME="/rustup-home"
@@ -57,5 +59,5 @@ COPY RUSTC_VERSION /srtool/
 
 VOLUME [ "/build", "/cargo-home", "/out" ]
 WORKDIR /srtool
-
+USER builder
 CMD ["/srtool/build"]

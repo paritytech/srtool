@@ -1,3 +1,4 @@
+set positional-arguments
 export RUSTC_VERSION:=`cat RUSTC_VERSION`
 export REPO:="paritytech/srtool"
 export TAG:=`cat VERSION`
@@ -14,7 +15,7 @@ build:
     @echo Building $REPO:$RUSTC_VERSION
     @echo If you encounter issues, try running `just cleanup` and try building again.
     @echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
-    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t srtool -t $REPO:$RUSTC_VERSION-$TAG .
+    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $REPO:$RUSTC_VERSION-$TAG -t $REPO -t ${REPO#*/} .
     docker images | grep srtool
 
 # Build and Publish the docker image
@@ -37,3 +38,7 @@ info:
     @echo RUSTC_VERSION=$RUSTC_VERSION
     @echo REPO=$REPO
     @echo TAG=$TAG
+
+
+test *args='':
+    container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/main.yaml --verbosity debug "$@"

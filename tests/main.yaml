@@ -1,0 +1,37 @@
+schemaVersion: '2.0.0'
+fileExistenceTests:
+  - name: 'Check srtool build script'
+    path: '/srtool/build'
+    shouldExist: true
+    uid: 0
+    gid: 0
+    isExecutableBy: other
+# fileContentTests:
+#   - name: 'Cache folder config'
+#     path: '/home/user/.bazelrc'
+#     expectedContents: ['.*build --repository_cache=/bazel/cache.*']
+commandTests:
+  - name: "root"
+    setup: []
+    command: "whoami"
+    args: []
+    expectedOutput: ["builder"]
+  - name: "uid"
+    setup: []
+    command: "id"
+    args: ["-u"]
+    expectedOutput: ["1000"]
+  - name: "gid"
+    setup: []
+    command: "id"
+    args: ["-g"]
+    expectedOutput: ["1000"]
+  - name:  "apt-get upgrade"
+    command: "apt-get"
+    args: ["-qqs", "upgrade"]
+    excludedOutput: [".*Inst.*Security.* | .*Security.*Inst.*"]
+    excludedError: [".*Inst.*Security.* | .*Security.*Inst.*"]
+  - name: Patch build
+    command: "bash"
+    args: ["-c", "echo foo >> /srtool/build"]
+    exitCode: 1
