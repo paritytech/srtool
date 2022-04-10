@@ -8,7 +8,7 @@ on:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.59.0
+        default: 1.60.0
         required: false
       srtool_image:
         description: The SRTOOL image to use

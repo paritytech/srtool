@@ -1,7 +1,7 @@
 schemaVersion: '2.0.0'
 globalEnvVars:
   - key: RUSTC_VERSION
-    value: 1.59.0
+    value: 1.60.0
   - key: PACKAGE
     value: kusama-runtime
 
