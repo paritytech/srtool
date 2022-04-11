@@ -41,12 +41,10 @@ RUN export PATH=$CARGO_HOME/bin:/rustup-home:$PATH && \
     curl -L https://github.com/chevdor/tera-cli/releases/download/v${TERA_CLI_VERSION}/tera-cli_linux_amd64.deb --output tera_cli.deb && dpkg -i tera_cli.deb && tera --version && \
     curl -L https://github.com/chevdor/toml-cli/releases/download/v${TOML_CLI_VERSION}/toml_linux_amd64_v${TOML_CLI_VERSION}.deb --output toml.deb && dpkg -i toml.deb && toml --version && \
     mv -f $CARGO_HOME/bin/* /bin && \
-    touch $CARGO_HOME/env && \
-    touch $RUSTUP_HOME && \
-    chown -R builder ${RUSTUP_HOME} && \
-    chown -R builder ${CARGO_HOME} && \
-    chmod -R u+rwx ${RUSTUP_HOME} && \
-    chmod -R u+rwx ${CARGO_HOME} && \
+    touch /build && chown -R builder /build && chmod -R u+rwx /build && \
+    touch ${RUSTUP_HOME} && chown -R builder ${RUSTUP_HOME} && chmod -R u+rwx ${RUSTUP_HOME} && \
+    touch ${CARGO_HOME}/env && chown builder ${CARGO_HOME} &&  chmod -R u+rwx ${CARGO_HOME} && \
+
     mkdir /out && \
     rustup show && rustc -V
 

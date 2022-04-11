@@ -1,0 +1,30 @@
+schemaVersion: '2.0.0'
+
+commandTests:
+  - name: "rustup-home"
+    setup: []
+    command: "bash"
+    args:
+      - -c
+      - |
+        cd /rustup-home
+        mkdir test
+    exitCode: 0
+  - name: "cargo-home"
+    setup: []
+    command: "bash"
+    args:
+      - -c
+      - |
+        cd /cargo-home
+        mkdir test
+    exitCode: 0
+  - name: "polkadot-runtime"
+    setup: []
+    command: "bash"
+    args:
+      - -c
+      - |
+        cd /build/runtime/polkadot
+        mkdir target
+    exitCode: 0

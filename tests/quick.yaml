@@ -1,6 +1,6 @@
 schemaVersion: '2.0.0'
 
-# Quick set of ttest
+# Quick set of tests
 fileExistenceTests:
   - name: 'Check srtool build script'
     path: '/srtool/build'
