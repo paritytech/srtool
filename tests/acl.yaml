@@ -7,24 +7,48 @@ commandTests:
     args:
       - -c
       - |
-        cd /rustup-home
+        cd /home/builder/.rustup
         mkdir test
     exitCode: 0
+
   - name: "cargo-home"
     setup: []
     command: "bash"
     args:
       - -c
       - |
-        cd /cargo-home
+        cd /home/builder/.cargo
         mkdir test
     exitCode: 0
+
+  - name: "/build"
+    setup: []
+    command: "bash"
+    args:
+      - -c
+      - |
+        cd /build
+        mkdir test
+    exitCode: 0
+
+  - name: "/out"
+    setup: []
+    command: "bash"
+    args:
+      - -c
+      - |
+        cd /out
+        mkdir test
+    exitCode: 0
+
   - name: "polkadot-runtime"
     setup: []
     command: "bash"
     args:
       - -c
       - |
-        cd /build/runtime/polkadot
+        TARGET=/build/runtime/polkadot
+        mkdir -p $TARGET
+        cd $TARGET
         mkdir target
     exitCode: 0

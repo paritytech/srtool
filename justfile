@@ -38,8 +38,7 @@ info:
     @echo REPO=$REPO
     @echo TAG=$TAG
 
-
-test *args='':
+test_quick *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/quick.yaml --verbosity debug "$@"
 
 test_acl *args='':
