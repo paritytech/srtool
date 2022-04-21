@@ -60,6 +60,7 @@ RUN export PATH=$CARGO_HOME/bin:/rustup-home:$PATH && \
     . $HOME/.cargo/env && \
     /srtool/init.sh && \
     rustup show && rustc -V && \
+    git config --global --add safe.directory /build && \
     /srtool/version && \
     echo 'export PATH="/srtool/:$PATH"' >> $HOME/.bashrc
 

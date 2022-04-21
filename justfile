@@ -47,3 +47,6 @@ test_acl *args='':
 
 test_long *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/long.yaml --verbosity debug "$@"
+
+test_commands *args='':
+    container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/commands.yaml --verbosity debug "$@"

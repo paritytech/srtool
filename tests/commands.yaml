@@ -1,0 +1,21 @@
+schemaVersion: '2.0.0'
+
+commandTests:
+  - name: "version"
+    setup: []
+    command: "version"
+    args:
+      - -cM
+    expectedOutput: ["version"]
+  - name: "info"
+    setup: []
+    command: "info"
+    args:
+      - -cM
+    expectedOutput: ["generator"]
+  - name: "help"
+    setup: []
+    command: "help"
+    args: []
+    expectedOutput: ["documentation"]
+
