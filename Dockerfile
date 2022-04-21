@@ -2,6 +2,7 @@ FROM docker.io/library/ubuntu:20.04
 
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
+SHELL ["/bin/bash", "-c"]
 
 ARG RUSTC_VERSION="1.60.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
@@ -26,8 +27,6 @@ ARG SUBWASM_VERSION=0.17.0
 ARG TERA_CLI_VERSION=0.2.1
 ARG TOML_CLI_VERSION=0.2.1
 
-# We first init as much as we can in the first layers
-COPY ./scripts/init.sh /srtool/
 COPY ./templates ${SRTOOL_TEMPLATES}/
 RUN apt update && \
     apt upgrade -y && \
@@ -50,19 +49,25 @@ COPY ./scripts/* /srtool/
 COPY VERSION /srtool/
 COPY RUSTC_VERSION /srtool/
 
-# USER $BUILDER
-# ENV RUSTUP_HOME="/home/${BUILDER}/.rustup"
-# ENV CARGO_HOME="/home/${BUILDER}/.cargo"
-ENV PATH="/srtool:$HOME/.cargo/bin:$PATH"
+USER $BUILDER
+ENV RUSTUP_HOME="/home/${BUILDER}/rustup"
+ENV CARGO_HOME="/home/${BUILDER}/cargo"
+ENV PATH="/srtool:$PATH"
 
-RUN export PATH=$HOME/.cargo/bin:$HOME/.rustup:$PATH && \
-    curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
-    . $HOME/.cargo/env && \
-    /srtool/init.sh && \
-    rustup show && rustc -V && \
-    git config --global --add safe.directory /build && \
+# RUN export PATH=$HOME/cargo/bin:$HOME/rustup:$PATH && \
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && \
+    source $HOME/cargo/env && \
+    rustup toolchain add stable ${RUSTC_VERSION} && \
+    # rustup default ${RUSTC_VERSION} && \
+    rustup target add wasm32-unknown-unknown --toolchain stable && \
+    rustup target add wasm32-unknown-unknown --toolchain $RUSTC_VERSION && \
+    chmod -R a+w $RUSTUP_HOME $CARGO_HOME && \
+    # /srtool/init.sh && \
+    rustup show && rustc -V
+
+RUN git config --global --add safe.directory /build && \
     /srtool/version && \
-    echo 'export PATH="/srtool/:$PATH"' >> $HOME/.bashrc
+    echo 'PATH=".:$HOME/cargo/bin:$PATH"' >> $HOME/.bashrc
 
 VOLUME [ "/build", "/out" ]
 # VOLUME [ "/build", "$CARGO_HOME", "/out" ]

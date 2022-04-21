@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 CDIR=`dirname "$0"`
-source "$CDIR/lib.sh"
+source "/srtool/lib.sh"
 
 # This script helps since version v0.8.30. Starting with this version
 # a few feature has been introduced and is highly required to build
