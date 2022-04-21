@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 export CDIR=`dirname "$0"`
 source "$CDIR/lib.sh"
+source "$HOME/cargo/env"
+
+# echo $PATH
 
 # If the user sends a SIGINT, we want to exit the entire script
 trap "exit" INT
@@ -70,7 +73,7 @@ fi
 # As of https://github.com/paritytech/polkadot/pull/2522 we need to cd to the
 # runtime directory itself
 export RUNTIME_NAME="${PACKAGE/-*/}"
-export GET_OPTS_CMD="${CDIR}/getBuildOpts.sh"
+export GET_OPTS_CMD="/srtool/getBuildOpts.sh"
 export GET_OPTS=`$GET_OPTS_CMD`
 export BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}"
 export PROFILE="${PROFILE:-release}"
