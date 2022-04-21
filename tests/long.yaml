@@ -13,12 +13,14 @@ commandTests:
     command: git
     args: ["--version"]
     expectedOutput: ["git version"]
-  - name: "Build"
-    # setup: [["echo", "setup"],["ls", "-al"], ["git","clone", "https://github.com/paritytech/polkadot", "/build/"]]
-    command: "bash"
-    args:
-      - -c
-      - |
-        git clone https://github.com/paritytech/polkadot /build/
-        ls -al /build
-    # expectedOutput: ["builder"]
+
+  # - name: "Build"
+  #   # setup: [["echo", "setup"],["ls", "-al"], ["git","clone", "https://github.com/paritytech/polkadot", "/build/"]]
+  #   command: "bash"
+  #   args:
+  #     - -c
+  #     - |
+  #       set -e
+  #       git clone https://github.com/paritytech/polkadot /build/
+  #       ls -al /build
+  #   exitCode: 0
