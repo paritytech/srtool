@@ -49,9 +49,9 @@ COPY RUSTC_VERSION /srtool/
 # USER $BUILDER
 # ENV RUSTUP_HOME="/home/${BUILDER}/.rustup"
 # ENV CARGO_HOME="/home/${BUILDER}/.cargo"
-ENV PATH="/srtool:$CARGO_HOME/bin:$PATH"
+ENV PATH="/srtool:$HOME/.cargo/bin:$PATH"
 
-RUN export PATH=$CARGO_HOME/bin:/rustup-home:$PATH && \
+RUN export PATH=$HOME/.cargo/bin:$HOME/.rustup:$PATH && \
     curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain $RUSTC_VERSION -y && \
     . $HOME/.cargo/env && \
     /srtool/init.sh && \
