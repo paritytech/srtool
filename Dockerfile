@@ -50,9 +50,9 @@ COPY ./scripts/* /srtool/
 COPY VERSION /srtool/
 COPY RUSTC_VERSION /srtool/
 
-USER $BUILDER
-ENV RUSTUP_HOME="/home/${BUILDER}/.rustup"
-ENV CARGO_HOME="/home/${BUILDER}/.cargo"
+# USER $BUILDER
+# ENV RUSTUP_HOME="/home/${BUILDER}/.rustup"
+# ENV CARGO_HOME="/home/${BUILDER}/.cargo"
 ENV PATH="/srtool:$CARGO_HOME/bin:$PATH"
 
 RUN export PATH=$CARGO_HOME/bin:/rustup-home:$PATH && \
@@ -64,7 +64,8 @@ RUN export PATH=$CARGO_HOME/bin:/rustup-home:$PATH && \
     /srtool/version && \
     echo 'export PATH="/srtool/:$PATH"' >> $HOME/.bashrc
 
-VOLUME [ "/build", "$CARGO_HOME", "/out" ]
+VOLUME [ "/build", "/out" ]
+# VOLUME [ "/build", "$CARGO_HOME", "/out" ]
 WORKDIR /srtool
 
 CMD ["/srtool/build"]

@@ -18,4 +18,3 @@ commandTests:
     command: "help"
     args: []
     expectedOutput: ["documentation"]
-
