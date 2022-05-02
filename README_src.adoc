@@ -23,7 +23,7 @@ The Docker images are tagged with both the rustc version used internally as well
 
 You may find for instance the following:
 
-- `{name}:{rsversion}-0.9.16`
+- `{name}:{rsversion}-0.9.19`
 - `{name}:{rsversion}-{version}`
 - `{name}:{rsversion}`
 

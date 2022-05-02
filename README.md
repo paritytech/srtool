@@ -16,7 +16,7 @@ The Docker images are tagged with both the rustc version used internally as well
 
 You may find for instance the following:
 
--   `paritytech/srtool:1.60.0-0.9.16`
+-   `paritytech/srtool:1.60.0-0.9.19`
 
 -   `paritytech/srtool:1.60.0-0.9.20`
 
