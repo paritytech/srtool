@@ -180,7 +180,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chain: ["statemine", "statemint", "westmint", "rococo-parachain", "shell"]
+        chain: ["statemine", "statemint", "westmint", "shell"]
     steps:
       - name: Cache the image
         uses: actions/cache@v2
