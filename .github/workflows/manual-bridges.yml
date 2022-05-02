@@ -26,7 +26,7 @@ jobs:
         chain: ["millau", "rialto"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           repository: paritytech/parity-bridges-common
           ref: ${{ github.event.inputs.ref }}

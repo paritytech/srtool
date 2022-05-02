@@ -26,7 +26,7 @@ jobs:
         chain: ["statemine", "statemint", "westmint", "rococo-parachain", "shell"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v3
         with:
           repository: paritytech/cumulus
           ref: ${{ github.event.inputs.ref }}
