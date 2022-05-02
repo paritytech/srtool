@@ -39,7 +39,7 @@ jobs:
     name: Build ${{ github.event.inputs.repository }}/${{ github.event.inputs.package }} ${{ github.event.inputs.ref }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.2
         with:
           repository: ${{ github.event.inputs.repository }}
           ref: ${{ github.event.inputs.ref }}
