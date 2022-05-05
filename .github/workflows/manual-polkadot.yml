@@ -1,14 +1,14 @@
 name: Manual Build - Polkadot
 
 env:
-  SUBWASM_VERSION: 0.16.1
+  SUBWASM_VERSION: 0.17.0
 
 on:
   workflow_dispatch:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.57.0
+        default: 1.60.0
         required: false
       ref:
         description: The ref to be used for the repo
@@ -26,7 +26,7 @@ jobs:
         chain: ["polkadot", "kusama", "westend"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           repository: paritytech/polkadot
           ref: ${{ github.event.inputs.ref }}

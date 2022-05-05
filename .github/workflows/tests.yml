@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -98,7 +98,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Polkadot repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: paritytech/polkadot
           ref: ${{ github.event.inputs.ref }}
@@ -180,7 +180,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chain: ["statemine", "statemint", "westmint", "rococo-parachain", "shell"]
+        chain: ["statemine", "statemint", "westmint", "shell"]
     steps:
       - name: Cache the image
         uses: actions/cache@v2
@@ -195,7 +195,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Cumulus repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: paritytech/cumulus
           ref: ${{ github.event.inputs.ref }}
@@ -292,7 +292,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Bridges repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: paritytech/parity-bridges-common
           ref: ${{ github.event.inputs.ref }}

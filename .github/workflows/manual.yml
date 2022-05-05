@@ -1,14 +1,14 @@
 name: Manual Build
 
 env:
-  SUBWASM_VERSION: 0.16.1
+  SUBWASM_VERSION: 0.17.0
 
 on:
   workflow_dispatch:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.57.0
+        default: 1.60.0
         required: false
       srtool_image:
         description: The SRTOOL image to use
@@ -39,7 +39,7 @@ jobs:
     name: Build ${{ github.event.inputs.repository }}/${{ github.event.inputs.package }} ${{ github.event.inputs.ref }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           repository: ${{ github.event.inputs.repository }}
           ref: ${{ github.event.inputs.ref }}
