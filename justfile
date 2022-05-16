@@ -26,7 +26,7 @@ publish: build
 tag:
     @echo Tagging version $TAG
     @git tag v$TAG -f
-    @git tag | sort --version-sort -r
+    @git tag | sort --version-sort -r | head
 
 # Generate the readme as .md
 md:
