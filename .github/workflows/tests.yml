@@ -124,6 +124,16 @@ jobs:
             echo $INFO
           fi
 
+      - name: Run some debug
+        env:
+          PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: runtime/${{ matrix.chain }}
+        # working-directory: polkadot
+        run: |
+          ls -al runtime
+          ls -al runtime/${{ matrix.chain }}
+          ls -al runtime/${{ matrix.chain }}/target
+
       - name: Run srtool build for ${{ matrix.chain }}
         id: srtool_build
         env:
