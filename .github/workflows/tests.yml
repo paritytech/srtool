@@ -128,11 +128,11 @@ jobs:
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
           RUNTIME_DIR: runtime/${{ matrix.chain }}
-        # working-directory: polkadot
+        working-directory: polkadot
         run: |
-          ls -al runtime
-          ls -al runtime/${{ matrix.chain }}
-          ls -al runtime/${{ matrix.chain }}/target
+          ls -al runtime || true
+          ls -al runtime/${{ matrix.chain }} || true
+          ls -al runtime/${{ matrix.chain }}/target || true
 
       - name: Run srtool build for ${{ matrix.chain }}
         id: srtool_build
