@@ -132,7 +132,10 @@ jobs:
         run: |
           ls -al runtime || true
           ls -al runtime/${{ matrix.chain }} || true
-          ls -al runtime/${{ matrix.chain }}/target || true
+          id -u runner || true
+          id -g runner || true
+          id -u docker || true
+          docker info --format "{{ .ClientInfo.Context }}"
 
       - name: Run srtool build for ${{ matrix.chain }}
         id: srtool_build

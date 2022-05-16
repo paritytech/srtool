@@ -10,11 +10,13 @@ ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
 ENV PACKAGE=polkadot-runtime
 ENV BUILDER=builder
+ARG UID=1001
+ARG GID=1001
 
 ENV SRTOOL_TEMPLATES=/srtool/templates
 
-RUN groupadd -g 1000 $BUILDER && \
-    useradd --no-log-init  -m -u 1000 -s /bin/bash -d /home/$BUILDER -r -g $BUILDER $BUILDER
+RUN groupadd -g $GID $BUILDER && \
+    useradd --no-log-init  -m -u $UID -s /bin/bash -d /home/$BUILDER -r -g $BUILDER $BUILDER
 RUN mkdir -p ${SRTOOL_TEMPLATES} && \
     mkdir /build && chown -R $BUILDER /build && \
     mkdir /out && chown -R $BUILDER /out
