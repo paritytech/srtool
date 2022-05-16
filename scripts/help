@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
+source "$HOME/.bashrc"
 
 cat /srtool/help.txt

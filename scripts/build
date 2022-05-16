@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 export CDIR=`dirname "$0"`
-source "$CDIR/lib.sh"
-source "$HOME/cargo/env"
+. "$CARGO_HOME/env"
+. "$CDIR/lib.sh"
 
 # echo $PATH
 

@@ -45,7 +45,9 @@ metadataTest:
       value: chevdor@gmail.com
 
   exposedPorts: []
-  volumes: [ "/build", "/home/builder/.cargo", "/out" ]
+  volumes: [ "/build",
+    "/home/builder/cargo",
+    "/out" ]
   entrypoint: []
   cmd: ["/srtool/build"]
   workdir: "/srtool"
