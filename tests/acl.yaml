@@ -7,7 +7,7 @@ commandTests:
     args:
       - -c
       - |
-        cd /home/builder/.rustup
+        cd /home/builder/rustup
         mkdir test
     exitCode: 0
 
@@ -17,7 +17,7 @@ commandTests:
     args:
       - -c
       - |
-        cd /home/builder/.cargo
+        cd /home/builder/cargo
         mkdir test
     exitCode: 0
 

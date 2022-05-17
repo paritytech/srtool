@@ -18,12 +18,12 @@ commandTests:
     setup: []
     command: "id"
     args: ["-u"]
-    expectedOutput: ["1000"]
+    expectedOutput: ["1001"]
   - name: "gid"
     setup: []
     command: "id"
     args: ["-g"]
-    expectedOutput: ["1000"]
+    expectedOutput: ["1001"]
   - name:  "apt-get upgrade"
     command: "apt-get"
     args: ["-qqs", "upgrade"]
