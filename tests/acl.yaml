@@ -51,4 +51,4 @@ commandTests:
         mkdir -p $TARGET
         cd $TARGET
         mkdir target
-    exitCode: 1
+    exitCode: 0
