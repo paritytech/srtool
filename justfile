@@ -50,3 +50,8 @@ test_long *args='':
 
 test_commands *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/commands.yaml --verbosity debug "$@"
+
+test_all:
+    #!/usr/bin/env bash
+    TESTS=$(find tests -type f | sed -e 's/^/ --config /g' | tr -d '\n')
+    container-structure-test test --image srtool --verbosity info ${TESTS}
