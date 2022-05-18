@@ -109,7 +109,7 @@ else
 fi
 
 pushd "$RUNTIME_DIR" > /dev/null || exit 1
-  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
+  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --profile $PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
   if [ ! -z "$VERBOSE" ]; then
       time $CMD || exit 1
   else
