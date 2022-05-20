@@ -268,7 +268,7 @@ jobs:
       - name: Archive Artifacts for ${{ matrix.runtime }}
         uses: actions/upload-artifact@v2
         env:
-          RUNTIME_DIR: parachains/${{ matrix.category }}/${{ matrix.runtime }}
+          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
         with:
           name: ${{ matrix.runtime }}-runtime
           path: |
