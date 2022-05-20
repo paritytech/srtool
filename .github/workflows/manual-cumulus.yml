@@ -23,7 +23,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chain: ["statemine", "statemint", "westmint", "shell"]
+        include:
+          - category: contracts
+            runtime: contracts-rococo
+          - category: assets
+            runtime: statemint
+          - category: starters
+            runtime: shell
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -34,27 +40,27 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
-        uses: chevdor/srtool-actions@v0.3.0
+        uses: chevdor/srtool-actions@v0.4.0
         with:
-          chain: ${{ matrix.chain }}
+          runtime: ${{ matrix.runtime }}
           tag: ${{ github.event.inputs.srtool_tag }}
-          runtime_dir: polkadot-parachains/${{ matrix.chain }}
+          runtime_dir: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
 
       - name: Summary
         run: |
-          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${{ matrix.chain }}-srtool-digest.json
-          cat ${{ matrix.chain }}-srtool-digest.json
+          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${{ matrix.runtime }}-srtool-digest.json
+          cat ${{ matrix.runtime }}-srtool-digest.json
           echo "Runtime location: ${{ steps.srtool_build.outputs.wasm }}"
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
-      - name: Archive Artifacts for ${{ matrix.chain }}
+      - name: Archive Artifacts for ${{ matrix.runtime }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.chain }}-runtime
+          name: ${{ matrix.runtime }}-runtime
           path: |
             ${{ steps.srtool_build.outputs.wasm }}
             ${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            ${{ matrix.runtime }}-srtool-digest.json
 
       # We now get extra information thanks to subwasm
       - name: Install subwasm ${{ env.SUBWASM_VERSION }}
@@ -66,22 +72,22 @@ jobs:
         run: |
           subwasm info ${{ steps.srtool_build.outputs.wasm }}
           subwasm info ${{ steps.srtool_build.outputs.wasm_compressed }}
-          subwasm --json info ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-info.json
-          subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
+          subwasm --json info ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.runtime }}-info.json
+          subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ matrix.runtime }}-info_compressed.json
       - name: Extract the metadata
         run: |
           subwasm meta ${{ steps.srtool_build.outputs.wasm }}
-          subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-metadata.json
+          subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.runtime }}-metadata.json
       - name: Check the metadata diff
         run: |
-          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
+          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.runtime }} | tee ${{ matrix.runtime }}-diff.txt
 
       - name: Archive Subwasm results
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ matrix.chain }}-runtime
+          name: ${{ matrix.runtime }}-runtime
           path: |
-            ${{ matrix.chain }}-info.json
-            ${{ matrix.chain }}-info_compressed.json
-            ${{ matrix.chain }}-metadata.json
-            ${{ matrix.chain }}-diff.txt
+            ${{ matrix.runtime }}-info.json
+            ${{ matrix.runtime }}-info_compressed.json
+            ${{ matrix.runtime }}-metadata.json
+            ${{ matrix.runtime }}-diff.txt

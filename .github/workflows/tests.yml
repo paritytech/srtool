@@ -180,7 +180,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chain: ["statemine", "statemint", "westmint", "shell"]
+        include:
+          - category: contracts
+            runtime: contracts-rococo
+          - category: assets
+            runtime: statemint
+          - category: starters
+            runtime: shell
     steps:
       - name: Cache the image
         uses: actions/cache@v2
@@ -204,8 +210,8 @@ jobs:
 
       - name: Run srtool info
         env:
-          PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: polkadot-parachains/${{ matrix.chain }}
+          PACKAGE: ${{ matrix.runtime }}-runtime
+          RUNTIME_DIR: parachains/${{ matrix.category }}/${{ matrix.runtime }}
         working-directory: cumulus
         run: |
           INFO=$(docker run --rm -i \
@@ -221,11 +227,11 @@ jobs:
             echo $INFO
           fi
 
-      - name: Run srtool build for ${{ matrix.chain }}
+      - name: Run srtool build for ${{ matrix.runtime }}
         id: srtool_build
         env:
-          PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: polkadot-parachains/${{ matrix.chain }}
+          PACKAGE: ${{ matrix.runtime }}-runtime
+          RUNTIME_DIR: parachains/${{ matrix.category }}/${{ matrix.runtime }}
         working-directory: cumulus
         run: |
           CMD="docker run --rm -i \
@@ -253,22 +259,22 @@ jobs:
             echo ::set-output name=wasm_compressed::$Z_WASM
           }
 
-      - name: Summary for ${{ matrix.chain }}
+      - name: Summary for ${{ matrix.runtime }}
         run: |
-          echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+          echo $JSON | jq . | tee ${{ matrix.runtime }}-srtool-digest.json
           echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
 
-      - name: Archive Artifacts for ${{ matrix.chain }}
+      - name: Archive Artifacts for ${{ matrix.runtime }}
         uses: actions/upload-artifact@v2
         env:
-          RUNTIME_DIR: polkadot-parachains/${{ matrix.chain }}
+          RUNTIME_DIR: parachains/${{ matrix.category }}/${{ matrix.runtime }}
         with:
-          name: ${{ matrix.chain }}-runtime
+          name: ${{ matrix.runtime }}-runtime
           path: |
             $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
             $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            ${{ matrix.runtime }}-srtool-digest.json
 
   bridges:
     runs-on: ubuntu-latest
