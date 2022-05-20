@@ -211,7 +211,7 @@ jobs:
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.runtime }}-runtime
-          RUNTIME_DIR: parachains/${{ matrix.category }}/${{ matrix.runtime }}
+          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
         working-directory: cumulus
         run: |
           INFO=$(docker run --rm -i \
