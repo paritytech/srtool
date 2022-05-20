@@ -231,7 +231,7 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.runtime }}-runtime
-          RUNTIME_DIR: parachains/${{ matrix.category }}/${{ matrix.runtime }}
+          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
         working-directory: cumulus
         run: |
           CMD="docker run --rm -i \
