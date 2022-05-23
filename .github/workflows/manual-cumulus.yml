@@ -42,7 +42,7 @@ jobs:
         id: srtool_build
         uses: chevdor/srtool-actions@v0.4.0
         with:
-          runtime: ${{ matrix.runtime }}
+          chain: ${{ matrix.runtime }}
           tag: ${{ github.event.inputs.srtool_tag }}
           runtime_dir: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
 
