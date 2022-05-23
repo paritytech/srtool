@@ -55,3 +55,9 @@ test_all:
     #!/usr/bin/env bash
     TESTS=$(find tests -type f | sed -e 's/^/ --config /g' | tr -d '\n')
     container-structure-test test --image srtool --verbosity info ${TESTS}
+
+# Scan the srtool image for vuln
+scan:
+    #!/usr/bin/env bash
+    echo "scanning $REPO:$RUSTC_VERSION-$TAG"
+    trivy image $REPO:$RUSTC_VERSION-$TAG
