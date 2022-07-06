@@ -7,7 +7,7 @@ To do so, add the following to your `zshconfig`:
 
 ```
 MY_REPO="https://gitlab.com/chevdor/dotfiles/-/raw/master/zsh-plugins"
-for plugin (git cargo srtool); { <1>
+for plugin (git cargo srtool); {<1>
   SNIPPET="$MY_REPO/$plugin/$plugin.plugin.zsh"
   zinit snippet $SNIPPET
 }

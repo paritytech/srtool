@@ -4,7 +4,7 @@ LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 # SHELL ["/bin/bash", "-c"]
 
-ARG RUSTC_VERSION="1.61.0"
+ARG RUSTC_VERSION="1.62.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
@@ -25,7 +25,7 @@ WORKDIR /tmp
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Tooling
-ARG SUBWASM_VERSION=0.17.1
+ARG SUBWASM_VERSION=0.18.0
 ARG TERA_CLI_VERSION=0.2.1
 ARG TOML_CLI_VERSION=0.2.1
 

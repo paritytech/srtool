@@ -294,7 +294,7 @@ If you’re using `zsh` and `zinit`, you may benefit from using the srtool snipp
 To do so, add the following to your `zshconfig`:
 
     MY_REPO="https://gitlab.com/chevdor/dotfiles/-/raw/master/zsh-plugins"
-    for plugin (git cargo srtool); { 
+    for plugin (git cargo srtool); {
       SNIPPET="$MY_REPO/$plugin/$plugin.plugin.zsh"
       zinit snippet $SNIPPET
     }
