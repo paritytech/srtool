@@ -2,6 +2,7 @@ set positional-arguments
 export RUSTC_VERSION:=`cat RUSTC_VERSION`
 export REPO:="paritytech/srtool"
 export TAG:=`cat VERSION`
+export COMMIT:=`git rev-parse --short HEAD`
 
 _default:
     just --choose --chooser "fzf +s -x --tac --cycle"
@@ -15,7 +16,12 @@ build:
     @echo Building $REPO:$RUSTC_VERSION
     @echo If you encounter issues, try running `just cleanup` and try building again.
     @echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
-    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION -t $REPO:$RUSTC_VERSION-$TAG -t $REPO -t ${REPO#*/} .
+    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION \
+        -t chevdor/srtool:$RUSTC_VERSION-$TAG-$COMMIT \
+        -t $REPO:$RUSTC_VERSION-$TAG \
+        -t $REPO \
+        -t ${REPO#*/} \
+        .
     docker images | grep srtool
 
 # Build and Publish the docker image
