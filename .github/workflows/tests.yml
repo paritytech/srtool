@@ -76,6 +76,49 @@ jobs:
             echo $VERSION
           fi
 
+  container-structure-test:
+    runs-on: ubuntu-latest
+    needs: build
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Show files
+        run: |
+          ls -al
+
+      - name: Cache the image
+        uses: actions/cache@v2
+        with:
+          key: srtool-docker-image-${{ github.sha }}
+          path: |
+            srtool.tar.gz
+
+      - name: Install tooling
+        run: |
+          curl -LO https://storage.googleapis.com/container-structure-test/latest/container-structure-test-linux-amd64 && \
+            chmod +x container-structure-test-linux-amd64 && \
+            mkdir -p $HOME/bin && \
+            export PATH=$PATH:$HOME/bin && \
+            mv container-structure-test-linux-amd64 $HOME/bin/container-structure-test
+          echo "Installed version:"
+          container-structure-test version
+
+      - name: Load Docker image
+        run: |
+          docker load -i srtool.tar.gz
+          docker images --digests
+
+      - name: Run the tests
+        run: |
+          export PATH=$PATH:$HOME/bin
+          TESTS=$(find tests -type f | sed -e 's/^/ --config /g' | tr -d '\n')
+          echo "Running tests:"
+          find tests -type f
+          container-structure-test test --image srtool --verbosity info ${TESTS}
+
   polkadot:
     runs-on: ubuntu-latest
     needs: build
@@ -123,6 +166,19 @@ jobs:
           else
             echo $INFO
           fi
+
+      - name: Run some debug
+        env:
+          PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: runtime/${{ matrix.chain }}
+        working-directory: polkadot
+        run: |
+          ls -al runtime || true
+          ls -al runtime/${{ matrix.chain }} || true
+          id -u runner || true
+          id -g runner || true
+          id -u docker || true
+          docker info --format "{{ .ClientInfo.Context }}"
 
       - name: Run srtool build for ${{ matrix.chain }}
         id: srtool_build

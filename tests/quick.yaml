@@ -1,0 +1,54 @@
+schemaVersion: '2.0.0'
+
+# Quick set of tests
+fileExistenceTests:
+  - name: 'Check srtool build script'
+    path: '/srtool/build'
+    shouldExist: true
+    uid: 0
+    gid: 0
+    isExecutableBy: other
+commandTests:
+  - name: "root"
+    setup: []
+    command: "whoami"
+    args: []
+    expectedOutput: ["builder"]
+  - name: "uid"
+    setup: []
+    command: "id"
+    args: ["-u"]
+    expectedOutput: ["1001"]
+  - name: "gid"
+    setup: []
+    command: "id"
+    args: ["-g"]
+    expectedOutput: ["1001"]
+  - name:  "apt-get upgrade"
+    command: "apt-get"
+    args: ["-qqs", "upgrade"]
+    excludedOutput: [".*Inst.*Security.* | .*Security.*Inst.*"]
+    excludedError: [".*Inst.*Security.* | .*Security.*Inst.*"]
+  - name: Patch build
+    command: "bash"
+    args: ["-c", "echo foo >> /srtool/build"]
+    exitCode: 1
+metadataTest:
+  env:
+    - key: DOCKER_IMAGE
+      value: paritytech/srtool
+    - key: RUSTC_VERSION
+      value: '^\d+\.\d+\.\d+$'
+      isRegex: true
+  labels:
+    - key: maintainer
+      value: chevdor@gmail.com
+
+  exposedPorts: []
+  volumes: [ "/build",
+    "/home/builder/cargo",
+    "/out" ]
+  entrypoint: []
+  cmd: ["/srtool/build"]
+  workdir: "/srtool"
+  user: "builder"

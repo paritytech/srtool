@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+. "$CARGO_HOME/env"
+
 # This script returns all the build information available *BEFORE* having to run the build
 # So you get a summary of data such as git repo, package name, rustc version, etc...
 # but you will not get the runtime, its hash, etc...
@@ -12,7 +14,7 @@ cd /build/
 
 if git describe --all > /dev/null 2>&1; then
     SRC='git'
-    GIT_TAG=`git describe --tags --abbrev=0`
+    GIT_TAG=`git describe --tags --abbrev=0 > /dev/null 2>&1;`
     GIT_COMMIT_REF=`git rev-parse HEAD`
     GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 else

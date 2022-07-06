@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 export CDIR=`dirname "$0"`
-source "$CDIR/lib.sh"
+. "$CARGO_HOME/env"
+. "$CDIR/lib.sh"
+
+# echo $PATH
 
 # If the user sends a SIGINT, we want to exit the entire script
 trap "exit" INT
@@ -70,7 +73,7 @@ fi
 # As of https://github.com/paritytech/polkadot/pull/2522 we need to cd to the
 # runtime directory itself
 export RUNTIME_NAME="${PACKAGE/-*/}"
-export GET_OPTS_CMD="${CDIR}/getBuildOpts.sh"
+export GET_OPTS_CMD="/srtool/getBuildOpts.sh"
 export GET_OPTS=`$GET_OPTS_CMD`
 export BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}"
 export PROFILE="${PROFILE:-release}"
@@ -106,7 +109,7 @@ else
 fi
 
 pushd "$RUNTIME_DIR" > /dev/null || exit 1
-  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --$PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
+  CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --profile $PROFILE --target-dir target/srtool --out-dir /out -Z unstable-options"
   if [ ! -z "$VERBOSE" ]; then
       time $CMD || exit 1
   else
@@ -132,19 +135,19 @@ if [ $Z_WASM ]; then
     cp -f "$Z_WASM" /out/
 fi
 
-SHA256=0x`shasum -a 256 $WASM | awk '{print $1}'`
-MULTIHASH=`subwasm -j info $WASM | jq -r .ipfs_hash`
-SIZE=`wc -c < $WASM`
+SIZE=`wc -c < $Z_WASM`
 LENGTH=16
 SKIP=`echo $(($SIZE-$LENGTH))`
 # Some magic to show the first and last bytes of the blob the same way the UI does when you see
 # a setCode coming from a motion or referendum
-PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $WASM`
+PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $Z_WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $Z_WASM`
 
-SZ=`du -sb $WASM | awk '{print $1}'`
+SZ=`du -sb $Z_WASM | awk '{print $1}'`
 KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
-PROP=`subwasm -j info $WASM | jq -r .proposal_hash`
+SHA256=0x`shasum -a 256 $Z_WASM | awk '{print $1}'`
+PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
+MULTIHASH=`subwasm -j info $Z_WASM | jq -r .ipfs_hash`
 
 # If we work on a snapshot, we will NOT get a .git folder to work on
 if [ -d ".git" ]; then
@@ -174,6 +177,7 @@ JSON=$( jq -n \
     --arg pkg "$PACKAGE" \
     --arg bytes "$SZ" \
     --arg wasm "$WASM" \
+    --arg z_wasm "$Z_WASM" \
     --arg prop "$PROP" \
     --arg sha256 "$SHA256" \
     --arg tmsp "$TMSP" \
@@ -200,7 +204,7 @@ JSON=$( jq -n \
         prop: $prop,
         ipfs: $ipfs,
         sha256: $sha256,
-        wasm: $wasm,
+        wasm: $z_wasm,
 
         info: $info,
         context: $context,

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source "$HOME/.bashrc"
 
 VERSION=`cat /srtool/VERSION`
 RUSTC_VERSION=`cat /srtool/RUSTC_VERSION`
