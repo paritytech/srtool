@@ -146,7 +146,7 @@ SZ=`du -sb $Z_WASM | awk '{print $1}'`
 KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
 SHA256=0x`shasum -a 256 $Z_WASM | awk '{print $1}'`
-SET_CODE_PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
+PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
 AUTHORIZE_UPGRADE_PROP=`subwasm -j info $Z_WASM | jq -r .parachain_authorize_upgrade_hash`
 MULTIHASH=`subwasm -j info $Z_WASM | jq -r .ipfs_hash`
 
@@ -179,7 +179,7 @@ JSON=$( jq -n \
     --arg bytes "$SZ" \
     --arg wasm "$WASM" \
     --arg z_wasm "$Z_WASM" \
-    --arg set_code_prop "$SET_CODE_PROP" \
+    --arg prop "$PROP" \
     --arg authorize_upgrade_prop "$AUTHORIZE_UPGRADE_PROP" \
     --arg sha256 "$SHA256" \
     --arg tmsp "$TMSP" \
@@ -203,7 +203,7 @@ JSON=$( jq -n \
         pkg: $pkg,
         tmsp: $tmsp,
         size: $bytes,
-        set_code_prop: $set_code_prop,
+        prop: $prop,
         authorize_upgrade_prop: $authorize_upgrade_prop,
         ipfs: $ipfs,
         sha256: $sha256,

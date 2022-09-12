@@ -4,7 +4,7 @@ WASM=$1
 WASM_FULLPATH=/build/$WASM
 
 SZ=`du -sb $WASM_FULLPATH | awk '{print $1}'`
-SET_CODE_PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
+PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
 AUTHORIZE_UPGRADE_PROP=`subwasm -j info $Z_WASM | jq -r .parachain_authorize_upgrade_hash`
 MULTIHASH=`subwasm -j info $WASM_FULLPATH | jq -r .ipfs_hash`
 SHA256=0x`shasum -a 256 $WASM_FULLPATH | awk '{print $1}'`
@@ -15,7 +15,7 @@ SUBWASM=`subwasm -j info $WASM_FULLPATH`
 JSON=$( jq -n \
     --arg tmsp "$TMSP" \
     --arg size "$SZ" \
-    --arg set_code_prop "$SET_CODE_PROP" \
+    --arg prop "$PROP" \
     --arg authorize_upgrade_prop "$AUTHORIZE_UPGRADE_PROP" \
     --arg blake2_256 "$BLAKE2_256" \
     --arg ipfs "$MULTIHASH" \
@@ -25,7 +25,7 @@ JSON=$( jq -n \
     '{
         tmsp: $tmsp,
         size: $size,
-        set_code_prop: $set_code_prop,
+        prop: $prop,
         authorize_upgrade_prop: $authorize_upgrade_prop,
         blake2_256: $blake2_256,
         ipfs: $ipfs,
