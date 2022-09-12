@@ -11,27 +11,27 @@ Summary generated with {{ gen }} using the docker image {{ context.docker.image 
  Time        : {{ tmsp }}
 
 == Compact
- Version                                      : {{ runtimes.compact.subwasm.core_version }}
- Metadata                                     : V{{ runtimes.compact.subwasm.metadata_version }}
- Size                                         : {{ runtimes.compact.size | int | filesizeformat }} ({{ runtimes.compact.size }} bytes)
- system.setCode proposal                      : {{ runtimes.compact.set_code_prop }}
- parachainSystem.authorizeUpgrade proposal    : {{ runtimes.compact.authorize_upgrade_prop }}
- IPFS                                         : {{ runtimes.compact.ipfs }}
- BLAKE2_256                                   : {{ runtimes.compact.blake2_256 }}
- Wasm                                         : {{ runtimes.compact.wasm }}
+ Version                    : {{ runtimes.compact.subwasm.core_version }}
+ Metadata                   : V{{ runtimes.compact.subwasm.metadata_version }}
+ Size                       : {{ runtimes.compact.size | int | filesizeformat }} ({{ runtimes.compact.size }} bytes)
+ setCode proposal           : {{ runtimes.compact.set_code_prop }}
+ authorizeUpgrade proposal  : {{ runtimes.compact.authorize_upgrade_prop }}
+ IPFS                       : {{ runtimes.compact.ipfs }}
+ BLAKE2_256                 : {{ runtimes.compact.blake2_256 }}
+ Wasm                       : {{ runtimes.compact.wasm }}
 
 == Compressed
 {%- if  runtimes.compressed %}
 {%- set ratio = 100 - (( runtimes.compressed.subwasm.compression.size_compressed / runtimes.compressed.subwasm.compression.size_decompressed) ) * 100 %}
- Version                                      : {{ runtimes.compressed.subwasm.core_version }}
- Metadata                                     : V{{ runtimes.compressed.subwasm.metadata_version }}
- Size                                         : {{ runtimes.compressed.size | int | filesizeformat }} ({{ runtimes.compressed.size }} bytes)
- Compression                                  : {{ ratio | round(method="ceil", precision=2) }}%
- system.setCode proposal                      : {{ runtimes.compressed.set_code_prop }}
- parachainSystem.authorizeUpgrade proposal    : {{ runtimes.compressed.authorize_upgrade_prop }}
- IPFS                                         : {{ runtimes.compressed.ipfs }}
- BLAKE2_256                                   : {{ runtimes.compressed.blake2_256 }}
- Wasm                                         : {{ runtimes.compressed.wasm }}
+ Version                    : {{ runtimes.compressed.subwasm.core_version }}
+ Metadata                   : V{{ runtimes.compressed.subwasm.metadata_version }}
+ Size                       : {{ runtimes.compressed.size | int | filesizeformat }} ({{ runtimes.compressed.size }} bytes)
+ Compression                : {{ ratio | round(method="ceil", precision=2) }}%
+ setCode proposal           : {{ runtimes.compressed.set_code_prop }}
+ authorizeUpgrade proposal  : {{ runtimes.compressed.authorize_upgrade_prop }}
+ IPFS                       : {{ runtimes.compressed.ipfs }}
+ BLAKE2_256                 : {{ runtimes.compressed.blake2_256 }}
+ Wasm                       : {{ runtimes.compressed.wasm }}
 {% else  %}
  No compressed runtime found
 {% endif %}
