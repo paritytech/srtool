@@ -4,8 +4,8 @@ WASM=$1
 WASM_FULLPATH=/build/$WASM
 
 SZ=`du -sb $WASM_FULLPATH | awk '{print $1}'`
-PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
-AUTHORIZE_UPGRADE_PROP=`subwasm -j info $Z_WASM | jq -r .parachain_authorize_upgrade_hash`
+PROP=`subwasm -j info $WASM_FULLPATH | jq -r .proposal_hash`
+AUTHORIZE_UPGRADE_PROP=`subwasm -j info $WASM_FULLPATH | jq -r .parachain_authorize_upgrade_hash`
 MULTIHASH=`subwasm -j info $WASM_FULLPATH | jq -r .ipfs_hash`
 SHA256=0x`shasum -a 256 $WASM_FULLPATH | awk '{print $1}'`
 TMSP=$(date --utc +%FT%TZ -d @$(stat -c "%Y" $WASM_FULLPATH))
