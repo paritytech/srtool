@@ -3,7 +3,7 @@ FROM docker.io/library/ubuntu:22.04
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 
-ARG RUSTC_VERSION="1.62.0"
+ARG RUSTC_VERSION="1.64.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
@@ -25,14 +25,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Tooling
 ARG SUBWASM_VERSION=0.18.0
-ARG TERA_CLI_VERSION=0.2.1
-ARG TOML_CLI_VERSION=0.2.1
+ARG TERA_CLI_VERSION=0.2.2
+ARG TOML_CLI_VERSION=0.2.2
 
 COPY ./templates ${SRTOOL_TEMPLATES}/
 RUN apt update && \
     apt upgrade -y && \
     apt install --no-install-recommends -y \
-        cmake pkg-config libssl-dev make \
+        cmake pkg-config libssl-dev make protobuf-compiler \
         git clang bsdmainutils ca-certificates curl && \
     curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && chmod a+x /usr/bin/jq && \
     rm -rf /var/lib/apt/lists/* /tmp/* && apt clean

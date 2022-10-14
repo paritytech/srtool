@@ -1,11 +1,11 @@
 :name: paritytech/srtool
-:rsversion: 1.62.0
-:version: 0.9.21
+:rsversion: 1.64.0
+:version: 0.9.22
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right
 :sectnums:
 
-= Substrate Runtime Toolbox: srtool
+= Substrate Runtime Toolbox: srtool v{version}
 
 image::resources/srtool-docker_128px.png[align=center, width=128px]
 
