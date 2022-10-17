@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
 
       - name: Build image
         run: |
@@ -25,7 +25,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -39,7 +39,7 @@ jobs:
       release_url: ${{ steps.create-release.outputs.html_url }}
       asset_upload_url: ${{ steps.create-release.outputs.upload_url }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           fetch-depth: 0
       - name: Get Release Version
@@ -52,7 +52,7 @@ jobs:
           echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
           echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -85,7 +85,7 @@ jobs:
 
       - name: Create Release
         id: create-release
-        uses: actions/create-release@v1
+        uses: actions/create-release@0cb9c9b65d5d1901c1f53e5e66eaf4afd303e70e # v1.1.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -99,7 +99,7 @@ jobs:
     needs: ["create_draft"]
     steps:
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |

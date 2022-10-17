@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -39,7 +39,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -51,7 +51,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -81,7 +81,7 @@ jobs:
     needs: build
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -90,7 +90,7 @@ jobs:
           ls -al
 
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -129,7 +129,7 @@ jobs:
         chain: ["polkadot", "kusama", "westend"]
     steps:
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -141,7 +141,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Polkadot repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           repository: paritytech/polkadot
           ref: ${{ github.event.inputs.ref }}
@@ -219,7 +219,7 @@ jobs:
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         env:
           RUNTIME_DIR: runtime/${{ matrix.chain }}
         with:
@@ -245,7 +245,7 @@ jobs:
             runtime: shell
     steps:
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -257,7 +257,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Cumulus repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           repository: paritytech/cumulus
           ref: ${{ github.event.inputs.ref }}
@@ -322,7 +322,7 @@ jobs:
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
 
       - name: Archive Artifacts for ${{ matrix.runtime }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         env:
           RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
         with:
@@ -342,7 +342,7 @@ jobs:
         chain: ["millau", "rialto"]
     steps:
       - name: Cache the image
-        uses: actions/cache@v2
+        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -354,7 +354,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Bridges repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           repository: paritytech/parity-bridges-common
           ref: ${{ github.event.inputs.ref }}
@@ -419,7 +419,7 @@ jobs:
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         env:
           RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
         with:
