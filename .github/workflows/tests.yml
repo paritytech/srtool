@@ -200,16 +200,16 @@ jobs:
               JSON="$line"
             done
 
-            echo ::set-output name=json::$JSON
+            echo "json=$JSON" >> $GITHUB_OUTPUT
             echo "JSON=$JSON" >> $GITHUB_ENV
 
             echo $JSON | jq .
 
             WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
-            echo ::set-output name=wasm::$WASM
+            echo "wasm=$WASM" >> $GITHUB_OUTPUT
 
             Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
-            echo ::set-output name=wasm_compressed::$Z_WASM
+            echo "wasm_compressed=$Z_WASM" >> $GITHUB_OUTPUT
           }
 
       - name: Summary for ${{ matrix.chain }}
@@ -303,16 +303,16 @@ jobs:
               JSON="$line"
             done
 
-            echo ::set-output name=json::$JSON
+            echo "json=$JSON" >> $GITHUB_OUTPUT
             echo "JSON=$JSON" >> $GITHUB_ENV
 
             echo $JSON | jq .
 
             WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
-            echo ::set-output name=wasm::$WASM
+            echo "wasm=$WASM" >> $GITHUB_OUTPUT
 
             Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
-            echo ::set-output name=wasm_compressed::$Z_WASM
+            echo "wasm_compressed=$Z_WASM" >> $GITHUB_OUTPUT
           }
 
       - name: Summary for ${{ matrix.runtime }}
@@ -400,16 +400,16 @@ jobs:
               JSON="$line"
             done
 
-            echo ::set-output name=json::$JSON
+            echo "json=$JSON" >> $GITHUB_OUTPUT
             echo "JSON=$JSON" >> $GITHUB_ENV
 
             echo $JSON | jq .
 
             WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
-            echo ::set-output name=wasm::$WASM
+            echo "wasm=$WASM" >> $GITHUB_OUTPUT
 
             Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
-            echo ::set-output name=wasm_compressed::$Z_WASM
+            echo "wasm_compressed=$Z_WASM" >> $GITHUB_OUTPUT
           }
 
       - name: Summary for ${{ matrix.chain }}
