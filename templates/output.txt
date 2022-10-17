@@ -14,7 +14,7 @@ Summary generated with {{ gen }} using the docker image {{ context.docker.image 
  Version          : {{ runtimes.compact.subwasm.core_version }}
  Metadata         : V{{ runtimes.compact.subwasm.metadata_version }}
  Size             : {{ runtimes.compact.size | int | filesizeformat }} ({{ runtimes.compact.size }} bytes)
- setCode          : {{ runtimes.compact.set_code_prop }}
+ setCode          : {{ runtimes.compact.prop }}
  authorizeUpgrade : {{ runtimes.compact.authorize_upgrade_prop }}
  IPFS             : {{ runtimes.compact.ipfs }}
  BLAKE2_256       : {{ runtimes.compact.blake2_256 }}
@@ -27,7 +27,7 @@ Summary generated with {{ gen }} using the docker image {{ context.docker.image 
  Metadata         : V{{ runtimes.compressed.subwasm.metadata_version }}
  Size             : {{ runtimes.compressed.size | int | filesizeformat }} ({{ runtimes.compressed.size }} bytes)
  Compression      : {{ ratio | round(method="ceil", precision=2) }}%
- setCode          : {{ runtimes.compressed.set_code_prop }}
+ setCode          : {{ runtimes.compressed.prop }}
  authorizeUpgrade : {{ runtimes.compressed.authorize_upgrade_prop }}
  IPFS             : {{ runtimes.compressed.ipfs }}
  BLAKE2_256       : {{ runtimes.compressed.blake2_256 }}

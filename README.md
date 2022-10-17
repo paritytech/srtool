@@ -1,4 +1,4 @@
-# Substrate Runtime Toolbox: srtool v0.9.22
+# Substrate Runtime Toolbox: srtool v0.9.23
 
 ![srtool docker 128px](resources/srtool-docker_128px.png)
 
@@ -18,11 +18,11 @@ You may find for instance the following:
 
 -   `paritytech/srtool:1.64.0-0.9.19`
 
--   `paritytech/srtool:1.64.0-0.9.22`
+-   `paritytech/srtool:1.64.0-0.9.23`
 
 -   `paritytech/srtool:1.64.0`
 
-The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.64.0` is the same image than `paritytech/srtool:1.64.0-0.9.22`.
+The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.64.0` is the same image than `paritytech/srtool:1.64.0-0.9.23`.
 
 ## Related tools
 
@@ -47,7 +47,7 @@ You may also want to have a look at [subwasm](https://github.com/chevdor/subwasm
 The project was initially developed by <https://gitlab.com/chevdor>.
 It has now moved to Github under the [Parity Technologies](https://www.github.com/paritytech) organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
 
-The last version hosted on Gitlab has been built using Rust Stable 1.64.0. It is tagged as v0.9.22 and there is no plan on updating the Gitlab repository further. New versions will be available from [this repository](https://www.github.com/paritytech/srtool) only. The functionalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+The last version hosted on Gitlab has been built using Rust Stable 1.64.0. It is tagged as v0.9.23 and there is no plan on updating the Gitlab repository further. New versions will be available from [this repository](https://www.github.com/paritytech/srtool) only. The functionalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
 
 ## Install
 
@@ -91,7 +91,7 @@ Invoking `srtool build` with
 
 will output something that looks like this:
 
-        🧰 Substrate Runtime Toolbox - srtool v0.9.22 🧰
+        🧰 Substrate Runtime Toolbox - srtool v0.9.23 🧰
                   - by Chevdor -
         🏗  Building polkadot-runtime as release using rustc 1.64.0
         ⏳ That can take a little while, be patient... subsequent builds will be faster.
@@ -104,7 +104,7 @@ and finally …​
 
     ✨ Your Substrate WASM Runtime is ready! ✨
     Summary:
-      Generator  : srtool v0.9.22
+      Generator  : srtool v0.9.23
       Version    : null
       GIT commit : 56b9e95a9b634695f59a7c699bc68a5cfb695f03
       GIT tag    : moonriver-genesis
@@ -134,7 +134,7 @@ If you prefer a json output, srtool has you covered:
 The output will look something like:
 
     {
-        "gen": "srtool v0.9.22",
+        "gen": "srtool v0.9.23",
         "src": "git",
         "version": "1.0.0",
         "commit": "85cad2ef48f123d7475385b00d113bc900324ad6",
@@ -151,7 +151,7 @@ The output will look something like:
         "info": {
           "generator": {
             "name": "srtool",
-            "version": "0.9.22"
+            "version": "0.9.23"
           },
           "src": "git",
           "version": "1.0.0",
