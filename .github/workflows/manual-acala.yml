@@ -25,7 +25,7 @@ jobs:
         chain: ["karura"]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
         with:
           repository: AcalaNetwork/Acala
           ref: ${{ github.event.inputs.ref }}
@@ -34,7 +34,7 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
-        uses: chevdor/srtool-actions@v0.3.0
+        uses: chevdor/srtool-actions@v0.6.0
         with:
           chain: ${{ matrix.chain }}
           tag: ${{ github.event.inputs.srtool_tag }}
@@ -47,7 +47,7 @@ jobs:
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -76,7 +76,7 @@ jobs:
           subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
       - name: Archive Subwasm results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
