@@ -47,7 +47,7 @@ commandTests:
     args:
       - -c
       - |
-        TARGET=/build/runtime/polkadot
+        export TARGET=/build/runtime/polkadot
         mkdir -p $TARGET
         cd $TARGET
         mkdir target
