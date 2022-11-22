@@ -34,7 +34,7 @@ commandTests:
     args: ["-c", "echo foo >> /srtool/build"]
     exitCode: 1
 metadataTest:
-  env:
+  envVars:
     - key: DOCKER_IMAGE
       value: paritytech/srtool
     - key: RUSTC_VERSION
