@@ -1,5 +1,5 @@
 :name: paritytech/srtool
-:rsversion: 1.66.1
+:rsversion: 1.67.0
 :version: 0.9.25
 // :rsversion: pass:m[include:RUSTC_VERSION[]] // TODO: not working...
 :toc: right

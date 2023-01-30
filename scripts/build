@@ -78,7 +78,7 @@ export GET_OPTS=`$GET_OPTS_CMD`
 export BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}"
 export PROFILE="${PROFILE:-release}"
 export RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}"
-export RUSTC_BOOTSTRAP=1
+# export RUSTC_BOOTSTRAP=1
 
 # We check a few things before spending too much time building...
 
