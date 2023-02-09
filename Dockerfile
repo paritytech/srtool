@@ -33,8 +33,8 @@ RUN apt update && \
     apt upgrade -y && \
     apt install --no-install-recommends -y \
     cmake pkg-config libssl-dev make protobuf-compiler \
-    git clang bsdmainutils ca-certificates curl && \
-    curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && chmod a+x /usr/bin/jq && \
+        git clang bsdmainutils ca-certificates curl && \
+        curl -L https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 --output /usr/bin/jq && chmod a+x /usr/bin/jq && \
     rm -rf /var/lib/apt/lists/* /tmp/* && apt clean
 
 RUN curl -L https://github.com/chevdor/subwasm/releases/download/v${SUBWASM_VERSION}/subwasm_linux_amd64_v${SUBWASM_VERSION}.deb --output subwasm.deb && dpkg -i subwasm.deb && subwasm --version && \
