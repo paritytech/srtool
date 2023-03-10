@@ -137,15 +137,7 @@ if [ "$Z_WASM" ]; then
     cp -f "$Z_WASM" /out/
 fi
 
-# SIZE=`wc -c < "$Z_WASM"`
-# LENGTH=16
-# SKIP=`echo $(($SIZE-$LENGTH))`
-# Some magic to show the first and last bytes of the blob the same way the UI does when you see
-# a setCode coming from a motion or referendum
-# PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' "$Z_WASM"; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' "$Z_WASM"`
-
 SZ=`du -sb "$Z_WASM" | awk '{print $1}'`
-# KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
 SHA256=0x`shasum -a 256 "$Z_WASM" | awk '{print $1}'`
 PROP=`subwasm -j info "$Z_WASM" | jq -r .proposal_hash`
