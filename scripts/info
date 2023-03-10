@@ -23,6 +23,10 @@ fi
 
 CARGO_VERSION=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
 
+if [[ "$CARGO_VERSION" =~ 'workspace' ]]; then
+    :
+fi
+
 JSON=$( jq -n \
     --arg gen "srtool" \
     --arg version "$VERSION" \
