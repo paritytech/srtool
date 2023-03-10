@@ -21,7 +21,8 @@ else
     SRC='zip'
 fi
 
-CARGO_VERSION=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
+# We use the Cargo.lock to benefit from workspace version inheritance when appropriate
+CARGO_VERSION=`toml get Cargo.lock . | jq -r '.package[] | select(.name == "'"$PACKAGE"'") | .version'`
 
 JSON=$( jq -n \
     --arg gen "srtool" \

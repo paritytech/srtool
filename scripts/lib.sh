@@ -31,3 +31,9 @@ vercomp () {
     done
     return 0
 }
+
+# Get the version of the runtime package
+get_runtime_package_version () {
+    PACKAGE=$1
+    toml get Cargo.lock . | jq -r '.package[] | select(.name == "'"$PACKAGE"'") | .version'
+}

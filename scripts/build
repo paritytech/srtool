@@ -15,7 +15,7 @@ export VERSION=`cat /srtool/VERSION || echo 0.0.0`
 export GEN="srtool v$VERSION"
 export LATEST_VERSION=$(curl -L -s https://github.com/paritytech/srtool/raw/master/VERSION)
 
-vercomp $LATEST_VERSION $VERSION
+vercomp "$LATEST_VERSION" "$VERSION"
 
 case $? in
     0) op='=';;
@@ -88,10 +88,10 @@ if [ ! -f Cargo.toml ]; then
     exit 1
 fi
 
-CRATE_VERSION=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.version | jq -r`
+CRATE_VERSION=$(get_runtime_package_version "$PACKAGE")
 CRATE_NAME=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.name | jq -r`
 
-if [[ $CRATE_NAME != $PACKAGE ]]; then
+if [[ $CRATE_NAME != "$PACKAGE" ]]; then
     echo "!!! The PACKAGE '$PACKAGE' does not match the crate name at '$RUNTIME_DIR'. Did you mean '$CRATE_NAME'?"
     exit 1
 fi
@@ -121,8 +121,8 @@ pushd "$RUNTIME_DIR" > /dev/null || exit 1
           $CMD 2>&1 || exit 1
       fi
   fi
-  WASM=`find target/srtool/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.wasm"`
-  Z_WASM=`find target/srtool/$PROFILE/wbuild/$PACKAGE -type f -name "*.compact.compressed.wasm"`
+  WASM=`find "target/srtool/$PROFILE/wbuild/$PACKAGE" -type f -name "*.compact.wasm"`
+  Z_WASM=`find "target/srtool/$PROFILE/wbuild/$PACKAGE" -type f -name "*.compact.compressed.wasm"`
 popd > /dev/null || exit 1
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
@@ -132,25 +132,25 @@ fi
 export WASM=$RUNTIME_DIR/$WASM
 
 cp -f "$WASM" /out/
-if [ $Z_WASM ]; then
+if [ "$Z_WASM" ]; then
     export Z_WASM=$RUNTIME_DIR/$Z_WASM
     cp -f "$Z_WASM" /out/
 fi
 
-SIZE=`wc -c < $Z_WASM`
-LENGTH=16
-SKIP=`echo $(($SIZE-$LENGTH))`
+# SIZE=`wc -c < "$Z_WASM"`
+# LENGTH=16
+# SKIP=`echo $(($SIZE-$LENGTH))`
 # Some magic to show the first and last bytes of the blob the same way the UI does when you see
 # a setCode coming from a motion or referendum
-PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' $Z_WASM; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' $Z_WASM`
+# PREVIEW=`printf "0x"; hexdump -n $LENGTH -ve '1/1 "%.2x"' "$Z_WASM"; printf "..."; hexdump -n $LENGTH -s $SKIP -ve '1/1 "%.2x"' "$Z_WASM"`
 
-SZ=`du -sb $Z_WASM | awk '{print $1}'`
-KB=$(expr $SZ / 1024)
+SZ=`du -sb "$Z_WASM" | awk '{print $1}'`
+# KB=$(expr $SZ / 1024)
 TMSP=`date --utc +%FT%TZ`
-SHA256=0x`shasum -a 256 $Z_WASM | awk '{print $1}'`
-PROP=`subwasm -j info $Z_WASM | jq -r .proposal_hash`
-AUTHORIZE_UPGRADE_PROP=`subwasm -j info $Z_WASM | jq -r .parachain_authorize_upgrade_hash`
-MULTIHASH=`subwasm -j info $Z_WASM | jq -r .ipfs_hash`
+SHA256=0x`shasum -a 256 "$Z_WASM" | awk '{print $1}'`
+PROP=`subwasm -j info "$Z_WASM" | jq -r .proposal_hash`
+AUTHORIZE_UPGRADE_PROP=`subwasm -j info "$Z_WASM" | jq -r .parachain_authorize_upgrade_hash`
+MULTIHASH=`subwasm -j info "$Z_WASM" | jq -r .ipfs_hash`
 
 # If we work on a snapshot, we will NOT get a .git folder to work on
 if [ -d ".git" ]; then
@@ -162,10 +162,10 @@ else
     SRC='zip'
 fi
 
-COMPACT_DETAILS=`/srtool/analyse.sh $WASM | tail -n 1`
+COMPACT_DETAILS=`/srtool/analyse.sh "$WASM" | tail -n 1`
 
-if [ $Z_WASM ]; then
-    COMPRESSED_DETAILS=`/srtool/analyse.sh $Z_WASM | tail -n 1`
+if [ "$Z_WASM" ]; then
+    COMPRESSED_DETAILS=`/srtool/analyse.sh "$Z_WASM" | tail -n 1`
 else
     COMPRESSED_DETAILS={}
 fi
