@@ -1,14 +1,14 @@
 name: Manual Build - Moonbeam
 
 env:
-  SUBWASM_VERSION: 0.18.0
+  SUBWASM_VERSION: 0.19.1
 
 on:
   workflow_dispatch:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.68.0
+        default: 1.69.0
         required: false
       ref:
         description: The ref to be used for the repo
