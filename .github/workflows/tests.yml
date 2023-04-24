@@ -220,13 +220,15 @@ jobs:
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        env:
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
+        # env:
+        #   RUNTIME_DIR: runtime/${{ matrix.chain }}
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
+            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
+            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
 
   cumulus:
@@ -323,13 +325,15 @@ jobs:
 
       - name: Archive Artifacts for ${{ matrix.runtime }}
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        env:
-          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
+        # env:
+        #   RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
         with:
           name: ${{ matrix.runtime }}-runtime
           path: |
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
+            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
+            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.runtime }}-srtool-digest.json
 
   bridges:
@@ -420,11 +424,13 @@ jobs:
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        env:
-          RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
+        # env:
+        #   RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
+            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
+            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ steps.srtool_build.outputs.wasm }}
+            ${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
