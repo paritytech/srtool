@@ -1,33 +1,34 @@
 set positional-arguments
 export RUSTC_VERSION:=`cat RUSTC_VERSION`
+export REGISTRY:="docker.io"
 export REPO:="paritytech/srtool"
 export TAG:=`cat VERSION`
 export COMMIT:=`git rev-parse --short HEAD`
 
 _default:
-    just --choose --chooser "fzf +s -x --tac --cycle"
+    @just --choose --chooser "fzf +s -x --tac --cycle"
 
-# Runs a docker system prune to ensure we have the resources to build the image
+# Runs a system prune to ensure we have the resources to build the image
 cleanup:
-    docker system prune -f
+    podman system prune -f
 
-# Build the docker image
+# Build the container image
 build:
     @echo Building $REPO:$RUSTC_VERSION
     @echo If you encounter issues, try running `just cleanup` and try building again.
-    @echo Any arg you pass is forward to 'docker build'... You can pass'`--no-cache' for instance
-    docker build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION \
-        -t chevdor/srtool:$RUSTC_VERSION-$TAG-$COMMIT \
-        -t $REPO:$RUSTC_VERSION-$TAG \
-        -t $REPO \
-        -t ${REPO#*/} \
+    @echo Any arg you pass is forward to 'podman build'... You can pass'`--no-cache' for instance
+    podman build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION \
+        -t $REGISTRY/chevdor/srtool:$RUSTC_VERSION-$TAG-$COMMIT \
+        -t $REGISTRY/$REPO:$RUSTC_VERSION-$TAG \
+        -t $REGISTRY/$REPO \
+        -t $REGISTRY/${REPO#*/} \
         .
-    docker images | grep srtool
+    podman images | grep srtool
 
-# Build and Publish the docker image
+# Build and Publish the container image
 publish: build
-    @echo Pushing docker image $REPO:$RUSTC_VERSION
-    docker push $REPO:$RUSTC_VERSION
+    @echo Pushing podman image $REPO:$RUSTC_VERSION
+    podman push $REGISTRY/$REPO:$RUSTC_VERSION
 
 # Set a git tag
 tag:
@@ -45,18 +46,23 @@ info:
     @echo REPO=$REPO
     @echo TAG=$TAG
 
+# Quick test
 test_quick *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/quick.yaml --verbosity debug "$@"
 
+# Test ACL
 test_acl *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/acl.yaml --verbosity debug "$@"
 
+# Container test that takes longer
 test_long *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/long.yaml --verbosity debug "$@"
 
+# Test commands
 test_commands *args='':
     container-structure-test test --image $REPO:$RUSTC_VERSION-$TAG --config tests/commands.yaml --verbosity debug "$@"
 
+# Test all
 test_all:
     #!/usr/bin/env bash
     TESTS=$(find tests -type f | sed -e 's/^/ --config /g' | tr -d '\n')
