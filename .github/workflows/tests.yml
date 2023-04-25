@@ -332,7 +332,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Summary for ${{ matrix.runtime }}
-        working-directory: polkadot
+        working-directory: cumulus
         run: |
             echo "::group::JSON digest"
             echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
@@ -442,7 +442,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
-        working-directory: polkadot
+        working-directory: bridges
         run: |
             echo "::group::JSON digest"
             echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
