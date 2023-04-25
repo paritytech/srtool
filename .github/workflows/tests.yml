@@ -238,9 +238,9 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            polkadot/${{ steps.srtool_build.outputs.wasm }}
+            polkadot/${{ steps.srtool_build.outputs.wasm_compressed }}
+            polkadot/${{ matrix.chain }}-srtool-digest.json
 
   cumulus:
     runs-on: ubuntu-latest
@@ -354,9 +354,9 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            cumulus/${{ steps.srtool_build.outputs.wasm }}
+            cumulus/${{ steps.srtool_build.outputs.wasm_compressed }}
+            cumulus/${{ matrix.chain }}-srtool-digest.json
 
   bridges:
     runs-on: ubuntu-latest
@@ -464,6 +464,6 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            bridges/${{ steps.srtool_build.outputs.wasm }}
+            bridges/${{ steps.srtool_build.outputs.wasm_compressed }}
+            bridges/${{ matrix.chain }}-srtool-digest.json
