@@ -225,8 +225,6 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ steps.srtool_build.outputs.wasm }}
             ${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
@@ -330,8 +328,6 @@ jobs:
         with:
           name: ${{ matrix.runtime }}-runtime
           path: |
-            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ steps.srtool_build.outputs.wasm }}
             ${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.runtime }}-srtool-digest.json
@@ -429,8 +425,6 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            # $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ steps.srtool_build.outputs.wasm }}
             ${{ steps.srtool_build.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
