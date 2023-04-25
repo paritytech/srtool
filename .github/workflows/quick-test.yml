@@ -170,13 +170,15 @@ jobs:
           RUNTIME_DIR: runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
-          echo "::group::runtimes"
+          echo "::group::Runtimes"
           ls -al runtime || true
           echo "::endgroup::"
+
           echo "::group::${{ matrix.chain }}"
           ls -al runtime/${{ matrix.chain }} || true
           echo "::endgroup::"
-          echo "::group::default"
+
+          echo "::group::IDs and Docker"
           id -u runner || true
           id -g runner || true
           id -u docker || true
@@ -196,7 +198,8 @@ jobs:
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
-          echo "::group::srtool"
+
+          echo "::group::SRTOOL Build Output"
           stdbuf -oL $CMD | {
             while IFS= read -r line
             do
@@ -218,12 +221,18 @@ jobs:
           echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
+        working-directory: polkadot
         run: |
+          echo "::group::JSON digest"
           echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+          echo "::endgroup::"
+
+          echo "::group::Runtimes paths"
           echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+          echo "::endgroup::"
 
-          echo "::group::debug"
+          echo "::group::Debuging"
           pwd; ls -al
           ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
           ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
@@ -234,6 +243,6 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            polkadot/${{ steps.srtool_build.outputs.wasm }}
+            polkadot/${{ steps.srtool_build.outputs.wasm_compressed }}
+            polkadot/${{ matrix.chain }}-srtool-digest.json
