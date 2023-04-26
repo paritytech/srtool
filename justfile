@@ -32,9 +32,14 @@ publish: build
 
 # Set a git tag
 tag:
-    @echo Tagging version $TAG
+    @echo Tagging v$TAG
     @git tag v$TAG -f
     @git tag | sort --version-sort -r | head
+
+# Push git tag
+tag_push:
+    @echo Pushing tag v$TAG
+    @git push origin v$TAG -f
 
 # Generate the readme as .md
 md:
