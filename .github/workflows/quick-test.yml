@@ -232,7 +232,7 @@ jobs:
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
           echo "::endgroup::"
 
-          echo "::group::Debuging"
+          echo "::group::Debugging"
           pwd; ls -al
           ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
           ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
