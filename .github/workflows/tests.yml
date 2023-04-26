@@ -167,7 +167,7 @@ jobs:
             echo $INFO
           fi
 
-      - name: Run some debug
+      - name: Debugging
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
           RUNTIME_DIR: runtime/${{ matrix.chain }}
@@ -193,6 +193,8 @@ jobs:
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
+
+          echo "::group::SRTOOL Build Output"
           stdbuf -oL $CMD | {
             while IFS= read -r line
             do
@@ -211,23 +213,34 @@ jobs:
             Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
             echo "wasm_compressed=$Z_WASM" >> $GITHUB_OUTPUT
           }
+          echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
+        working-directory: polkadot
         run: |
+          echo "::group::JSON digest"
           echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+          echo "::endgroup::"
+
+          echo "::group::Runtimes paths"
           echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
           echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+          echo "::endgroup::"
+
+          echo "::group::Debugging"
+          pwd; ls -al
+          ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
+          ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
+          echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        env:
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            polkadot/${{ steps.srtool_build.outputs.wasm }}
+            polkadot/${{ steps.srtool_build.outputs.wasm_compressed }}
+            polkadot/${{ matrix.chain }}-srtool-digest.json
 
   cumulus:
     runs-on: ubuntu-latest
@@ -238,11 +251,11 @@ jobs:
       matrix:
         include:
           - category: contracts
-            runtime: contracts-rococo
+            chain: contracts-rococo
           - category: assets
-            runtime: statemint
+            chain: statemint
           - category: starters
-            runtime: shell
+            chain: shell
     steps:
       - name: Cache the image
         uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
@@ -266,8 +279,8 @@ jobs:
 
       - name: Run srtool info
         env:
-          PACKAGE: ${{ matrix.runtime }}-runtime
-          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
+          PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
         working-directory: cumulus
         run: |
           INFO=$(docker run --rm -i \
@@ -283,11 +296,11 @@ jobs:
             echo $INFO
           fi
 
-      - name: Run srtool build for ${{ matrix.runtime }}
+      - name: Run srtool build for ${{ matrix.chain }}
         id: srtool_build
         env:
-          PACKAGE: ${{ matrix.runtime }}-runtime
-          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
+          PACKAGE: ${{ matrix.chain }}-runtime
+          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
         working-directory: cumulus
         run: |
           CMD="docker run --rm -i \
@@ -296,6 +309,8 @@ jobs:
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
+
+          echo "::group::SRTOOL Build Output"
           stdbuf -oL $CMD | {
             while IFS= read -r line
             do
@@ -314,23 +329,34 @@ jobs:
             Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
             echo "wasm_compressed=$Z_WASM" >> $GITHUB_OUTPUT
           }
+          echo "::endgroup::"
 
-      - name: Summary for ${{ matrix.runtime }}
+      - name: Summary for ${{ matrix.chain }}
+        working-directory: cumulus
         run: |
-          echo $JSON | jq . | tee ${{ matrix.runtime }}-srtool-digest.json
-          echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
-          echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+            echo "::group::JSON digest"
+            echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+            echo "::endgroup::"
 
-      - name: Archive Artifacts for ${{ matrix.runtime }}
+            echo "::group::Runtimes paths"
+            echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
+            echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+            echo "::endgroup::"
+
+            echo "::group::Debugging"
+            pwd; ls -al
+            ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
+            ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
+            echo "::endgroup::"
+
+      - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        env:
-          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.runtime }}
         with:
-          name: ${{ matrix.runtime }}-runtime
+          name: ${{ matrix.chain }}-runtime
           path: |
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.runtime }}-srtool-digest.json
+            cumulus/${{ steps.srtool_build.outputs.wasm }}
+            cumulus/${{ steps.srtool_build.outputs.wasm_compressed }}
+            cumulus/${{ matrix.chain }}-srtool-digest.json
 
   bridges:
     runs-on: ubuntu-latest
@@ -393,6 +419,8 @@ jobs:
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
+
+          echo "::group::SRTOOL Build Output"
           stdbuf -oL $CMD | {
             while IFS= read -r line
             do
@@ -411,20 +439,31 @@ jobs:
             Z_WASM=`echo $JSON | jq -r .runtimes.compressed.wasm`
             echo "wasm_compressed=$Z_WASM" >> $GITHUB_OUTPUT
           }
+          echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
+        working-directory: bridges
         run: |
-          echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
-          echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
-          echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+            echo "::group::JSON digest"
+            echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
+            echo "::endgroup::"
+
+            echo "::group::Runtimes paths"
+            echo "Compact Runtime: ${{ steps.srtool_build.outputs.wasm }}"
+            echo "Compressed Runtime: ${{ steps.srtool_build.outputs.wasm_compressed }}"
+            echo "::endgroup::"
+
+            echo "::group::Debugging"
+            pwd; ls -al
+            ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
+            ls -al ${{ steps.srtool_build.outputs.wasm_compressed }}
+            echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
-        env:
-          RUNTIME_DIR: bin/${{ matrix.chain }}/runtime
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm }}
-            $RUNTIME_DIR/${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            bridges/${{ steps.srtool_build.outputs.wasm }}
+            bridges/${{ steps.srtool_build.outputs.wasm_compressed }}
+            bridges/${{ matrix.chain }}-srtool-digest.json

@@ -24,6 +24,10 @@ fi
 # We use the Cargo.lock to benefit from workspace version inheritance when appropriate
 CARGO_VERSION=`toml get Cargo.lock . | jq -r '.package[] | select(.name == "'"$PACKAGE"'") | .version'`
 
+if [[ "$CARGO_VERSION" =~ 'workspace' ]]; then
+    :
+fi
+
 JSON=$( jq -n \
     --arg gen "srtool" \
     --arg version "$VERSION" \
