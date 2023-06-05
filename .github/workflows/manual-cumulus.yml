@@ -19,7 +19,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.chain }} ${{ github.event.inputs.ref }}
+    name: Build ${{ matrix.runtime }} ${{ github.event.inputs.ref }}
     strategy:
       fail-fast: false
       matrix:
