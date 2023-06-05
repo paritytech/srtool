@@ -253,7 +253,7 @@ jobs:
           - category: contracts
             chain: contracts-rococo
           - category: assets
-            chain: statemint
+            chain: asset-hub-polkadot
           - category: starters
             chain: shell
     steps:

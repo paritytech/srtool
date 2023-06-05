@@ -27,7 +27,7 @@ jobs:
           - category: contracts
             runtime: contracts-rococo
           - category: assets
-            runtime: statemint
+            runtime: asset-hub-polkadot
           - category: starters
             runtime: shell
     runs-on: ubuntu-latest
