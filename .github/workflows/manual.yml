@@ -1,14 +1,14 @@
 name: Manual Build
 
 env:
-  SUBWASM_VERSION: 0.19.1
+  SUBWASM_VERSION: 0.20.0
 
 on:
   workflow_dispatch:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.69.0
+        default: 1.70.0
         required: false
       srtool_image:
         description: The SRTOOL image to use
@@ -47,7 +47,7 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
-        uses: chevdor/srtool-actions@v0.6.0
+        uses: chevdor/srtool-actions@v0.7.0
         with:
           chain: ${{ github.event.inputs.chain }}
           package: ${{ github.event.inputs.package }}
