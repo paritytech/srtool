@@ -100,7 +100,7 @@ will output something that looks like this:
         🏗  Building polkadot-runtime as release using rustc 1.70.0
         ⏳ That can take a little while, be patient... subsequent builds will be faster.
         Since you have to wait a little, you may want to learn more about Substrate runtimes:
-        https://docs.substrate.io/v3/getting-started/architecture/
+        https://docs.substrate.io/learn/architecture/
 
             Finished release [optimized] target(s) in 37.43s
 
