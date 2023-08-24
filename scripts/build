@@ -131,19 +131,24 @@ if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
 fi
 
 export WASM=$RUNTIME_DIR/$WASM
-
 cp -f "$WASM" /out/
 if [ "$Z_WASM" ]; then
     export Z_WASM=$RUNTIME_DIR/$Z_WASM
     cp -f "$Z_WASM" /out/
 fi
 
+if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
+    echo "✨ WASM  : $WASM"
+    echo "✨ Z_WASM: $Z_WASM"
+fi
+
+Z_WASM_JSON=$(subwasm -j info "$Z_WASM")
 SZ=`du -sb "$Z_WASM" | awk '{print $1}'`
 TMSP=`date --utc +%FT%TZ`
 SHA256=0x`shasum -a 256 "$Z_WASM" | awk '{print $1}'`
-PROP=`subwasm -j info "$Z_WASM" | jq -r .proposal_hash`
-AUTHORIZE_UPGRADE_PROP=`subwasm -j info "$Z_WASM" | jq -r .parachain_authorize_upgrade_hash`
-MULTIHASH=`subwasm -j info "$Z_WASM" | jq -r .ipfs_hash`
+PROP=`echo "$Z_WASM_JSON" | jq -r .proposal_hash`
+AUTHORIZE_UPGRADE_PROP=`echo "$Z_WASM_JSON" | jq -r .parachain_authorize_upgrade_hash`
+MULTIHASH=`echo "$Z_WASM_JSON" | jq -r .ipfs_hash`
 
 # If we work on a snapshot, we will NOT get a .git folder to work on
 if [ -d ".git" ]; then
