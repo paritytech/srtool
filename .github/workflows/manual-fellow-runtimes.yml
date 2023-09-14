@@ -49,7 +49,7 @@ jobs:
             chain: bridge-hub-polkadot
 
           # System parachains / Collectives
-          - runtime_dir: system-parachains/collectives/collectives/polkadot
+          - runtime_dir: system-parachains/collectives/collectives-polkadot
             runtime: collectives-polkadot-runtime
             chain: collectives-polkadot
 
