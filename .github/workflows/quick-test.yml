@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -78,7 +78,7 @@ jobs:
     needs: build
     continue-on-error: false
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -137,19 +137,19 @@ jobs:
           docker load -i srtool.tar.gz
           docker images --digests
 
-      - name: Check out the Polkadot repo
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - name: Check out the Polkadot SDK repo
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
-          repository: paritytech/polkadot
+          repository: paritytech/polkadot-sdk
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
-          path: polkadot
+          path: sdk
 
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
-        working-directory: polkadot
+          RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
+        working-directory: sdk
         run: |
           INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
@@ -167,7 +167,7 @@ jobs:
       - name: Debug information
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
+          RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
           echo "::group::Runtimes"
@@ -189,7 +189,7 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
+          RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
           CMD="docker run --rm -i \

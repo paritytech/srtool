@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -81,7 +81,7 @@ jobs:
     needs: build
     continue-on-error: false
     steps:
-      - uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -141,18 +141,18 @@ jobs:
           docker images --digests
 
       - name: Check out the Polkadot repo
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
-          repository: paritytech/polkadot
+          repository: paritytech/polkadot-sdk
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
-          path: polkadot
+          path: sdk
 
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
-        working-directory: polkadot
+          RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
+        working-directory: sdk
         run: |
           INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
@@ -170,7 +170,7 @@ jobs:
       - name: Debugging
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
+          RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
           ls -al runtime || true
@@ -184,7 +184,7 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: runtime/${{ matrix.chain }}
+          RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
         working-directory: polkadot
         run: |
           CMD="docker run --rm -i \
@@ -270,18 +270,18 @@ jobs:
           docker images --digests
 
       - name: Check out the Cumulus repo
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
-          repository: paritytech/cumulus
+          repository: paritytech/polkadot-sdk
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
-          path: cumulus
+          path: sdk
 
       - name: Run srtool info
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
-        working-directory: cumulus
+          RUNTIME_DIR: cumulus/parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
+        working-directory: sdk
         run: |
           INFO=$(docker run --rm -i \
             -e PACKAGE=$PACKAGE \
@@ -300,7 +300,7 @@ jobs:
         id: srtool_build
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
-          RUNTIME_DIR: parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
+          RUNTIME_DIR: cumulus/parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
         working-directory: cumulus
         run: |
           CMD="docker run --rm -i \
@@ -380,7 +380,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Bridges repo
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           repository: paritytech/parity-bridges-common
           ref: ${{ github.event.inputs.ref }}
