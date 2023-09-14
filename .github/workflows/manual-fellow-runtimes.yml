@@ -12,7 +12,7 @@ on:
         required: false
       ref:
         description: The ref to be used for the repo
-        default: master
+        default: main
         required: false
   schedule:
     - cron: "00 04 * * 1"
