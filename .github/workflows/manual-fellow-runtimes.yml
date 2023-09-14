@@ -1,4 +1,4 @@
-name: Manual Build - Polkadot
+name: Runtimes Fellowship
 
 env:
   SUBWASM_VERSION: 0.20.0
@@ -15,7 +15,7 @@ on:
         default: master
         required: false
   schedule:
-    - cron: "00 03 * * 1" # 3AM weekly on mondays
+    - cron: "00 04 * * 1"
 
 jobs:
   build:
@@ -23,12 +23,41 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        chain: ["polkadot", "kusama", "westend"]
+        include:
+          # Relay
+          - runtime_dir: relay/kusama
+            runtime: kusama-runtime
+            chain: kusama
+          - runtime_dir: relay/polkadot
+            runtime: polkadot-runtime
+            chain: polkadot
+
+          # System parachains / Asset Hub
+          - runtime_dir: system-parachains/asset-hubs/asset-hub-kusama
+            runtime: asset-hub-kusama-runtime
+            chain: asset-hub-kusama
+          - runtime_dir: system-parachains/asset-hubs/asset-hub-polkadot
+            runtime: asset-hub-polkadot-runtime
+            chain: asset-hub-polkadot
+
+          # System parachains / Bridge Hub
+          - runtime_dir: system-parachains/bridge-hubs/bridge-hub-kusama
+            runtime: bridge-hub-kusama-runtime
+            chain: bridge-hub-kusama
+          - runtime_dir: system-parachains/bridge-hubs/bridge-hub-polkadot
+            runtime: bridge-hub-polkadot-runtime
+            chain: bridge-hub-polkadot
+
+          # System parachains / Collectives
+          - runtime_dir: system-parachains/collectives/collectives/polkadot
+            runtime: collectives-polkadot-runtime
+            chain: collectives-polkadot
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
-          repository: paritytech/polkadot-sdk
+          repository: polkadot-fellows/runtimes
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
 
@@ -38,6 +67,7 @@ jobs:
         with:
           chain: ${{ matrix.chain }}
           tag: ${{ github.event.inputs.srtool_tag }}
+          runtime_dir:  ${{ matrix.runtime_dir }}
 
       - name: Summary
         run: |
