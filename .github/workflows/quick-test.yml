@@ -168,7 +168,7 @@ jobs:
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
           RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
-        working-directory: polkadot
+        working-directory: sdk
         run: |
           echo "::group::Runtimes"
           ls -al runtime || true
@@ -190,7 +190,7 @@ jobs:
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
           RUNTIME_DIR: polkadot/runtime/${{ matrix.chain }}
-        working-directory: polkadot
+        working-directory: sdk
         run: |
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
