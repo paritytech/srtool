@@ -12,7 +12,7 @@ on:
         required: false
       ref:
         description: The ref to be used for the repo
-        default: master
+        default: main
         required: false
   schedule:
     - cron: "00 04 * * 1"
@@ -49,7 +49,7 @@ jobs:
             chain: bridge-hub-polkadot
 
           # System parachains / Collectives
-          - runtime_dir: system-parachains/collectives/collectives/polkadot
+          - runtime_dir: system-parachains/collectives/collectives-polkadot
             runtime: collectives-polkadot-runtime
             chain: collectives-polkadot
 
