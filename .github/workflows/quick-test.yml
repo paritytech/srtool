@@ -221,7 +221,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
-        working-directory: polkadot
+        working-directory: sdk
         run: |
           echo "::group::JSON digest"
           echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json

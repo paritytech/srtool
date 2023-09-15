@@ -216,7 +216,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
-        working-directory: polkadot
+        working-directory: sdk
         run: |
           echo "::group::JSON digest"
           echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
@@ -301,7 +301,7 @@ jobs:
         env:
           PACKAGE: ${{ matrix.chain }}-runtime
           RUNTIME_DIR: cumulus/parachains/runtimes/${{ matrix.category }}/${{ matrix.chain }}
-        working-directory: cumulus
+        working-directory: sdk
         run: |
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
@@ -332,7 +332,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Summary for ${{ matrix.chain }}
-        working-directory: cumulus
+        working-directory: sdk
         run: |
             echo "::group::JSON digest"
             echo $JSON | jq . | tee ${{ matrix.chain }}-srtool-digest.json
