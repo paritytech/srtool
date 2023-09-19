@@ -92,7 +92,10 @@ CRATE_VERSION=$(get_runtime_package_version "$PACKAGE")
 CRATE_NAME=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.name | jq -r`
 
 if [[ $CRATE_NAME != "$PACKAGE" ]]; then
-    echo "!!! The PACKAGE '$PACKAGE' does not match the crate name at '$RUNTIME_DIR'. Did you mean '$CRATE_NAME'?"
+    echo "!!! The PACKAGE '$PACKAGE' does not match the crate name at '$RUNTIME_DIR'."
+    if [ ! -z "$CRATE_NAME" ]; then
+        echo "Did you mean '$CRATE_NAME'?"
+    fi
     exit 1
 fi
 
