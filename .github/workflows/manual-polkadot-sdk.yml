@@ -19,7 +19,7 @@ on:
 
 jobs:
   find-runtimes:
-    name: Build ${{ matrix.chain }} ${{ github.event.inputs.ref }}
+    name: Scan Polkadot SDK ${{ github.event.inputs.ref }}
     outputs:
       runtime: ${{ steps.scan-runtimes.outputs.runtime }}
     runs-on: ubuntu-latest
@@ -79,7 +79,7 @@ jobs:
         uses: chevdor/srtool-actions@v0.8.0
         with:
           chain: ${{ matrix.chain }}
-          runtime_dir: ${{ matrix.runtime_dir }}
+          runtime_dir: sdk/${{ matrix.runtime_dir }}
           tag: ${{ github.event.inputs.srtool_tag }}
 
       - name: Summary
