@@ -38,6 +38,9 @@ get_runtime_package_version () {
     toml get Cargo.lock . | jq -r '.package[] | select(.name == "'"$PACKAGE"'") | .version'
 }
 
+function relative_parent() {
+  echo "$1" | sed -E 's/(.*)\/(.*)\/\.\./\1/g'
+}
 
 # TODO: The following should be removed once it has been merged into the polkadot-sdk repo and used from there.
 # Find all the runtimes, it returns the result as JSON as an array of
