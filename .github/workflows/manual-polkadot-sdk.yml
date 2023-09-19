@@ -73,6 +73,8 @@ jobs:
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
           fetch-depth: 0
+          ref: ${{ github.event.inputs.ref }}
+          path: sdk
 
       - name: Debug
         run: |
@@ -84,7 +86,7 @@ jobs:
         uses: chevdor/srtool-actions@v0.8.0
         with:
           chain: ${{ matrix.chain }}
-          runtime_dir: ${{ matrix.runtime_dir }}
+          runtime_dir: sdk/${{ matrix.runtime_dir }}
           tag: ${{ github.event.inputs.srtool_tag }}
 
       - name: Summary
