@@ -76,8 +76,10 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           path: sdk
 
-      - name: Debug
+      # The following step is required until https://github.com/paritytech/srtool/issues/72 is fixed
+      - name: Change dir and debug
         run: |
+          cd sdk
           echo "Current folder:"; pwd
           ls -al
 
@@ -86,7 +88,7 @@ jobs:
         uses: chevdor/srtool-actions@v0.8.0
         with:
           chain: ${{ matrix.chain }}
-          runtime_dir: sdk/${{ matrix.runtime_dir }}
+          runtime_dir: ${{ matrix.runtime_dir }}
           tag: ${{ github.event.inputs.srtool_tag }}
 
       - name: Summary

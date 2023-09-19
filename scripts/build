@@ -84,7 +84,7 @@ export RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}"
 
 # srtool only makes sense when called from a Cargo folder so we check that
 if [ ! -f Cargo.toml ]; then
-    echo "!!! The RUNTIME_DIR '$RUNTIME_DIR' does not look like a Cargo project. Is it pointing to the repo of your runtime?"
+    echo "!!! The RUNTIME_DIR '$RUNTIME_DIR' does not look like a Cargo project. Is it pointing to the folder of your runtime?"
     exit 1
 fi
 
