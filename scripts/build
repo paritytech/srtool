@@ -58,7 +58,7 @@ export RUSTCV=`rustc -V`
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV"
-    echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
+    echo -e "⏳ That can take a little while, be patient... subsequent builds may be faster."
     echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
     echo -e "   https://docs.substrate.io/learn/architecture/"
 fi
@@ -83,7 +83,7 @@ export RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}"
 # We check a few things before spending too much time building...
 
 # srtool only makes sense when called from a Cargo folder so we check that
-if [ ! -f Cargo.toml ]; then
+if [ ! -f "/build/$RUNTIME_DIR/Cargo.toml" ]; then
     echo "!!! The RUNTIME_DIR '$RUNTIME_DIR' does not look like a Cargo project. Is it pointing to the folder of your runtime?"
     exit 1
 fi

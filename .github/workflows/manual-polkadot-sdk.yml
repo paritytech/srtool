@@ -77,8 +77,9 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           path: sdk
 
-      - name: Change dir and debug
+      - name: Debug
         run: |
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
           echo "Current folder:"; pwd
           ls -al
           ls -al sdk
