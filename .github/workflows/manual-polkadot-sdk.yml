@@ -74,12 +74,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Debug
+        run: |
+          echo "Current folder:"; pwd
+          ls -al
+
       - name: Srtool build
         id: srtool_build
         uses: chevdor/srtool-actions@v0.8.0
         with:
           chain: ${{ matrix.chain }}
-          runtime_dir: sdk/${{ matrix.runtime_dir }}
+          runtime_dir: ${{ matrix.runtime_dir }}
           tag: ${{ github.event.inputs.srtool_tag }}
 
       - name: Summary
