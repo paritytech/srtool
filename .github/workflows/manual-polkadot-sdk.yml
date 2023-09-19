@@ -26,8 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         with:
-          repository: paritytech/polkadot-sdk
-          ref: ${{ github.event.inputs.ref }}
+          # TODO: bring that back once we can get the find_runtimes function from the polkadot-sdk repo
+          # repository: paritytech/polkadot-sdk
+          # ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
 
       - name: Install tooling
@@ -43,7 +44,12 @@ jobs:
       - name: Scan runtimes
         id: scan-runtimes
         run: |
-          . ./.github/scripts/common/lib.sh
+          # TODO: the following is for find_runtimes from the polkadot-sdl repo
+          # . ./.github/scripts/common/lib.sh
+
+          # TODO: for now, the scan script is in this repo
+          . ./scripts/lib.sh
+
           MATRIX=$(find_runtimes)
           echo $MATRIX
           echo "runtime=$MATRIX" >> $GITHUB_OUTPUT

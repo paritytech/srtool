@@ -37,3 +37,33 @@ get_runtime_package_version () {
     PACKAGE=$1
     toml get Cargo.lock . | jq -r '.package[] | select(.name == "'"$PACKAGE"'") | .version'
 }
+
+
+# TODO: The following should be removed once it has been merged into the polkadot-sdk repo and used from there.
+# Find all the runtimes, it returns the result as JSON as an array of
+# arrays containing the crate name and the runtime_dir
+function find_runtimes() {
+  libs=($(git grep -I -r --cached --max-depth 20 --files-with-matches 'construct_runtime!' -- '*lib.rs'))
+  re=".*-runtime$"
+  JSON=$(jq --null-input '{ "include": [] }')
+
+  for lib in "${libs[@]}"; do
+      crate_dir=$(dirname "$lib")
+      cargo_toml="$crate_dir/../Cargo.toml"
+
+      name=$(toml get -r $cargo_toml 'package.name')
+
+      if [[ "$name" =~ $re ]]; then
+          lib_dir=$(dirname "$lib")
+          runtime_dir=$(relative_parent "$lib_dir/..")
+          chain=${name//-runtime/}
+          ITEM=$(jq --null-input \
+            --arg chain "$chain" \
+            --arg name "$name" \
+            --arg runtime_dir "$runtime_dir" \
+            '{ "chain": $chain, "crate": $name, "runtime_dir": $runtime_dir }')
+        JSON=$(echo $JSON | jq ".include += [$ITEM]")
+      fi
+  done
+  echo $JSON
+}
