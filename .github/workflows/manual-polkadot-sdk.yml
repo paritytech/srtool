@@ -59,12 +59,16 @@ jobs:
           # TODO: for now, the scan script is in this repo
           . ./srtool/scripts/lib.sh
 
+          echo "Github workspace: ${{ github.workspace }}"
+          echo "Current folder: $(pwd)"
+          ls -al
           cd sdk
+          ls -al
           MATRIX=$(find_runtimes)
           echo $MATRIX
           echo "runtime=$MATRIX" >> $GITHUB_OUTPUT
 
-  srtool:
+  srtool-build:
     runs-on: ubuntu-latest
     needs:
       - find-runtimes
@@ -83,6 +87,7 @@ jobs:
 
       - name: Debug
         run: |
+          echo "github.workspace: ${{ github.workspace }}"
           echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
           echo "Current folder:"; pwd
           ls -al
