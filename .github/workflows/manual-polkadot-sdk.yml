@@ -6,6 +6,10 @@ env:
 on:
   workflow_dispatch:
     inputs:
+      image:
+        description: The SRTOOL image to use use
+        default: paritytech/srtool
+        required: false
       srtool_tag:
         description: The SRTOOL tag to use
         default: 1.70.0
@@ -91,6 +95,7 @@ jobs:
           workdir: sdk
           chain: ${{ matrix.chain }}
           runtime_dir: ${{ matrix.runtime_dir }}
+          image: ${{ github.event.inputs.image }}
           tag: ${{ github.event.inputs.srtool_tag }}
 
       - name: Summary
