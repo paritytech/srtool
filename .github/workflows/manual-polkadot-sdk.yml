@@ -95,7 +95,7 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
-        uses: chevdor/srtool-actions@v0.8.0
+        uses: chevdor/srtool-actions@wk-230920-add-debug
         with:
           workdir: sdk
           chain: ${{ matrix.chain }}
