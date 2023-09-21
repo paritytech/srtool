@@ -52,6 +52,8 @@ jobs:
 
       - name: Scan runtimes
         id: scan-runtimes
+        env:
+          EXCLUDED_RUNTIMES: "substrate-test"
         run: |
           # TODO: the following is for find_runtimes from the polkadot-sdl repo
           # . ./.github/scripts/common/lib.sh
@@ -60,10 +62,9 @@ jobs:
           . ./srtool/scripts/lib.sh
 
           echo "Github workspace: ${{ github.workspace }}"
-          echo "Current folder: $(pwd)"
-          ls -al
-          cd sdk
-          ls -al
+          echo "Current folder: $(pwd)"; ls -al
+          cd sdk; ls -al
+
           MATRIX=$(find_runtimes)
           echo $MATRIX
           echo "runtime=$MATRIX" >> $GITHUB_OUTPUT
