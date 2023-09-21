@@ -3,11 +3,6 @@ name: Manual Build - Polkadot SDK
 env:
   SUBWASM_VERSION: 0.19.1
 
-defaults:
-  run:
-    shell: bash
-    working-directory: sdk
-
 on:
   workflow_dispatch:
     inputs:
@@ -132,6 +127,7 @@ jobs:
           subwasm --version
 
       - name: Show Runtime information
+        working-directory: sdk
         run: |
           subwasm info ${{ steps.srtool_build.outputs.wasm }}
           subwasm info ${{ steps.srtool_build.outputs.wasm_compressed }}
@@ -139,11 +135,13 @@ jobs:
           subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
 
       - name: Extract the metadata
+        working-directory: sdk
         run: |
           subwasm meta ${{ steps.srtool_build.outputs.wasm }}
           subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-metadata.json
 
       - name: Check the metadata diff
+        working-directory: sdk
         run: |
           subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
