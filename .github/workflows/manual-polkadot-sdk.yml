@@ -3,6 +3,11 @@ name: Manual Build - Polkadot SDK
 env:
   SUBWASM_VERSION: 0.19.1
 
+defaults:
+  run:
+    shell: bash
+    working-directory: sdk
+
 on:
   workflow_dispatch:
     inputs:
