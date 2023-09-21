@@ -44,7 +44,8 @@ function find_runtimes() {
     re=".*-runtime$"
     JSON=$(jq --null-input '{ "include": [] }')
 
-    EXCLUDED_RUNTIMES=${EXCLUDED_RUNTIMES:-"substrate-test"}
+    # EXCLUDED_RUNTIMES is a space separated list of runtime names (without the -runtime postfix)
+    # EXCLUDED_RUNTIMES=${EXCLUDED_RUNTIMES:-"substrate-test"}
     IFS=' ' read -r -a exclusions <<< "$EXCLUDED_RUNTIMES"
 
     for lib in "${libs[@]}"; do
