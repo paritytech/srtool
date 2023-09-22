@@ -15,9 +15,9 @@ on:
       ref:
         description: The ref to be used for the repo
         default: master
-      no_cache:
-        description: By default, caching will be used but you can turn it off here if you provide 'true'
-        default: false
+      cache:
+        description: By default, caching will be used but you can turn it off here if you provide 'false'
+        default: true
   schedule:
     - cron: "00 03 * * 1" # 3AM weekly on mondays
 
@@ -36,7 +36,7 @@ jobs:
 
       - name: Cache runtimes list for ${{ github.sha }}
         id: cache-runtimes-list
-        if: github.event.inputs.no_cache == false
+        if: github.event.inputs.cache == 'true'
         uses: actions/cache@v3
         with:
           key: runtimes-list-${{ github.sha }}
@@ -110,7 +110,7 @@ jobs:
 
       - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
         id: cache-runtime
-        if: github.event.inputs.no_cache == false
+        if: github.event.inputs.cache == 'true'
         uses: actions/cache@v3
         with:
           key: ${{ matrix.chain }}-${{ github.sha }}
