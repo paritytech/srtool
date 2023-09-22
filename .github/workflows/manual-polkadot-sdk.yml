@@ -16,7 +16,7 @@ on:
         description: The ref to be used for the repo
         default: master
       no_cache:
-        description: By default, caching will be used but you can turn it off here
+        description: By default, caching will be used but you can turn it off here if you provide 'true'
         default: false
   schedule:
     - cron: "00 03 * * 1" # 3AM weekly on mondays
@@ -168,6 +168,7 @@ jobs:
 
       - name: Check for reference chain
         id: check-reference-chain
+        continue-on-error: true
         run: |
           subwasm info --chain ${{ matrix.chain }}
           ref_found_status=$?
