@@ -177,26 +177,26 @@ jobs:
         id: check-reference-chain
         continue-on-error: true
         run: |
-          subwasm info --chain ${{ matrix.chain }}
-          ref_found_status=$?
+          echo "Checking for reference chain: ${{ matrix.chain }} "
+          ref_found=$(subwasm info --chain ${{ matrix.chain }} || echo "Reference chain not found")
 
-          if (( ref_found_status == 0 )); then
-            echo "Reference chain found: ${{ matrix.chain }}"
+          if ! [[ "$ref_found" =~ (not found) ]]; then
+            echo "Reference chain found."
+            echo "ref_chain_found=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Reference chain not found. Status: $ref_found_status"
+            echo "Reference chain not found."
             echo "Next steps will be skipped"
+            echo "ref_chain_found=false" >> "$GITHUB_OUTPUT"
           fi
 
-          echo "ref_found_status=$ref_found_status" >> "$GITHUB_OUTPUT"
-
       - name: Check the metadata diff
-        if: steps.check-reference-chain.outputs.ref_found_status == 0
+        if: steps.check-reference-chain.outputs.ref_chain_found == 'true'
         working-directory: sdk
         run: |
           subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
       - name: Archive Subwasm diff
-        if: steps.check-reference-chain.outputs.ref_found_status == 0
+        if: steps.check-reference-chain.outputs.ref_chain_found == 'true'
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: ${{ matrix.chain }}-runtime-diff
