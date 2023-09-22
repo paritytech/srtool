@@ -151,7 +151,7 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ matrix.chain }}-info.json
-            ${{ matrix.chain }}-info_compressed.json
-            ${{ matrix.chain }}-metadata.json
-            ${{ matrix.chain }}-diff.txt
+            sdk/${{ matrix.chain }}-info.json
+            sdk/${{ matrix.chain }}-info_compressed.json
+            sdk/${{ matrix.chain }}-metadata.json
+            sdk/${{ matrix.chain }}-diff.txt
