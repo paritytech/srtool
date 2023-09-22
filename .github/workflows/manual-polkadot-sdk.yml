@@ -141,12 +141,7 @@ jobs:
           subwasm meta ${{ steps.srtool_build.outputs.wasm }}
           subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-metadata.json
 
-      - name: Check the metadata diff
-        working-directory: sdk
-        run: |
-          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
-
-      - name: Archive Subwasm results
+      - name: Archive Subwasm information
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: ${{ matrix.chain }}-runtime
@@ -154,4 +149,32 @@ jobs:
             sdk/${{ matrix.chain }}-info.json
             sdk/${{ matrix.chain }}-info_compressed.json
             sdk/${{ matrix.chain }}-metadata.json
+
+      - name: Check for reference chain
+        id: check-reference-chain
+        run: |
+          subwasm info --chain ${{ matrix.chain }}
+          ref_found_status=$?
+
+          if (( ref_found_status == 0 )); then
+            echo "Reference chain found: ${{ matrix.chain }}"
+          else
+            echo "Reference chain not found. Status: $ref_found_status"
+            echo "Next steps will be skipped"
+          fi
+
+          echo "ref_found_status=$ref_found_status" >> "$GITHUB_OUTPUT"
+
+      - name: Check the metadata diff
+        if: steps.check-reference-chain.outputs.ref_found_status == 0
+        working-directory: sdk
+        run: |
+          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
+
+      - name: Archive Subwasm diff
+        if: steps.check-reference-chain.outputs.ref_found_status == 0
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        with:
+          name: ${{ matrix.chain }}-runtime-diff
+          path: |
             sdk/${{ matrix.chain }}-diff.txt
