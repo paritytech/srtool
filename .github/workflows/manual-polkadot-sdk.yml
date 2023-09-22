@@ -9,15 +9,15 @@ on:
       image:
         description: The SRTOOL image to use use
         default: paritytech/srtool
-        required: false
       srtool_tag:
         description: The SRTOOL tag to use
         default: 1.70.0
-        required: false
       ref:
         description: The ref to be used for the repo
         default: master
-        required: false
+      no_cache:
+        description: By default, caching will be used but you can turn it off here
+        default: false
   schedule:
     - cron: "00 03 * * 1" # 3AM weekly on mondays
 
@@ -50,6 +50,14 @@ jobs:
           sudo dpkg -i toml.deb
           toml --version; jq --version
 
+      - name: Cache runtimes list for ${{ github.sha }}
+        if: github.event.inputs.no_cache == false
+        uses: actions/cache@v3
+        with:
+          key: runtimes-list-${{ github.sha }}
+          path: |
+            sdk/runtimes-list.json
+
       - name: Scan runtimes
         id: scan-runtimes
         env:
@@ -65,7 +73,7 @@ jobs:
           echo "Current folder: $(pwd)"; ls -al
           cd sdk; ls -al
 
-          MATRIX=$(find_runtimes)
+          MATRIX=$(find_runtimes | tee runtimes_list.json)
           echo $MATRIX
           echo "runtime=$MATRIX" >> $GITHUB_OUTPUT
 
@@ -93,6 +101,14 @@ jobs:
           echo "Current folder:"; pwd
           ls -al
           ls -al sdk
+
+      - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
+        if: github.event.inputs.no_cache == false
+        uses: actions/cache@v3
+        with:
+          key: ${{ matrix.chain }}-${{ github.sha }}
+          path: |
+            sdk/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
 
       - name: Srtool build
         id: srtool_build

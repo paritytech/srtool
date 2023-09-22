@@ -2,6 +2,8 @@
     "cSpell.words": [
         "paritytech",
         "RUSTC",
-        "srtool"
+        "srtool",
+        "wbuild",
+        "workdir"
     ]
 }
