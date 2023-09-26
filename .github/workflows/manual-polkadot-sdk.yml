@@ -68,7 +68,7 @@ jobs:
         env:
           EXCLUDED_RUNTIMES: "substrate-test"
         run: |
-          # TODO: the following is for find_runtimes from the polkadot-sdl repo
+          # TODO: the following is for find_runtimes from the polkadot-sdk repo
           # . ./.github/scripts/common/lib.sh
 
           # TODO: for now, the scan script is in this repo
@@ -129,7 +129,7 @@ jobs:
 
       # This is done to allow caching
       - name: Store build artifacts to disk
-        id: cache-digest
+        id: cache_digest
         if: ${{ steps.cache-runtime.outputs.cache-hit != 'true' }}
         working-directory: sdk
         run: |
@@ -156,9 +156,11 @@ jobs:
       - name: Summary
         working-directory: sdk
         run: |
-          # TODO
-          cat ${{ matrix.chain }}-srtool-digest.json
-          echo "Runtime location: ${{ steps.srtool_build.outputs.wasm }}"
+          digest_file=${{ steps.cache_digest.outputs.digest_file }}"
+          ls -al ${digest_file}
+          cat ${digest_file}
+          echo "WASM location: ${{ steps.get_values.outputs.wasm }}"
+          echo "WASM Compressed location: ${{ steps.get_values.outputs.wasm_compressed }}"
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
       - name: Archive Artifacts for ${{ matrix.chain }}
@@ -180,15 +182,15 @@ jobs:
       - name: Show Runtime information
         working-directory: sdk
         run: |
-          subwasm info ${{ steps.srtool_build.outputs.wasm }}
-          subwasm info ${{ steps.srtool_build.outputs.wasm_compressed }}
-          subwasm --json info ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-info.json
-          subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
+          subwasm info ${{ steps.get_values.outputs.wasm }}
+          subwasm info ${{ steps.get_values.outputs.wasm_compressed }}
+          subwasm --json info ${{ steps.get_values.outputs.wasm }} > ${{ matrix.chain }}-info.json
+          subwasm --json info ${{ steps.get_values.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
 
       - name: Extract the metadata
         working-directory: sdk
         run: |
-          subwasm meta --format=json ${{ steps.srtool_build.outputs.wasm }} | tee ${{ matrix.chain }}-metadata.json
+          subwasm meta --format=json ${{ steps.get_values.outputs.wasm }} | tee ${{ matrix.chain }}-metadata.json
 
       - name: Archive Subwasm information
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
@@ -219,7 +221,7 @@ jobs:
         if: steps.check-reference-chain.outputs.ref_chain_found == 'true'
         working-directory: sdk
         run: |
-          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
+          subwasm diff ${{ steps.get_values.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
       - name: Archive Subwasm diff
         if: steps.check-reference-chain.outputs.ref_chain_found == 'true'

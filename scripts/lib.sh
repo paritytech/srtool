@@ -36,7 +36,9 @@ function relative_parent() {
     echo "$1" | sed -E 's/(.*)\/(.*)\/\.\./\1/g'
 }
 
-# TODO: The following should be removed once it has been merged into the polkadot-sdk repo and used from there.
+# TODO: The following should be removed once it has been merged into the polkadot-sdk repo and used from there unless we
+# decide to keep it in srtool
+
 # Find all the runtimes, it returns the result as JSON as an array of
 # arrays containing the crate name and the runtime_dir
 function find_runtimes() {
