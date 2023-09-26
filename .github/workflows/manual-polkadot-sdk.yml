@@ -61,7 +61,6 @@ jobs:
           sudo dpkg -i toml.deb
           toml --version; jq --version
 
-
       - name: Scan runtimes
         id: scan-runtimes
         if: ${{ steps.cache-runtimes-list.outputs.cache-hit != 'true' }}
@@ -128,9 +127,36 @@ jobs:
           image: ${{ github.event.inputs.image }}
           tag: ${{ github.event.inputs.srtool_tag }}
 
-      - name: Summary
+      # This is done to allow caching
+      - name: Store build artifacts to disk
+        id: cache-digest
+        if: ${{ steps.cache-runtime.outputs.cache-hit != 'true' }}
+        working-directory: sdk
         run: |
-          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${{ matrix.chain }}-srtool-digest.json
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
+          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${digest_file}
+          cat ${digest_file}
+          echo "digest_file=$digest_file" >> "$GITHUB_OUTPUT"
+
+      - name: Retrieve WASM paths
+        id: get_values
+        run: |
+          runtime_package=${{ matrix.chain }}-runtime
+          runtime_filename=${runtime_package/-/_}
+
+          wasm="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
+
+          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
+
+          # we need wasm and wasm_compressed
+          echo "wasm=$wasm" >> "$GITHUB_OUTPUT"
+          echo "wasm_compressed=$wasm_compressed" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        working-directory: sdk
+        run: |
+          # TODO
           cat ${{ matrix.chain }}-srtool-digest.json
           echo "Runtime location: ${{ steps.srtool_build.outputs.wasm }}"
 
@@ -140,8 +166,8 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
+            ${{ steps.get_values.outputs.wasm }}
+            ${{ steps.get_values.outputs.wasm_compressed }}
             ${{ matrix.chain }}-srtool-digest.json
 
       # We now get extra information thanks to subwasm,
