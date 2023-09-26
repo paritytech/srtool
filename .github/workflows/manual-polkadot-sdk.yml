@@ -156,7 +156,7 @@ jobs:
       - name: Summary
         working-directory: sdk
         run: |
-          digest_file=${{ steps.cache_digest.outputs.digest_file }}"
+          digest_file=${{ steps.cache_digest.outputs.digest_file }}
           ls -al ${digest_file}
           cat ${digest_file}
           echo "WASM location: ${{ steps.get_values.outputs.wasm }}"
