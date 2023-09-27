@@ -25,7 +25,7 @@ jobs:
   find-runtimes:
     name: Scan Polkadot SDK ${{ github.event.inputs.ref }}
     outputs:
-      runtime: ${{ steps.scan-runtimes.outputs.runtime }}
+      runtime: ${{ steps.get_runtimes_list.outputs.runtime }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the srtool repo
@@ -62,7 +62,6 @@ jobs:
           toml --version; jq --version
 
       - name: Scan runtimes
-        id: scan-runtimes
         if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
 
         env:
@@ -79,6 +78,13 @@ jobs:
           cd sdk; ls -al
 
           MATRIX=$(find_runtimes | tee runtimes_list.json)
+          echo $MATRIX
+
+      - name: Get runtimes list
+        id: get_runtimes_list
+        run: |
+          cd sdk; ls -al
+          MATRIX=$(cat runtimes_list.json)
           echo $MATRIX
           echo "runtime=$MATRIX" >> $GITHUB_OUTPUT
 
