@@ -32,7 +32,7 @@ jobs:
         include:
           # Relay
           - runtime_dir: relay/kusama
-            runtime: kusama-runtime
+            runtime: staging-kusama-runtime
             chain: kusama
           - runtime_dir: relay/polkadot
             runtime: polkadot-runtime
