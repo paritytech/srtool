@@ -6,6 +6,9 @@ env:
 on:
   workflow_dispatch:
     inputs:
+      image:
+        description: The SRTOOL image to use use
+        default: paritytech/srtool
       srtool_tag:
         description: The SRTOOL tag to use
         default: 1.70.0
@@ -14,6 +17,9 @@ on:
         description: The ref to be used for the repo
         default: main
         required: false
+      cache:
+        description: By default, caching will be used but you can turn it off here if you provide 'false'
+        default: true
   schedule:
     - cron: "00 04 * * 1"
 
@@ -55,7 +61,17 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
+      - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
+        id: cache_runtime
+        if: github.event.inputs.cache == 'true'
+        uses: actions/cache@v3
+        with:
+          key: ${{ matrix.chain }}-${{ github.sha }}
+          path: |
+            sdk/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
+
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         with:
           repository: polkadot-fellows/runtimes
           ref: ${{ github.event.inputs.ref }}
@@ -63,17 +79,47 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         uses: chevdor/srtool-actions@v0.8.0
         with:
           chain: ${{ matrix.chain }}
-          tag: ${{ github.event.inputs.srtool_tag }}
           runtime_dir:  ${{ matrix.runtime_dir }}
+          image: ${{ github.event.inputs.image }}
+          tag: ${{ github.event.inputs.srtool_tag }}
+
+      # This is done to allow caching
+      - name: Store build artifacts to disk
+        id: cache_digest
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
+        run: |
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
+          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${digest_file}
+          cat ${digest_file}
+          echo "digest_file=$digest_file" >> "$GITHUB_OUTPUT"
+
+      - name: Retrieve WASM paths
+        id: get_values
+        run: |
+          runtime_package=${{ matrix.chain }}-runtime
+          runtime_filename=${runtime_package//-/_}
+
+          wasm="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
+
+          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
+
+          # we need wasm and wasm_compressed
+          echo "wasm=$wasm" >> "$GITHUB_OUTPUT"
+          echo "wasm_compressed=$wasm_compressed" >> "$GITHUB_OUTPUT"
 
       - name: Summary
         run: |
-          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${{ matrix.chain }}-srtool-digest.json
-          cat ${{ matrix.chain }}-srtool-digest.json
-          echo "Runtime location: ${{ steps.srtool_build.outputs.wasm }}"
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
+          ls -al ${digest_file}
+          cat ${digest_file}
+          echo "WASM location: ${{ steps.get_values.outputs.wasm }}"
+          echo "WASM Compressed location: ${{ steps.get_values.outputs.wasm_compressed }}"
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
       - name: Archive Artifacts for ${{ matrix.chain }}
@@ -91,6 +137,7 @@ jobs:
           wget https://github.com/chevdor/subwasm/releases/download/v${{ env.SUBWASM_VERSION }}/subwasm_linux_amd64_v${{ env.SUBWASM_VERSION }}.deb
           sudo dpkg -i subwasm_linux_amd64_v${{ env.SUBWASM_VERSION }}.deb
           subwasm --version
+
       - name: Show Runtime information
         run: |
           subwasm info ${{ steps.srtool_build.outputs.wasm }}

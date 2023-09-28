@@ -114,7 +114,7 @@ jobs:
           ls -al sdk
 
       - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
-        id: cache-runtime
+        id: cache_runtime
         if: github.event.inputs.cache == 'true'
         uses: actions/cache@v3
         with:
@@ -124,7 +124,7 @@ jobs:
 
       - name: Srtool build
         id: srtool_build
-        if: ${{ steps.cache-runtime.outputs.cache-hit != 'true' }}
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         uses: chevdor/srtool-actions@wk-230920-add-debug
         with:
           workdir: sdk
@@ -136,7 +136,7 @@ jobs:
       # This is done to allow caching
       - name: Store build artifacts to disk
         id: cache_digest
-        if: ${{ steps.cache-runtime.outputs.cache-hit != 'true' }}
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         working-directory: sdk
         run: |
           cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
@@ -162,7 +162,8 @@ jobs:
       - name: Summary
         working-directory: sdk
         run: |
-          digest_file=${{ steps.cache_digest.outputs.digest_file }}
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
           ls -al ${digest_file}
           cat ${digest_file}
           echo "WASM location: ${{ steps.get_values.outputs.wasm }}"
