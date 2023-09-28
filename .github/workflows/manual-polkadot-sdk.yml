@@ -174,9 +174,9 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.get_values.outputs.wasm }}
-            ${{ steps.get_values.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            sdk/${{ steps.get_values.outputs.wasm }}
+            sdk/${{ steps.get_values.outputs.wasm_compressed }}
+            sdk/${{ matrix.chain }}-srtool-digest.json
 
       # We now get extra information thanks to subwasm,
       - name: Install subwasm ${{ env.SUBWASM_VERSION }}
