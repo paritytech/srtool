@@ -179,10 +179,6 @@ If you're feeling fancy, you may also run:
 
 and look around the `/srtool` folder.
 
-include::doc/zsh.adoc[]
-
-include::doc/build.adoc[]
-
 == User Scripts
 
 You can see the list of available scripts in the `/scripts` folder:
@@ -191,6 +187,7 @@ You can see the list of available scripts in the `/scripts` folder:
 - `version`: Show some version.
 - `info`: Show available system info before running a build.
 - `build`: Run the actual build.
+- `scan`: Scan a repo for runtimes
 
 NOTE: The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M` (monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:{rsversion} info -cM` shows a monochrome output on a single line.
 
@@ -213,3 +210,5 @@ To easily export your runtime, it will be copied in the container into the `/out
 If you mount this docker volume, you will find the wasm on your local filesystem once the run is complete.
 
     docker run ... -v /tmp/out:/out ...
+
+include::doc/index.adoc[]
