@@ -1,4 +1,4 @@
-name: Runtimes Fellowship
+name: Manual Build - Fellowship
 
 env:
   SUBWASM_VERSION: 0.20.0
