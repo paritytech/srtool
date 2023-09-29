@@ -67,10 +67,6 @@ jobs:
         env:
           EXCLUDED_RUNTIMES: "substrate-test"
         run: |
-          # TODO: the following is for find_runtimes from the polkadot-sdk repo
-          # . ./.github/scripts/common/lib.sh
-
-          # TODO: for now, the scan script is in this repo
           . ./srtool/scripts/lib.sh
 
           echo "Github workspace: ${{ github.workspace }}"

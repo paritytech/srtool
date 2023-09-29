@@ -36,11 +36,9 @@ function relative_parent() {
     echo "$1" | sed -E 's/(.*)\/(.*)\/\.\./\1/g'
 }
 
-# TODO: The following should be removed once it has been merged into the polkadot-sdk repo and used from there unless we
-# decide to keep it in srtool
-
-# Find all the runtimes, it returns the result as JSON as an array of
-# arrays containing the crate name and the runtime_dir
+# Find all the runtimes, it returns the result as JSON object, compatible to be
+# used as Github Workflow Matrix. This call is exposed by the `scan` command and can be used as:
+# podman run --rm -it -v /.../fellowship-runtimes:/build docker.io/chevdor/srtool:1.70.0-0.11.1 scan
 function find_runtimes() {
     libs=($(git grep -I -r --cached --max-depth 20 --files-with-matches 'construct_runtime!' -- '*lib.rs'))
     re=".*-runtime$"
