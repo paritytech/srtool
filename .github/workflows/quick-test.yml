@@ -171,11 +171,11 @@ jobs:
         working-directory: sdk
         run: |
           echo "::group::Runtimes"
-          ls -al runtime || true
+          ls -al polkadot/runtime || true
           echo "::endgroup::"
 
           echo "::group::${{ matrix.chain }}"
-          ls -al runtime/${{ matrix.chain }} || true
+          ls -al polkadot/runtime/${{ matrix.chain }} || true
           echo "::endgroup::"
 
           echo "::group::IDs and Docker"

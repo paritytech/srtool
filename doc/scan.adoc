@@ -1,0 +1,14 @@
+
+== Scan
+
+`srtool` includes a command that helps finding runtimes in a repo.
+
+[subs="attributes+"]
+----
+    REPO=/projects/polkadot-sdk
+    # or
+    # REPO=fellowship-runtimes
+    podman run --rm -it \
+        -v $REPO:/build \
+        `{name}:{rsversion}-{version}` scan
+----

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+export CDIR=`dirname "$0"`
+. "$CARGO_HOME/env"
+. "$CDIR/lib.sh"
+
+# This script scans for runtimes.
+
+TARGET=${1:-/build/}
+cd "$TARGET"
+
+find_runtimes | jq
