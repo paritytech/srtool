@@ -1,0 +1,235 @@
+name: Manual Build - Polkadot SDK
+
+env:
+  SUBWASM_VERSION: 0.20.0
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: The SRTOOL image to use use
+        default: paritytech/srtool
+      srtool_tag:
+        description: The SRTOOL tag to use
+        default: 1.70.0
+      ref:
+        description: The ref to be used for the repo
+        default: master
+      cache:
+        description: By default, caching will be used but you can turn it off here if you provide 'false'
+        default: true
+  schedule:
+    - cron: "00 03 * * 1" # 3AM weekly on mondays
+
+jobs:
+  find-runtimes:
+    name: Scan Polkadot SDK ${{ github.event.inputs.ref }}
+    outputs:
+      runtime: ${{ steps.get_runtimes_list.outputs.runtime }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the srtool repo
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          fetch-depth: 0
+          path: srtool
+
+      - name: Cache runtimes list for ${{ github.sha }}
+        id: cache_runtimes_list
+        if: github.event.inputs.cache == 'true'
+        uses: actions/cache@v3
+        with:
+          key: runtimes-list-${{ github.sha }}
+          path: |
+            sdk/runtimes_list.json
+
+      - name: Checkout the Polkadot SDK repo
+        if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          repository: paritytech/polkadot-sdk
+          ref: ${{ github.event.inputs.ref }}
+          fetch-depth: 0
+          path: sdk
+
+      - name: Install tooling
+        if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
+        run: |
+          TOML_CLI_VERSION=0.2.4
+          URL=https://github.com/chevdor/toml-cli/releases/download/v${TOML_CLI_VERSION}/toml_linux_amd64_v${TOML_CLI_VERSION}.deb
+          curl -L $URL --output toml.deb
+          sudo dpkg -i toml.deb
+          toml --version; jq --version
+
+      - name: Scan runtimes
+        if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
+
+        env:
+          EXCLUDED_RUNTIMES: "substrate-test"
+        run: |
+          . ./srtool/scripts/lib.sh
+
+          echo "Github workspace: ${{ github.workspace }}"
+          echo "Current folder: $(pwd)"; ls -al
+          cd sdk; ls -al
+
+          MATRIX=$(find_runtimes | tee runtimes_list.json)
+          echo $MATRIX
+
+      - name: Get runtimes list
+        id: get_runtimes_list
+        run: |
+          cd sdk; ls -al
+          MATRIX=$(cat runtimes_list.json)
+          echo $MATRIX
+          echo "runtime=$MATRIX" >> $GITHUB_OUTPUT
+
+  srtool-build:
+    runs-on: ubuntu-latest
+    needs:
+      - find-runtimes
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.find-runtimes.outputs.runtime) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          repository: paritytech/polkadot-sdk
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.ref }}
+          path: sdk
+
+      - name: Debug
+        run: |
+          echo "github.workspace: ${{ github.workspace }}"
+          echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+          echo "Current folder:"; pwd
+          ls -al
+          ls -al sdk
+
+      - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
+        id: cache_runtime
+        if: github.event.inputs.cache == 'true'
+        uses: actions/cache@v3
+        with:
+          key: ${{ matrix.chain }}-${{ github.sha }}
+          path: |
+            sdk/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
+
+      - name: Srtool build
+        id: srtool_build
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
+        uses: chevdor/srtool-actions@wk-230920-add-debug
+        with:
+          workdir: sdk
+          chain: ${{ matrix.chain }}
+          runtime_dir: ${{ matrix.runtime_dir }}
+          image: ${{ github.event.inputs.image }}
+          tag: ${{ github.event.inputs.srtool_tag }}
+
+      # This is done to allow caching
+      - name: Store build artifacts to disk
+        id: cache_digest
+        if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
+        working-directory: sdk
+        run: |
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
+          echo '${{ steps.srtool_build.outputs.json }}' | jq > ${digest_file}
+          cat ${digest_file}
+          echo "digest_file=$digest_file" >> "$GITHUB_OUTPUT"
+
+      - name: Retrieve WASM paths
+        id: get_values
+        run: |
+          runtime_package=${{ matrix.chain }}-runtime
+          runtime_filename=${runtime_package//-/_}
+
+          wasm="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
+
+          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
+
+          # we need wasm and wasm_compressed
+          echo "wasm=$wasm" >> "$GITHUB_OUTPUT"
+          echo "wasm_compressed=$wasm_compressed" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        working-directory: sdk
+        run: |
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
+          ls -al ${digest_file}
+          cat ${digest_file}
+          echo "WASM location: ${{ steps.get_values.outputs.wasm }}"
+          echo "WASM Compressed location: ${{ steps.get_values.outputs.wasm_compressed }}"
+
+      # it takes a while to build the runtime, so let's save the artifact as soon as we have it
+      - name: Archive Artifacts for ${{ matrix.chain }}
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        with:
+          name: ${{ matrix.chain }}-runtime
+          path: |
+            sdk/${{ steps.get_values.outputs.wasm }}
+            sdk/${{ steps.get_values.outputs.wasm_compressed }}
+            sdk/${{ matrix.chain }}-srtool-digest.json
+
+      # We now get extra information thanks to subwasm,
+      - name: Install subwasm ${{ env.SUBWASM_VERSION }}
+        run: |
+          wget https://github.com/chevdor/subwasm/releases/download/v${{ env.SUBWASM_VERSION }}/subwasm_linux_amd64_v${{ env.SUBWASM_VERSION }}.deb
+          sudo dpkg -i subwasm_linux_amd64_v${{ env.SUBWASM_VERSION }}.deb
+          subwasm --version
+
+      - name: Show Runtime information
+        working-directory: sdk
+        run: |
+          subwasm info ${{ steps.get_values.outputs.wasm }}
+          subwasm info ${{ steps.get_values.outputs.wasm_compressed }}
+          subwasm --json info ${{ steps.get_values.outputs.wasm }} > ${{ matrix.chain }}-info.json
+          subwasm --json info ${{ steps.get_values.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
+
+      - name: Extract the metadata
+        working-directory: sdk
+        run: |
+          subwasm meta --format=json ${{ steps.get_values.outputs.wasm }} | tee ${{ matrix.chain }}-metadata.json
+
+      - name: Archive Subwasm information
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        with:
+          name: ${{ matrix.chain }}-runtime
+          path: |
+            sdk/${{ matrix.chain }}-info.json
+            sdk/${{ matrix.chain }}-info_compressed.json
+            sdk/${{ matrix.chain }}-metadata.json
+
+      - name: Check for reference chain
+        id: check-reference-chain
+        continue-on-error: true
+        run: |
+          echo "Checking for reference chain: ${{ matrix.chain }} "
+          ref_found=$(subwasm info --chain ${{ matrix.chain }} || echo "Reference chain not found")
+
+          if ! [[ "$ref_found" =~ (not found) ]]; then
+            echo "Reference chain found."
+            echo "ref_chain_found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Reference chain not found."
+            echo "Next steps will be skipped"
+            echo "ref_chain_found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check the metadata diff
+        if: steps.check-reference-chain.outputs.ref_chain_found == 'true'
+        working-directory: sdk
+        run: |
+          subwasm diff ${{ steps.get_values.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
+
+      - name: Archive Subwasm diff
+        if: steps.check-reference-chain.outputs.ref_chain_found == 'true'
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        with:
+          name: ${{ matrix.chain }}-runtime-diff
+          path: |
+            sdk/${{ matrix.chain }}-diff.txt

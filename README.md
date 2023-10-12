@@ -6,19 +6,19 @@
 
 ## Intro
 
-`srtool` is a collection of dockerized tools helping with [Substrate](https://substrate.io) & [Polkadot](https://polkadot.network) Runtime development. `srtool` especially allows building WASM runtimes in a deterministic way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
+`srtool` is a collection of containerized tools helping with building WASM Runtimes for the
+[Polkadot Network](https://polkadot.network). `srtool` especially allows building WASM runtimes in a
+**deterministic** way, allowing CIs and users, with various machines and OS, to produce a strictly identical WASM runtime.
 
-`srtool` can run on various Operating Systems supporting Docker. That includes Linux, MacOS and Windows.
+`srtool` can run on various Operating Systems supporting Podman or Docker. That includes Linux, MacOS and Windows.
 
-`srtool` especially helps with building and verifying WASM Runtimes. The Docker image is named `paritytech/srtool`. You can find the project’s repository at <https://hub.docker.com/r/paritytech/srtool>.
+`srtool` helps building and verifying WASM Runtimes. The Docker image is named `paritytech/srtool`. You can find the project’s repository at <https://hub.docker.com/r/paritytech/srtool>.
 
 ## Docker image naming scheme
 
 The Docker images are tagged with both the rustc version used internally as well as the version of the build script.
 
 You may find for instance the following:
-
--   `paritytech/srtool:1.73.0-0.9.19`
 
 -   `paritytech/srtool:1.73.0-0.12.0`
 
@@ -291,6 +291,53 @@ If you’re feeling fancy, you may also run:
 
 and look around the `/srtool` folder.
 
+## User Scripts
+
+You can see the list of available scripts in the `/scripts` folder:
+
+-   `help`: Show some help.
+
+-   `version`: Show some version.
+
+-   `info`: Show available system info before running a build.
+
+-   `build`: Run the actual build.
+
+-   `scan`: Scan a repo for runtimes
+
+The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M` (monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.73.0 info -cM` shows a monochrome output on a single line.
+
+## Build your custom chain / parachain
+
+Building the runtime for your custom chain may not work with the default used for Kusama, Polkadot and Co.
+You can however help `srtool` make the right choices using ENV VARs. You will need to make a new alias as shown below.
+
+Here’s how to build the runtime for the substrate-node-template, for instance:
+
+    alias mysrtool='docker run --rm -it --name mysrtool -e RUNTIME_DIR=runtime -e BUILD_OPTS=" " -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
+
+`BUILD_OPTS` is set to a space, not an empty string.
+
+Using `srtool-cli` makes the above much easier…​
+
+## Export the runtime
+
+To easily export your runtime, it will be copied in the container into the `/out` folder.
+If you mount this docker volume, you will find the wasm on your local filesystem once the run is complete.
+
+    docker run ... -v /tmp/out:/out ...
+
+## Scan
+
+`srtool` includes a command that helps finding runtimes in a repo.
+
+        REPO=/projects/polkadot-sdk
+        # or
+        # REPO=fellowship-runtimes
+        podman run --rm -it \
+            -v $REPO:/build \
+            `paritytech/srtool:1.73.0-0.12.0` scan
+
 ## ZSH/ Zinit users
 
 If you’re using `zsh` and `zinit`, you may benefit from using the srtool snippet maintained [here](https://gitlab.com/chevdor/dotfiles/-/tree/master/zsh-plugins).
@@ -320,37 +367,3 @@ First you may want to double check what rustc versions are available as you will
 So say you want to build a builder for rustc 1.73.0:
 
         RUSTC_VERSION=1.73.0 && docker build --build-arg RUSTC_VERSION=$RUSTC_VERSION -t paritytech/srtool:$RUSTC_VERSION .
-
-## User Scripts
-
-You can see the list of available scripts in the `/scripts` folder:
-
--   `help`: Show some help.
-
--   `version`: Show some version.
-
--   `info`: Show available system info before running a build.
-
--   `build`: Run the actual build.
-
-The `info` and `version` scripts pass any arguments you pass to the script to `jq`. So you can play with `c` (compact), `-M` (monochrome), `-C` color output. For instance `docker run --rm -it -v $PWD:/build chevdor/srtool:1.73.0 info -cM` shows a monochrome output on a single line.
-
-## Build your custom chain / parachain
-
-Building the runtime for your custom chain may not work with the default used for Kusama, Polkadot and Co.
-You can however help `srtool` make the right choices using ENV VARs. You will need to make a new alias as shown below.
-
-Here’s how to build the runtime for the substrate-node-template, for instance:
-
-    alias mysrtool='docker run --rm -it --name mysrtool -e RUNTIME_DIR=runtime -e BUILD_OPTS=" " -e PACKAGE=$PACKAGE -v $PWD:/build -v /tmp/cargo:/cargo-home chevdor/srtool:$RUSTC_VERSION'
-
-`BUILD_OPTS` is set to a space, not an empty string.
-
-Using `srtool-cli` makes the above much easier…​
-
-## Export the runtime
-
-To easily export your runtime, it will be copied in the container into the `/out` folder.
-If you mount this docker volume, you will find the wasm on your local filesystem once the run is complete.
-
-    docker run ... -v /tmp/out:/out ...

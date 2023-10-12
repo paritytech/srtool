@@ -58,7 +58,7 @@ export RUSTCV=`rustc -V`
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
     echo -e "🏗  Building $PACKAGE as $PROFILE using $RUSTCV"
-    echo -e "⏳ That can take a little while, be patient... subsequent builds will be faster."
+    echo -e "⏳ That can take a little while, be patient... subsequent builds may be faster."
     echo -e "   Since you have to wait a little, you may want to learn more about Substrate runtimes:"
     echo -e "   https://docs.substrate.io/learn/architecture/"
 fi
@@ -72,7 +72,7 @@ fi
 
 # As of https://github.com/paritytech/polkadot/pull/2522 we need to cd to the
 # runtime directory itself
-export RUNTIME_NAME="${PACKAGE/-*/}"
+export RUNTIME_NAME="${PACKAGE/-runtime/}"
 export GET_OPTS_CMD="/srtool/getBuildOpts.sh"
 export GET_OPTS=`$GET_OPTS_CMD`
 export BUILD_OPTS="${BUILD_OPTS:-${GET_OPTS}}"
@@ -83,8 +83,8 @@ export RUNTIME_DIR="${RUNTIME_DIR:-runtime/$RUNTIME_NAME}"
 # We check a few things before spending too much time building...
 
 # srtool only makes sense when called from a Cargo folder so we check that
-if [ ! -f Cargo.toml ]; then
-    echo "!!! The RUNTIME_DIR '$RUNTIME_DIR' does not look like a Cargo project. Is it pointing to the repo of your runtime?"
+if [ ! -f "/build/$RUNTIME_DIR/Cargo.toml" ]; then
+    echo "!!! The RUNTIME_DIR '$RUNTIME_DIR' does not look like a Cargo project. Is it pointing to the folder of your runtime crate?"
     exit 1
 fi
 
@@ -92,7 +92,10 @@ CRATE_VERSION=$(get_runtime_package_version "$PACKAGE")
 CRATE_NAME=`toml get "/build/$RUNTIME_DIR/Cargo.toml" package.name | jq -r`
 
 if [[ $CRATE_NAME != "$PACKAGE" ]]; then
-    echo "!!! The PACKAGE '$PACKAGE' does not match the crate name at '$RUNTIME_DIR'. Did you mean '$CRATE_NAME'?"
+    echo "!!! The PACKAGE '$PACKAGE' does not match the crate name at '$RUNTIME_DIR'."
+    if [ ! -z "$CRATE_NAME" ]; then
+        echo "Did you mean '$CRATE_NAME'?"
+    fi
     exit 1
 fi
 
@@ -109,7 +112,8 @@ else
 fi
 
 pushd "$RUNTIME_DIR" > /dev/null || exit 1
-  # TODO: --out-dir /out would be handy but still unstable
+  # TODO: --out-dir /out would be handy but still unstable.
+  # See https://doc.rust-lang.org/cargo/commands/cargo-build.html#output-options
   CMD="cargo build --locked ${INT_OPTS} ${BUILD_OPTS} --color=$COLOR --profile $PROFILE --target-dir target/srtool"
   if [ ! -z "$VERBOSE" ]; then
       echo "Command run:"
@@ -122,8 +126,9 @@ pushd "$RUNTIME_DIR" > /dev/null || exit 1
           $CMD 2>&1 || exit 1
       fi
   fi
-  WASM=`find "target/srtool/$PROFILE/wbuild/$PACKAGE" -type f -name "*.compact.wasm"`
-  Z_WASM=`find "target/srtool/$PROFILE/wbuild/$PACKAGE" -type f -name "*.compact.compressed.wasm"`
+  PKG_FILENAME=${PACKAGE//-/_}
+  WASM=`find "target/srtool/$PROFILE/wbuild/$PACKAGE" -type f -name "${PKG_FILENAME}.compact.wasm"`
+  Z_WASM=`find "target/srtool/$PROFILE/wbuild/$PACKAGE" -type f -name "${PKG_FILENAME}.compact.compressed.wasm"`
 popd > /dev/null || exit 1
 
 if [[ ! "$*" =~ --json ||  "$*" =~ --app ]]; then
