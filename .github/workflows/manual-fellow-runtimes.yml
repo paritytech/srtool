@@ -149,7 +149,7 @@ jobs:
       - name: Srtool build
         id: srtool_build
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
-        uses: chevdor/srtool-actions@v0.8.0
+        uses: chevdor/srtool-actions@wk-230920-add-debug
         with:
           workdir: fellows-runtimes
           chain: ${{ matrix.chain }}
