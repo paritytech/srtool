@@ -95,37 +95,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.find-runtimes.outputs.runtime) }}
-      # matrix:
-      #   include:
-      #     # Relay
-      #     - runtime_dir: relay/kusama
-      #       runtime: staging-kusama-runtime
-      #       chain: staging-kusama
-      #     - runtime_dir: relay/polkadot
-      #       runtime: polkadot-runtime
-      #       chain: polkadot
-
-      #     # System parachains / Asset Hub
-      #     - runtime_dir: system-parachains/asset-hubs/asset-hub-kusama
-      #       runtime: asset-hub-kusama-runtime
-      #       chain: asset-hub-kusama
-      #     - runtime_dir: system-parachains/asset-hubs/asset-hub-polkadot
-      #       runtime: asset-hub-polkadot-runtime
-      #       chain: asset-hub-polkadot
-
-      #     # System parachains / Bridge Hub
-      #     - runtime_dir: system-parachains/bridge-hubs/bridge-hub-kusama
-      #       runtime: bridge-hub-kusama-runtime
-      #       chain: bridge-hub-kusama
-      #     - runtime_dir: system-parachains/bridge-hubs/bridge-hub-polkadot
-      #       runtime: bridge-hub-polkadot-runtime
-      #       chain: bridge-hub-polkadot
-
-      #     # System parachains / Collectives
-      #     - runtime_dir: system-parachains/collectives/collectives-polkadot
-      #       runtime: collectives-polkadot-runtime
-      #       chain: collectives-polkadot
-
     runs-on: ubuntu-latest
     steps:
       - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
@@ -211,6 +180,7 @@ jobs:
           subwasm --version
 
       - name: Show Runtime information
+        working-directory: fellows-runtimes
         run: |
           subwasm info ${{ steps.srtool_build.outputs.wasm }}
           subwasm info ${{ steps.srtool_build.outputs.wasm_compressed }}
@@ -218,11 +188,13 @@ jobs:
           subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
 
       - name: Extract the metadata
+        working-directory: fellows-runtimes
         run: |
           subwasm meta ${{ steps.srtool_build.outputs.wasm }}
           subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-metadata.json
 
       - name: Check the metadata diff
+        working-directory: fellows-runtimes
         run: |
           subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
