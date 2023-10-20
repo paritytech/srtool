@@ -51,6 +51,7 @@ jobs:
 
       - name: Get commit hash for ${{ inputs.repo }} ${{ inputs.ref }}
         id: get_commit_hash
+        working-directory: fellows-runtimes
         run: |
           echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
