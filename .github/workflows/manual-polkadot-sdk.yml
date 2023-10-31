@@ -11,7 +11,7 @@ on:
         default: paritytech/srtool
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.70.0
+        default: 1.73.0
       ref:
         description: The ref to be used for the repo
         default: master
