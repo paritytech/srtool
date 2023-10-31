@@ -2,6 +2,7 @@ name: Manual Build - Fellowship
 
 env:
   SUBWASM_VERSION: 0.20.0
+  TOML_CLI_VERSION: 0.2.4
 
 on:
   workflow_dispatch:
@@ -12,6 +13,10 @@ on:
       srtool_tag:
         description: The SRTOOL tag to use
         default: 1.73.0
+        required: false
+      repo:
+        description: The repo to be used to build runtimes from
+        default: polkadot-fellows/runtimes
         required: false
       ref:
         description: The ref to be used for the repo
@@ -24,64 +29,104 @@ on:
     - cron: "00 04 * * 1"
 
 jobs:
-  build:
-    name: Build ${{ matrix.chain }} ${{ github.event.inputs.ref }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          # Relay
-          - runtime_dir: relay/kusama
-            runtime: staging-kusama-runtime
-            chain: staging-kusama
-          - runtime_dir: relay/polkadot
-            runtime: polkadot-runtime
-            chain: polkadot
-
-          # System parachains / Asset Hub
-          - runtime_dir: system-parachains/asset-hubs/asset-hub-kusama
-            runtime: asset-hub-kusama-runtime
-            chain: asset-hub-kusama
-          - runtime_dir: system-parachains/asset-hubs/asset-hub-polkadot
-            runtime: asset-hub-polkadot-runtime
-            chain: asset-hub-polkadot
-
-          # System parachains / Bridge Hub
-          - runtime_dir: system-parachains/bridge-hubs/bridge-hub-kusama
-            runtime: bridge-hub-kusama-runtime
-            chain: bridge-hub-kusama
-          - runtime_dir: system-parachains/bridge-hubs/bridge-hub-polkadot
-            runtime: bridge-hub-polkadot-runtime
-            chain: bridge-hub-polkadot
-
-          # System parachains / Collectives
-          - runtime_dir: system-parachains/collectives/collectives-polkadot
-            runtime: collectives-polkadot-runtime
-            chain: collectives-polkadot
-
+  find-runtimes:
+    name: Scan repo ${{ inputs.repo }} ${{ inputs.ref }}
+    outputs:
+      runtime: ${{ steps.get_runtimes_list.outputs.runtime }}
+      commit_hash: ${{ steps.get_commit_hash.outputs.commit_hash }}
     runs-on: ubuntu-latest
     steps:
-      - name: Cache ${{ matrix.chain }} runtime for ${{ github.sha }}
-        id: cache_runtime
-        if: github.event.inputs.cache == 'true'
+      - name: Checkout the srtool repo
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          fetch-depth: 0
+          path: srtool
+
+      - name: Checkout repo ${{ inputs.repo }}
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        with:
+          repository: ${{ inputs.repo }}
+          ref: ${{ inputs.ref }}
+          fetch-depth: 0
+          path: fellows-runtimes
+
+      - name: Get commit hash for ${{ inputs.repo }} ${{ inputs.ref }}
+        id: get_commit_hash
+        working-directory: fellows-runtimes
+        run: |
+          echo "commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Cache runtimes list for ${{ steps.get_commit_hash.outputs.commit_hash }}
+        id: cache_runtimes_list
+        if: inputs.cache == 'true'
         uses: actions/cache@v3
         with:
-          key: ${{ matrix.chain }}-${{ github.sha }}
+          key: runtimes-list-${{ steps.get_commit_hash.outputs.commit_hash }}
           path: |
-            sdk/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
+            fellows-runtimes/runtimes_list.json
 
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+      - name: Install tooling
+        if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
+        run: |
+          URL=https://github.com/chevdor/toml-cli/releases/download/v${{ env.TOML_CLI_VERSION }}/toml_linux_amd64_v${{ env.TOML_CLI_VERSION }}.deb
+          curl -L $URL --output toml.deb
+          sudo dpkg -i toml.deb
+          toml --version; jq --version
+
+      - name: Scan runtimes
+        if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
+
+        run: |
+          . ./srtool/scripts/lib.sh
+
+          echo "Github workspace: ${{ github.workspace }}"
+          echo "Current folder: $(pwd)"; ls -al
+          cd fellows-runtimes; ls -al
+
+          MATRIX=$(find_runtimes | tee runtimes_list.json)
+          echo $MATRIX
+
+      - name: Get runtimes list
+        id: get_runtimes_list
+        run: |
+          cd fellows-runtimes; ls -al
+          MATRIX=$(cat runtimes_list.json)
+          echo $MATRIX
+          echo "runtime=$MATRIX" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build ${{ matrix.chain }} ${{ inputs.ref }}
+    needs:
+      - find-runtimes
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.find-runtimes.outputs.runtime) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache ${{ matrix.chain }} runtime for ${{ needs.find-runtimes.outputs.commit_hash }}
+        id: cache_runtime
+        if: inputs.cache == 'true'
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 #v3.3.2
+        with:
+          key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
+          path: |
+            fellows-runtimes/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
+
+      - name: Checkout
+        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         with:
-          repository: polkadot-fellows/runtimes
-          ref: ${{ github.event.inputs.ref }}
+          repository: ${{ inputs.repo }}
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
+          path: fellows-runtimes
 
       - name: Srtool build
         id: srtool_build
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
-        uses: chevdor/srtool-actions@v0.8.0
+        uses: chevdor/srtool-actions@v0.9.0
         with:
+          workdir: fellows-runtimes
           chain: ${{ matrix.chain }}
           runtime_dir:  ${{ matrix.runtime_dir }}
           image: ${{ github.event.inputs.image }}
@@ -91,6 +136,7 @@ jobs:
       - name: Store build artifacts to disk
         id: cache_digest
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
+        working-directory: fellows-runtimes
         run: |
           cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
           digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
@@ -113,6 +159,7 @@ jobs:
           echo "wasm_compressed=$wasm_compressed" >> "$GITHUB_OUTPUT"
 
       - name: Summary
+        working-directory: fellows-runtimes
         run: |
           cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
           digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
@@ -127,9 +174,9 @@ jobs:
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ steps.srtool_build.outputs.wasm }}
-            ${{ steps.srtool_build.outputs.wasm_compressed }}
-            ${{ matrix.chain }}-srtool-digest.json
+            fellows-runtimes/${{ steps.get_values.outputs.wasm }}
+            fellows-runtimes/${{ steps.get_values.outputs.wasm_compressed }}
+            fellows-runtimes/${{ matrix.chain }}-srtool-digest.json
 
       # We now get extra information thanks to subwasm,
       - name: Install subwasm ${{ env.SUBWASM_VERSION }}
@@ -139,25 +186,30 @@ jobs:
           subwasm --version
 
       - name: Show Runtime information
+        working-directory: fellows-runtimes
         run: |
-          subwasm info ${{ steps.srtool_build.outputs.wasm }}
-          subwasm info ${{ steps.srtool_build.outputs.wasm_compressed }}
-          subwasm --json info ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-info.json
-          subwasm --json info ${{ steps.srtool_build.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
+          subwasm info ${{ steps.get_values.outputs.wasm }}
+          subwasm info ${{ steps.get_values.outputs.wasm_compressed }}
+          subwasm --json info ${{ steps.get_values.outputs.wasm }} > ${{ matrix.chain }}-info.json
+          subwasm --json info ${{ steps.get_values.outputs.wasm_compressed }} > ${{ matrix.chain }}-info_compressed.json
+
       - name: Extract the metadata
+        working-directory: fellows-runtimes
         run: |
-          subwasm meta ${{ steps.srtool_build.outputs.wasm }}
-          subwasm --json meta ${{ steps.srtool_build.outputs.wasm }} > ${{ matrix.chain }}-metadata.json
+          subwasm meta ${{ steps.get_values.outputs.wasm }}
+          subwasm --json meta ${{ steps.get_values.outputs.wasm }} > ${{ matrix.chain }}-metadata.json
+
       - name: Check the metadata diff
+        working-directory: fellows-runtimes
         run: |
-          subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
+          subwasm diff ${{ steps.get_values.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
       - name: Archive Subwasm results
         uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
-            ${{ matrix.chain }}-info.json
-            ${{ matrix.chain }}-info_compressed.json
-            ${{ matrix.chain }}-metadata.json
-            ${{ matrix.chain }}-diff.txt
+            fellows-runtimes/${{ matrix.chain }}-info.json
+            fellows-runtimes/${{ matrix.chain }}-info_compressed.json
+            fellows-runtimes/${{ matrix.chain }}-metadata.json
+            fellows-runtimes/${{ matrix.chain }}-diff.txt
