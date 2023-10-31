@@ -17,18 +17,18 @@ build:
     @echo Building $REPO:$RUSTC_VERSION
     @echo If you encounter issues, try running `just cleanup` and try building again.
     @echo Any arg you pass is forward to 'podman build'... You can pass'`--no-cache' for instance
-    podman build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION \
+    $ENGINE build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION \
         -t $REGISTRY/chevdor/srtool:$RUSTC_VERSION-$TAG-$COMMIT \
         -t $REGISTRY/$REPO:$RUSTC_VERSION-$TAG \
         -t $REGISTRY/$REPO \
         -t $REGISTRY/${REPO#*/} \
         .
-    podman images | grep srtool
+    $ENGINE images | grep srtool
 
 # Build and Publish the container image
 publish: build
     @echo Pushing podman image $REPO:$RUSTC_VERSION
-    podman push $REGISTRY/$REPO:$RUSTC_VERSION
+    $ENGINE push $REGISTRY/$REPO:$RUSTC_VERSION
 
 # Set a git tag
 tag:
