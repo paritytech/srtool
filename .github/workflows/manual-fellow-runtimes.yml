@@ -12,7 +12,7 @@ on:
         default: paritytech/srtool
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.70.0
+        default: 1.73.0
         required: false
       repo:
         description: The repo to be used to build runtimes from
