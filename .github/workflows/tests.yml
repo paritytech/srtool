@@ -407,7 +407,7 @@ jobs:
           - category: contracts
             chain: contracts-rococo
           - category: assets
-            chain: asset-hub-polkadot
+            chain: asset-hub-westend
           - category: starters
             chain: shell
     steps:
