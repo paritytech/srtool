@@ -190,6 +190,7 @@ jobs:
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
             -e RUNTIME_DIR=$RUNTIME_DIR \
+            -e WASM_BUILD_STD=0 \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
@@ -342,6 +343,7 @@ jobs:
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
             -e RUNTIME_DIR=$RUNTIME_DIR \
+            -e WASM_BUILD_STD=0 \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
@@ -458,6 +460,7 @@ jobs:
           CMD="docker run --rm -i \
             -e PACKAGE=$PACKAGE \
             -e RUNTIME_DIR=$RUNTIME_DIR \
+            -e WASM_BUILD_STD=0 \
             -v ${PWD}:/build \
             srtool build --app --json"
           echo ::debug::build::docker_run $CMD
