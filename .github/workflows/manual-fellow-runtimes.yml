@@ -25,6 +25,9 @@ on:
       cache:
         description: By default, caching will be used but you can turn it off here if you provide 'false'
         default: true
+      profile:
+        description: Profile to be used for the build
+        default: production
   schedule:
     - cron: "00 04 * * 1"
 
@@ -131,6 +134,7 @@ jobs:
           runtime_dir:  ${{ matrix.runtime_dir }}
           image: ${{ github.event.inputs.image }}
           tag: ${{ github.event.inputs.srtool_tag }}
+          profile: ${{ github.event.inputs.profile }}
 
       # This is done to allow caching
       - name: Store build artifacts to disk
