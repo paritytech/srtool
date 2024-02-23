@@ -56,6 +56,7 @@ RUN echo $SHELL && \
     . $CARGO_HOME/env && \
     rustup toolchain add stable ${RUSTC_VERSION} && \
     rustup target add wasm32-unknown-unknown --toolchain $RUSTC_VERSION && \
+    rustup component add rust-src --toolchain $RUSTC_VERSION && \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME && \
     rustup show && rustc -V
 
