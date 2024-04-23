@@ -75,7 +75,7 @@ jobs:
         if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
 
         env:
-          EXCLUDED_RUNTIMES: "substrate-test"
+          EXCLUDED_RUNTIMES: "substrate-test bp cumulus-test kitchensink polkadot-test sp"
         run: |
           . ./srtool/scripts/lib.sh
 
