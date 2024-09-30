@@ -3,7 +3,7 @@ FROM docker.io/library/ubuntu:22.04
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 
-ARG RUSTC_VERSION="1.77.0"
+ARG RUSTC_VERSION="1.81.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
