@@ -37,6 +37,10 @@ on:
       build_opts:
         description: The build options to be used to build runtime (can be left empty)
         required: false
+      profile:
+        description: The profile to be used for the runtime build
+        default: release
+        required: false
 
 jobs:
   build:
@@ -60,6 +64,7 @@ jobs:
           image: ${{ github.event.inputs.srtool_image }}
           tag: ${{ github.event.inputs.srtool_tag }}
           runtime_dir: ${{ github.event.inputs.runtime_dir }}
+          profile: ${{ github.event.inputs.profile }}
 
       - name: Summary
         run: |
