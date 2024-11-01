@@ -1,7 +1,7 @@
 name: Manual Build - Moonbeam
 
 env:
-  SUBWASM_VERSION: 0.20.0
+  SUBWASM_VERSION: 0.21.0
 
 on:
   workflow_dispatch:
