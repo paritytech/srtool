@@ -133,7 +133,7 @@ jobs:
         with:
           key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
           path: |
-            sdk/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
+            sdk/${{ matrix.runtime_dir }}/target/srtool/${{ inputs.profile }}/wbuild/${{ matrix.chain }}-runtime
 
       - name: Srtool build
         id: srtool_build
@@ -155,7 +155,7 @@ jobs:
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         working-directory: sdk
         run: |
-          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/${{ inputs.profile }}/wbuild/${{ matrix.chain }}-runtime/
           digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
           echo '${{ steps.srtool_build.outputs.json }}' | jq > ${digest_file}
           cat ${digest_file}
@@ -167,9 +167,9 @@ jobs:
           runtime_package=${{ matrix.chain }}-runtime
           runtime_filename=${runtime_package//-/_}
 
-          wasm="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
+          wasm="${{ matrix.runtime_dir }}/target/srtool/${{ inputs.profile }}/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
 
-          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
+          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/${{ inputs.profile }}/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
 
           # we need wasm and wasm_compressed
           echo "wasm=$wasm" >> "$GITHUB_OUTPUT"
@@ -178,7 +178,7 @@ jobs:
       - name: Summary
         working-directory: sdk
         run: |
-          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/${{ inputs.profile }}/wbuild/${{ matrix.chain }}-runtime/
           digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
           ls -al ${digest_file}
           cat ${digest_file}
