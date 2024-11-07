@@ -404,12 +404,12 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - category: contracts
-            chain: contracts-rococo
+          - category: collectives
+            chain: collectives-westend
           - category: assets
             chain: asset-hub-westend
-          - category: starters
-            chain: shell
+          - category: bridge-hubs
+            chain: bridge-hub-westend
     steps:
       - name: Cache the image
         uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
