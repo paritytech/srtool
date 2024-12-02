@@ -53,6 +53,8 @@ fi
 
 # The following is to prevent user's overrides to disturb srtool
 rustup override set $RUSTC_VERSION
+rustup target add wasm32-unknown-unknown
+rustup component add rust-src
 
 export RUSTCV=`rustc -V`
 
