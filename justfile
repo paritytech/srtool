@@ -10,12 +10,12 @@ _default:
 
 # Runs a system prune to ensure we have the resources to build the image
 cleanup:
-    podman system prune -f
+    $ENGINE system prune -f
 
 # Build the container image
 build:
     @echo Building $REPO:$RUSTC_VERSION
-    @echo If you encounter issues, try running `just cleanup` and try building again.
+    @echo If you encounter issues, try running \`just cleanup\` and try building again.
     @echo Any arg you pass is forward to 'podman build'... You can pass'`--no-cache' for instance
     $ENGINE build $@ --build-arg RUSTC_VERSION=$RUSTC_VERSION \
         -t $REGISTRY/chevdor/srtool:$RUSTC_VERSION-$TAG-$COMMIT \
