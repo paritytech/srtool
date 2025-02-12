@@ -235,7 +235,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -388,7 +388,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.runtime }}
           path: |
@@ -505,7 +505,7 @@ jobs:
             echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
