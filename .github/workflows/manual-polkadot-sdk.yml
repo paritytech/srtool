@@ -64,7 +64,7 @@ jobs:
       - name: Cache runtimes list for ${{ steps.get_commit_hash.outputs.commit_hash }}
         id: cache_runtimes_list
         if: github.event.inputs.cache == 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: runtimes-list-${{ steps.get_commit_hash.outputs.commit_hash }}
           path: |
@@ -129,7 +129,7 @@ jobs:
       - name: Cache ${{ matrix.chain }} runtime for ${{ needs.find-runtimes.outputs.commit_hash }}
         id: cache_runtime
         if: github.event.inputs.cache == 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
           path: |

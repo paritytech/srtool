@@ -36,7 +36,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -48,7 +48,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -87,7 +87,7 @@ jobs:
           ls -al
 
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -126,7 +126,7 @@ jobs:
         chain: ["westend"]
     steps:
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
