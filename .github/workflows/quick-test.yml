@@ -211,7 +211,7 @@ jobs:
             echo "json=$JSON" >> $GITHUB_OUTPUT
             echo "JSON=$JSON" >> $GITHUB_ENV
 
-            echo $JSON | jq .
+            echo $JSON
 
             WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
             echo "wasm=$WASM" >> $GITHUB_OUTPUT
