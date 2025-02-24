@@ -13,6 +13,10 @@ on:
   schedule:
     - cron: "00 05 * * 1" # 5AM weekly on mondays
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build Srtool Docker image
@@ -347,8 +351,6 @@ jobs:
             -e WASM_BUILD_STD=0 \
             -v ${PWD}:/build \
             srtool build --app --json"
-          echo ::debug::build::install_wasm32_target
-          rustup target add wasm32-unknown-unknown --toolchain ${RUSTC_VERSION}-x86_64-unknown-linux-gnu
 
           echo ::debug::build::docker_run $CMD
 
