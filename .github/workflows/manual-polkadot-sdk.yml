@@ -218,7 +218,7 @@ jobs:
       - name: Archive Subwasm information
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.chain }}-runtime
+          name: ${{ matrix.chain }}-runtime-info
           path: |
             sdk/${{ matrix.chain }}-info.json
             sdk/${{ matrix.chain }}-info_compressed.json

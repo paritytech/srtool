@@ -105,7 +105,7 @@ jobs:
       - name: Archive Subwasm results
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.event.inputs.chain }}-runtime
+          name: ${{ github.event.inputs.chain }}-runtime-info
           path: |
             ${{ github.event.inputs.chain }}-info.json
             ${{ github.event.inputs.chain }}-info_compressed.json
