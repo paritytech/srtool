@@ -25,6 +25,7 @@ on:
         default: true
       build_opts:
         description: The build options to be used to build runtime (can be left empty)
+        default: --features on-chain-release-build
         required: false
       profile:
         description: The profile to be used for the runtime build
