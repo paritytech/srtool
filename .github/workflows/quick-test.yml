@@ -10,6 +10,10 @@ on:
 
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build Srtool Docker image
@@ -36,7 +40,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -48,7 +52,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -87,7 +91,7 @@ jobs:
           ls -al
 
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -126,7 +130,7 @@ jobs:
         chain: ["westend"]
     steps:
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -211,7 +215,7 @@ jobs:
             echo "json=$JSON" >> $GITHUB_OUTPUT
             echo "JSON=$JSON" >> $GITHUB_ENV
 
-            echo $JSON | jq .
+            echo $JSON
 
             WASM=`echo $JSON | jq -r .runtimes.compact.wasm`
             echo "wasm=$WASM" >> $GITHUB_OUTPUT
@@ -240,7 +244,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |

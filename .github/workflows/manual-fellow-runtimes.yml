@@ -12,7 +12,7 @@ on:
         default: paritytech/srtool
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.81.0
+        default: 1.84.0
         required: false
       repo:
         description: The repo to be used to build runtimes from
@@ -59,7 +59,7 @@ jobs:
       - name: Cache runtimes list for ${{ steps.get_commit_hash.outputs.commit_hash }}
         id: cache_runtimes_list
         if: inputs.cache == 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: runtimes-list-${{ steps.get_commit_hash.outputs.commit_hash }}
           path: |
@@ -106,7 +106,7 @@ jobs:
       - name: Cache ${{ matrix.chain }} runtime for ${{ needs.find-runtimes.outputs.commit_hash }}
         id: cache_runtime
         if: inputs.cache == 'true'
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 #v3.3.2
+        uses: actions/cache@v4
         with:
           key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
           path: |
@@ -170,7 +170,7 @@ jobs:
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -205,7 +205,7 @@ jobs:
           subwasm diff ${{ steps.get_values.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
       - name: Archive Subwasm results
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |

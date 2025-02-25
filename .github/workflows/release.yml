@@ -25,7 +25,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -52,7 +52,7 @@ jobs:
           echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
           echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -99,7 +99,7 @@ jobs:
     needs: ["create_draft"]
     steps:
       - name: Cache the image
-        uses: actions/cache@9b0c1fce7a93df8e3bb8926b0d6e9d89e92f20a7 # v3.0.11
+        uses: actions/cache@v4
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |

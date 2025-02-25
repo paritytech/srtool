@@ -3,7 +3,7 @@ FROM docker.io/library/ubuntu:22.04
 LABEL maintainer "chevdor@gmail.com"
 LABEL description="This image contains tools for Substrate blockchains runtimes."
 
-ARG RUSTC_VERSION="1.81.0"
+ARG RUSTC_VERSION="1.84.0"
 ENV RUSTC_VERSION=$RUSTC_VERSION
 ENV DOCKER_IMAGE="paritytech/srtool"
 ENV PROFILE=release
@@ -56,6 +56,7 @@ RUN echo $SHELL && \
     . $CARGO_HOME/env && \
     rustup toolchain add stable ${RUSTC_VERSION} && \
     rustup target add wasm32-unknown-unknown --toolchain $RUSTC_VERSION && \
+    rustup target add wasm32v1-none --toolchain $RUSTC_VERSION && \
     rustup component add rust-src --toolchain $RUSTC_VERSION && \
     chmod -R a+w $RUSTUP_HOME $CARGO_HOME && \
     rustup show && rustc -V

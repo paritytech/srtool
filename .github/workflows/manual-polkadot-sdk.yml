@@ -12,7 +12,7 @@ on:
         default: paritytech/srtool
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.81.0
+        default: 1.84.0
       repo:
         description: The repo to be used to build runtimes from
         default: paritytech/polkadot-sdk
@@ -64,7 +64,7 @@ jobs:
       - name: Cache runtimes list for ${{ steps.get_commit_hash.outputs.commit_hash }}
         id: cache_runtimes_list
         if: github.event.inputs.cache == 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: runtimes-list-${{ steps.get_commit_hash.outputs.commit_hash }}
           path: |
@@ -129,7 +129,7 @@ jobs:
       - name: Cache ${{ matrix.chain }} runtime for ${{ needs.find-runtimes.outputs.commit_hash }}
         id: cache_runtime
         if: github.event.inputs.cache == 'true'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
           path: |
@@ -187,7 +187,7 @@ jobs:
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -216,7 +216,7 @@ jobs:
           subwasm meta --format=json ${{ steps.get_values.outputs.wasm }} | tee ${{ matrix.chain }}-metadata.json
 
       - name: Archive Subwasm information
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -248,7 +248,7 @@ jobs:
 
       - name: Archive Subwasm diff
         if: steps.check-reference-chain.outputs.ref_chain_found == 'true'
-        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8 # v3.1.0
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.chain }}-runtime-diff
           path: |
