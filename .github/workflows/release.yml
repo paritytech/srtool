@@ -126,6 +126,7 @@ jobs:
         run: |
           docker tag srtool $REPO:$RUSTC_VERSION-$SRTOOL_VERSION
           docker tag srtool $REPO:$RUSTC_VERSION
+          docker tag srtool $REPO:latest
           docker images
 
       - name: Log into Docker Hub
@@ -140,3 +141,4 @@ jobs:
         run: |
           docker push $REPO:$RUSTC_VERSION-$SRTOOL_VERSION
           docker push $REPO:$RUSTC_VERSION
+          docker push $REPO:latest

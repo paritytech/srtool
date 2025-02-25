@@ -25,6 +25,7 @@ on:
         default: true
       build_opts:
         description: The build options to be used to build runtime (can be left empty)
+        default: --features on-chain-release-build
         required: false
       profile:
         description: The profile to be used for the runtime build
@@ -82,7 +83,7 @@ jobs:
         if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
 
         env:
-          EXCLUDED_RUNTIMES: "substrate-test bp cumulus-test kitchensink polkadot-test sp"
+          EXCLUDED_RUNTIMES: "asset-hub-rococo bridge-hub-rococo contracts-rococo coretime-rococo people-rococo rococo rococo-parachain substrate-test bp cumulus-test kitchensink minimal-template parachain-template penpal polkadot-test seedling shell frame-try sp solochain-template polkadot-sdk-docs-first"
         run: |
           . ./srtool/scripts/lib.sh
 
@@ -218,7 +219,7 @@ jobs:
       - name: Archive Subwasm information
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.chain }}-runtime
+          name: ${{ matrix.chain }}-runtime-info
           path: |
             sdk/${{ matrix.chain }}-info.json
             sdk/${{ matrix.chain }}-info_compressed.json
