@@ -1,4 +1,4 @@
-# Substrate Runtime Toolbox: srtool v0.18.1
+# Substrate Runtime Toolbox: srtool v0.18.2
 
 ![srtool docker 128px](resources/srtool-docker_128px.png)
 
@@ -18,11 +18,11 @@ The Docker images are tagged with both the rustc version used internally as well
 
 You may find for instance the following:
 
--   `paritytech/srtool:1.84.0-0.18.1`
+-   `paritytech/srtool:1.84.1-0.18.2`
 
--   `paritytech/srtool:1.84.0`
+-   `paritytech/srtool:1.84.1`
 
-The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.84.0` is the same image than `paritytech/srtool:1.84.0-0.18.1`.
+The tags not mentioning the build version always point to the latest one. In the example above, `paritytech/srtool:1.84.1` is the same image than `paritytech/srtool:1.84.1-0.18.2`.
 
 ## Related tools
 
@@ -47,7 +47,7 @@ You may also want to have a look at [subwasm](https://github.com/chevdor/subwasm
 The project was initially developed by <https://gitlab.com/chevdor>.
 It has now moved to Github under the [Parity Technologies](https://www.github.com/paritytech) organisation to simplify the developement and the integration with other Parity products such as Polkadot and Kusama.
 
-The last version hosted on Gitlab has been built using Rust Stable 1.84.0. It is tagged as v0.18.1 and there is no plan on updating the Gitlab repository further. New versions will be available from [this repository](https://www.github.com/paritytech/srtool) only. The functionalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
+The last version hosted on Gitlab has been built using Rust Stable 1.84.1. It is tagged as v0.18.2 and there is no plan on updating the Gitlab repository further. New versions will be available from [this repository](https://www.github.com/paritytech/srtool) only. The functionalities remain the same so you can (and should!) simply swap `chevdor/srtool` for `paritytech/srtool` in your workflows. The [srtool-actions](https://github.com/chevdor/srtool-actions) will remain available as `chevdor/srtool-actions@<version>` and will be updated to point at the paritytech image.
 
 ## Install
 
