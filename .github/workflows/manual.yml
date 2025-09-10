@@ -8,7 +8,7 @@ on:
     inputs:
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.84.0
+        default: 1.88.0
         required: false
       srtool_image:
         description: The SRTOOL image to use
@@ -35,8 +35,7 @@ on:
         default: master
         required: false
       build_opts:
-        description: The build options to be used to build runtime (can be left empty)
-        default: --features on-chain-release-build
+        description: The build options to be used to build runtime e.g. --features on-chain-release-build (can be left empty)
         required: false
       profile:
         description: The profile to be used for the runtime build
