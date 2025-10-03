@@ -25,6 +25,14 @@ on:
       cache:
         description: By default, caching will be used but you can turn it off here if you provide 'false'
         default: true
+      build_opts:
+        description: The build options to be used to build runtime (can be left empty, or used as --features on-chain-release-build)
+        required: false
+      profile:
+        description: The profile to be used for the runtime build
+        default: production
+        required: false
+
   schedule:
     - cron: "00 04 * * 1"
 
@@ -107,10 +115,12 @@ jobs:
         id: cache_runtime
         if: inputs.cache == 'true'
         uses: actions/cache@v4
+        env:
+          PROFILE: ${{ inputs.profile }}
         with:
           key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
           path: |
-            fellows-runtimes/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
+            fellows-runtimes/${{ matrix.runtime_dir }}/target/srtool/${{ env.PROFILE }}/wbuild/${{ matrix.chain }}-runtime
 
       - name: Checkout
         uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
@@ -125,20 +135,26 @@ jobs:
         id: srtool_build
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         uses: chevdor/srtool-actions@v0.9.2
+        env:
+          BUILD_OPTS: ${{ inputs.build_opts }}
+          PROFILE: ${{ inputs.profile }}
         with:
           workdir: fellows-runtimes
           chain: ${{ matrix.chain }}
           runtime_dir:  ${{ matrix.runtime_dir }}
           image: ${{ github.event.inputs.image }}
           tag: ${{ github.event.inputs.srtool_tag }}
+          profile: ${{ env.PROFILE }}
 
       # This is done to allow caching
       - name: Store build artifacts to disk
         id: cache_digest
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         working-directory: fellows-runtimes
+        env:
+          PROFILE: ${{ inputs.profile }}
         run: |
-          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/${PROFILE}/wbuild/${{ matrix.chain }}-runtime/
           digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
           echo '${{ steps.srtool_build.outputs.json }}' | jq > ${digest_file}
           cat ${digest_file}
@@ -146,13 +162,15 @@ jobs:
 
       - name: Retrieve WASM paths
         id: get_values
+        env:
+          PROFILE: ${{ inputs.profile }}
         run: |
           runtime_package=${{ matrix.chain }}-runtime
           runtime_filename=${runtime_package//-/_}
 
-          wasm="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
+          wasm="${{ matrix.runtime_dir }}/target/srtool/${PROFILE}/wbuild/${runtime_package}/${runtime_filename}.compact.wasm"
 
-          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
+          wasm_compressed="${{ matrix.runtime_dir }}/target/srtool/${PROFILE}/wbuild/${runtime_package}/${runtime_filename}.compact.compressed.wasm"
 
           # we need wasm and wasm_compressed
           echo "wasm=$wasm" >> "$GITHUB_OUTPUT"
@@ -160,8 +178,10 @@ jobs:
 
       - name: Summary
         working-directory: fellows-runtimes
+        env:
+          PROFILE: ${{ inputs.profile }}
         run: |
-          cached_output=${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime/
+          cached_output=${{ matrix.runtime_dir }}/target/srtool/${PROFILE}/wbuild/${{ matrix.chain }}-runtime/
           digest_file=${cached_output}/${{ matrix.chain }}-srtool-digest.json
           ls -al ${digest_file}
           cat ${digest_file}
