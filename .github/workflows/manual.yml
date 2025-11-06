@@ -58,7 +58,7 @@ jobs:
 
       - name: Get commit hash for ${{ github.event.inputs.repository }} ${{ github.event.inputs.ref }}
         id: getsha
-        working-directory: ${{ github.event.inputs.repository }}
+        working-directory: polkadot-sdk
         run: |
           echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
