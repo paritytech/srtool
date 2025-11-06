@@ -44,9 +44,6 @@ on:
 
 jobs:
   build:
-    outputs:
-      polkadot_sdk_checkout_hash: ${{ steps.getsha.outputs.sha }}
-
     name: Build ${{ github.event.inputs.repository }}/${{ github.event.inputs.package }} ${{ github.event.inputs.ref }}
     runs-on: ubuntu-latest
     steps:
@@ -57,15 +54,16 @@ jobs:
           fetch-depth: 0
 
       - name: Get commit hash for ${{ github.event.inputs.repository }} ${{ github.event.inputs.ref }}
-        id: getsha
         run: |
           sha=$(git rev-parse --short HEAD)
           echo "sha: $sha"
-          echo "sha=$sha" >> $GITHUB_OUTPUT
-      - name: Debug SDK SHA
-        run: |
-            echo "Building with SDK SHA: ${{ steps.getsha.outputs.sha }}"
+          echo "$sha" > sdk-checkout-sha.txt
 
+      - name: Upload SHA artifact
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0
+        with:
+          name: sdk-checkout-sha
+          path: sdk-checkout-sha.txt
 
       # - name: Srtool build
       #   id: srtool_build
@@ -117,7 +115,7 @@ jobs:
       #     subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ github.event.inputs.chain }} | tee ${{ github.event.inputs.chain }}-diff.txt
 
       # - name: Archive Subwasm results
-      #   uses: actions/upload-artifact@v4
+      #   uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0
       #   with:
       #     name: ${{ github.event.inputs.chain }}-runtime-info
       #     path: |
