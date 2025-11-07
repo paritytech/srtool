@@ -53,19 +53,6 @@ jobs:
           ref: ${{ github.event.inputs.ref }}
           fetch-depth: 0
 
-      - name: Get commit hash for ${{ github.event.inputs.repository }} ${{ github.event.inputs.ref }}
-        run: |
-          # The sha from the polkadot-sdk checkout will be used later to connect a runtime build with the uplaoded artifact
-          sha=$(git rev-parse --short HEAD)
-          echo "sha: $sha"
-          echo "$sha" > sdk-checkout-sha.txt
-
-      - name: Upload SHA artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0
-        with:
-          name: sdk-checkout-sha
-          path: sdk-checkout-sha.txt
-
       - name: Srtool build
         id: srtool_build
         uses: chevdor/srtool-actions@v0.9.2
