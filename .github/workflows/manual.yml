@@ -1,5 +1,6 @@
 name: Manual Build
 
+run-name: Build for ${{ github.event.inputs.ref }}
 env:
   SUBWASM_VERSION: 0.21.0
 
@@ -31,8 +32,7 @@ on:
         default: polkadot/runtime/westend
         required: true
       ref:
-        description: The ref to be used for the repo
-        default: master
+        description: The github commit hash to be used for the repo to be built from (this should be a commit hash and not a branch name)
         required: false
       build_opts:
         description: The build options to be used to build runtime e.g. --features on-chain-release-build (can be left empty)
@@ -103,7 +103,7 @@ jobs:
           subwasm diff ${{ steps.srtool_build.outputs.wasm }} --chain-b ${{ github.event.inputs.chain }} | tee ${{ github.event.inputs.chain }}-diff.txt
 
       - name: Archive Subwasm results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 #v5.0.0
         with:
           name: ${{ github.event.inputs.chain }}-runtime-info
           path: |
