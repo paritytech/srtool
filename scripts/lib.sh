@@ -16,10 +16,10 @@ vercomp() {
             # fill empty fields in ver2 with zeros
             ver2[i]=0
         fi
-        if ((10#${ver1[i]} > 10#${ver2[i]})); then
+        if ((10#${ver1[i]:-0} > 10#${ver2[i]:-0})); then
             return 1
         fi
-        if ((10#${ver1[i]} < 10#${ver2[i]})); then
+        if ((10#${ver1[i]:-0} < 10#${ver2[i]:-0})); then
             return 2
         fi
     done
