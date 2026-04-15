@@ -1,5 +1,7 @@
 name: Manual Build - Polkadot SDK
 
+run-name: Build for ${{ github.event.inputs.ref }}
+
 env:
   SUBWASM_VERSION: 0.21.0
   TOML_CLI_VERSION: 0.2.4
@@ -12,17 +14,17 @@ on:
         default: paritytech/srtool
       srtool_tag:
         description: The SRTOOL tag to use
-        default: 1.84.0
+        default: 1.93.0
       repo:
         description: The repo to be used to build runtimes from
         default: paritytech/polkadot-sdk
         required: false
       ref:
-        description: The ref to be used for the repo
-        default: master
+        description: The github commit hash to be used for the repo to be built from (this should be a commit hash and not a branch name)
+        required: false
       cache:
         description: By default, caching will be used but you can turn it off here if you provide 'false'
-        default: true
+        default: 'true'
       build_opts:
         description: The build options to be used to build runtime (can be left empty)
         default: --features on-chain-release-build
@@ -83,7 +85,7 @@ jobs:
         if: ${{ steps.cache_runtimes_list.outputs.cache-hit != 'true' }}
 
         env:
-          EXCLUDED_RUNTIMES: "asset-hub-rococo bridge-hub-rococo contracts-rococo coretime-rococo people-rococo rococo rococo-parachain substrate-test bp cumulus-test kitchensink minimal-template parachain-template penpal polkadot-test seedling shell frame-try sp solochain-template polkadot-sdk-docs-first"
+          EXCLUDED_RUNTIMES: "rococo asset-hub-rococo bridge-hub-rococo rococo substrate-test bp cumulus-test kitchensink minimal-template parachain-template penpal polkadot-test seedling shell frame-try sp solochain-template polkadot-sdk-docs-first pallet-staking-async-parachain pallet-staking-async-rc frame-storage-access-test yet-another-parachain revive-dev"
         run: |
           . ./srtool/scripts/lib.sh
 
