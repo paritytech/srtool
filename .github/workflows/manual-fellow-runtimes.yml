@@ -37,13 +37,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the srtool repo
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
           path: srtool
 
       - name: Checkout repo ${{ inputs.repo }}
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: ${{ inputs.repo }}
           ref: ${{ inputs.ref }}
@@ -59,7 +59,7 @@ jobs:
       - name: Cache runtimes list for ${{ steps.get_commit_hash.outputs.commit_hash }}
         id: cache_runtimes_list
         if: inputs.cache == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: runtimes-list-${{ steps.get_commit_hash.outputs.commit_hash }}
           path: |
@@ -106,14 +106,14 @@ jobs:
       - name: Cache ${{ matrix.chain }} runtime for ${{ needs.find-runtimes.outputs.commit_hash }}
         id: cache_runtime
         if: inputs.cache == 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: ${{ matrix.chain }}-${{ needs.find-runtimes.outputs.commit_hash }}
           path: |
             fellows-runtimes/${{ matrix.runtime_dir }}/target/srtool/release/wbuild/${{ matrix.chain }}-runtime
 
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: ${{ steps.cache_runtime.outputs.cache-hit != 'true' }}
         with:
           repository: ${{ inputs.repo }}
@@ -170,7 +170,7 @@ jobs:
 
       # it takes a while to build the runtime, so let's save the artifact as soon as we have it
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -205,7 +205,7 @@ jobs:
           subwasm diff ${{ steps.get_values.outputs.wasm }} --chain-b ${{ matrix.chain }} | tee ${{ matrix.chain }}-diff.txt
 
       - name: Archive Subwasm results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.chain }}-runtime-info
           path: |

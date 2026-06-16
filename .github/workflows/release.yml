@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
 
       - name: Build image
         run: |
@@ -25,7 +25,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -39,7 +39,7 @@ jobs:
       release_url: ${{ steps.create-release.outputs.html_url }}
       asset_upload_url: ${{ steps.create-release.outputs.upload_url }}
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           fetch-depth: 0
       - name: Get Release Version
@@ -52,7 +52,7 @@ jobs:
           echo "SRTOOL_VERSION=$SRTOOL_VERSION" >> $GITHUB_ENV
           echo "RUSTC_VERSION=$RUSTC_VERSION" >> $GITHUB_ENV
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -99,7 +99,7 @@ jobs:
     needs: ["create_draft"]
     steps:
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -130,7 +130,7 @@ jobs:
           docker images
 
       - name: Log into Docker Hub
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee #v4.2.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}

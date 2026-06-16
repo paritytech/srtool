@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: false
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -43,7 +43,7 @@ jobs:
           docker save srtool | gzip > srtool.tar.gz
 
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -55,7 +55,7 @@ jobs:
     continue-on-error: false
     steps:
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -85,7 +85,7 @@ jobs:
     needs: build
     continue-on-error: false
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -94,7 +94,7 @@ jobs:
           ls -al
 
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -133,7 +133,7 @@ jobs:
         chain: ["westend"]
     steps:
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -145,7 +145,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Polkadot repo
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: paritytech/polkadot-sdk
           ref: ${{ github.event.inputs.ref }}
@@ -239,7 +239,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
@@ -286,7 +286,7 @@ jobs:
 
     steps:
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -298,7 +298,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Fellowship repo
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: polkadot-fellows/runtimes
           ref: ${{ github.event.inputs.ref }}
@@ -394,7 +394,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.runtime }}
           path: |
@@ -418,7 +418,7 @@ jobs:
             chain: bridge-hub-westend
     steps:
       - name: Cache the image
-        uses: actions/cache@v4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           key: srtool-docker-image-${{ github.sha }}
           path: |
@@ -430,7 +430,7 @@ jobs:
           docker images --digests
 
       - name: Check out the Cumulus repo
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: paritytech/polkadot-sdk
           ref: ${{ github.event.inputs.ref }}
@@ -511,7 +511,7 @@ jobs:
           echo "::endgroup::"
 
       - name: Archive Artifacts for ${{ matrix.chain }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.chain }}-runtime
           path: |
